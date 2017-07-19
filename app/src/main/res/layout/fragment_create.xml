@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:context="layout.Create">
+
+    <info.hoang8f.widget.FButton
+        android:id="@+id/btn_gantt"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_marginBottom="10dp"
+        android:text="Gantt Chart"
+        android:textAlignment="center"
+        android:textColor="@color/White"
+        fbutton:buttonColor="@color/wet_asphalt"
+        fbutton:shadowColor="@color/midnight_blue"
+        fbutton:shadowEnabled="true"
+        fbutton:shadowHeight="5dp" />
+
+    <info.hoang8f.widget.FButton
+        android:id="@+id/FButton2"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:text="Line Charts"
+        android:textAlignment="center"
+        android:textColor="@color/White"
+        fbutton:buttonColor="@color/concrete"
+        fbutton:shadowColor="@color/asbestos"
+        fbutton:shadowEnabled="true"
+        fbutton:shadowHeight="5dp" />
+
+</LinearLayout>

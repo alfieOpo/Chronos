@@ -1,0 +1,45 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context="pupthesis.chronos.MainMenu">
+
+    <info.hoang8f.widget.FButton
+        android:id="@+id/btn_create"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_marginBottom="10dp"
+        android:text="Create"
+        android:textAlignment="center"
+        android:textColor="@color/White"
+        fbutton:buttonColor="@color/turquoise"
+        fbutton:shadowColor="@color/green_sea"
+        fbutton:shadowEnabled="true"
+        fbutton:shadowHeight="5dp" />
+
+    <info.hoang8f.widget.FButton
+        android:id="@+id/btn_reference"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_marginBottom="10dp"
+        android:text="Reference"
+        android:textColor="@color/White"
+        fbutton:buttonColor="@color/sun_flower"
+        fbutton:shadowColor="@color/orange"
+        fbutton:shadowEnabled="true"
+        fbutton:shadowHeight="5dp" />
+
+    <info.hoang8f.widget.FButton
+        android:id="@+id/btn_about"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:text="About"
+        android:textColor="@color/White"
+        fbutton:buttonColor="@color/peter_river"
+        fbutton:shadowColor="@color/belize_hole"
+        fbutton:shadowEnabled="true"
+        fbutton:shadowHeight="5dp" />
+</LinearLayout>

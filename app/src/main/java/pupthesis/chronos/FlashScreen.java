@@ -1,0 +1,42 @@
+package pupthesis.chronos;
+
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
+import com.sdsmdg.tastytoast.TastyToast;
+
+import io.saeid.fabloading.LoadingView;
+
+public class FlashScreen extends AppCompatActivity {
+    LoadingView mLoadingView;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_flash_screen);
+        TastyToast.makeText(getApplicationContext(), "Welcome to CHRONOS", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
+        mLoadingView = (LoadingView) findViewById(R.id.loading_view);
+
+        mLoadingView.addAnimation(R.color.White,R.drawable.labor_man,LoadingView.FROM_LEFT);
+        mLoadingView.addAnimation(R.color.White,R.drawable.graph,LoadingView.FROM_TOP);
+        mLoadingView.addAnimation(R.color.White,R.drawable.building,LoadingView.FROM_RIGHT);
+        mLoadingView.addAnimation(R.color.White,R.drawable.road,LoadingView.FROM_BOTTOM);
+        mLoadingView.addAnimation(R.color.White,R.drawable.circlelogo,LoadingView.FROM_BOTTOM);
+
+        mLoadingView.startAnimation();
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    sleep(3000);
+                    Intent startmainactivity = new Intent(getApplicationContext(), NavigationActivity.class);
+                    startActivity(startmainactivity);
+                    finish();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.start();
+    }
+}

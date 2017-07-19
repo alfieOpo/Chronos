@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorAccent">#FF4081</color>
+    <color name="White">#FFFFFF</color>
+    <color name="AppbarColor">#1abc9c</color>
+    <color name="undone">#bebebe</color>
+    <color name="complete">#00d956</color>
+    <color name="progress">#ceaa1b</color>
+
+    <color name="turquoise">#1abc9c</color>
+    <color name="green_sea">#16a085</color>
+    <color name="peter_river">#3498db</color>
+    <color name="belize_hole">#2980b9</color>
+    <color name="wet_asphalt">#34495e</color>
+    <color name="midnight_blue">#2c3e50</color>
+    <color name="sun_flower">#f1c40f</color>
+    <color name="orange">#f39c12</color>
+    <color name="concrete">#95a5a6</color>
+    <color name="asbestos">#7f8c8d</color>
+    <color name="colorPrimary">#4CAF50</color>
+    <color name="colorPrimaryDark">#388E3C</color>
+    <color name="colorFAB1">#2196F3</color>
+    <color name="colorFAB2">#E040FB</color>
+</resources>

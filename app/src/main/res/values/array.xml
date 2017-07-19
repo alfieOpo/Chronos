@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="STATUS">
+        <item>Not yet Started</item>
+        <item>In progress</item>
+        <item>Complete</item>
+    </string-array>
+</resources>
