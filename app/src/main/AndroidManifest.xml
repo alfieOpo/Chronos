@@ -26,7 +26,6 @@
             android:name=".NavigationActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".Gantt_Task"
             android:label="@string/title_activity_gantt__task"
@@ -39,10 +38,13 @@
             android:name=".Project"
             android:label="@string/title_activity_project"
             android:theme="@style/NoActionBar" />
-
         <activity
             android:name=".Task"
             android:label="@string/title_activity_task"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".Charts"
+            android:label="@string/title_activity_charts"
             android:theme="@style/NoActionBar"></activity>
     </application>
 

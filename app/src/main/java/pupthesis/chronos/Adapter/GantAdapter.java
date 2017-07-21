@@ -40,19 +40,33 @@ public class GantAdapter   extends ArrayAdapter<String> {
         nameofprojectTV.setText(_nameofprojectTV[position]);
         DescriptionTV.setText(_descriptionTV[position]);
         statusTV.setText(_statusTV[position]);
-        CardView card=(CardView)listViewItem.findViewById(R.id.card);
+        CardView cardimage=(CardView)listViewItem.findViewById(R.id.cardimage);
+        CardView cardprojectname=(CardView)listViewItem.findViewById(R.id.cardprojectname);
+        CardView cardstatus=(CardView)listViewItem.findViewById(R.id.cardstatus);
+        CardView   carddescription=(CardView)listViewItem.findViewById(R.id.carddescription);
         try{   switch (_statusTV[position]){
             case "Not yet Started":
                 taskimage.setImageResource(R.drawable.undone);
-                taskimage.setBackgroundResource(R.color.undone);
+
+                cardimage.setCardBackgroundColor(context.getResources().getColor(R.color.undone));
+                cardstatus.setCardBackgroundColor(context.getResources().getColor(R.color.undone));
+                cardprojectname.setCardBackgroundColor(context.getResources().getColor(R.color.undone));
+                carddescription.setCardBackgroundColor(context.getResources().getColor(R.color.undone));
                 break;
             case "In progress":
                 taskimage.setImageResource(R.drawable.progress);
-                taskimage.setBackgroundResource(R.color.progress);
+                cardimage.setCardBackgroundColor(context.getResources().getColor(R.color.progress));
+                cardstatus.setCardBackgroundColor(context.getResources().getColor(R.color.progress));
+                cardprojectname.setCardBackgroundColor(context.getResources().getColor(R.color.progress));
+                carddescription.setCardBackgroundColor(context.getResources().getColor(R.color.progress));
                 break;
             case "Complete":
                 taskimage.setImageResource(R.drawable.complete);
-                taskimage.setBackgroundResource(R.color.complete);
+
+                cardimage.setCardBackgroundColor(context.getResources().getColor(R.color.complete));
+                cardstatus.setCardBackgroundColor(context.getResources().getColor(R.color.complete));
+                cardprojectname.setCardBackgroundColor(context.getResources().getColor(R.color.complete));
+                carddescription.setCardBackgroundColor(context.getResources().getColor(R.color.complete));
                 break;
 
 

@@ -185,7 +185,8 @@ public class Gantt extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     if(!isLongPress){
-
+                        Config.PROJECTID=_id[position];
+                        Config.PROJECTNAME=taskname[position];
                         Intent startmainactivity = new Intent(Gantt.this, Gantt_Task.class);
                         startActivity(startmainactivity);
 
@@ -300,6 +301,10 @@ public class Gantt extends AppCompatActivity {
                 deletealert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        da=new DataBaseHandler(getApplicationContext());
+                        da.ExecuteSql("delete from  gantt where _id="+ID);
+                        Loadlist();
+                        TastyToast.makeText(getApplicationContext(),"Successfully Deleted.",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
                         isLongPress=false;
                         dialog.cancel();
                     }

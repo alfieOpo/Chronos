@@ -3,6 +3,7 @@ package pupthesis.chronos;
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
@@ -33,10 +34,22 @@ import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
+import jxl.Cell;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
+import jxl.format.Alignment;
+import jxl.format.Border;
+import jxl.format.BorderLineStyle;
+import jxl.format.CellFormat;
+import jxl.format.Colour;
+import jxl.format.Font;
+import jxl.format.Format;
+import jxl.format.Orientation;
+import jxl.format.Pattern;
+import jxl.format.VerticalAlignment;
 import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
@@ -56,7 +69,7 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
     String startformatdate="";
     String endformatdate="";
     private Boolean isFabOpen = false;
-    private FloatingActionButton fab,fab1,fab2;
+    private FloatingActionButton fab,fab1,fab2,fab_charts;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
     ImageButton btn_excel;
     @Override
@@ -72,17 +85,24 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
                 showAlert();
             }
         });*/
+
+        fab_charts=(FloatingActionButton)findViewById(R.id.fab_charts);
         fab = (FloatingActionButton)findViewById(R.id.fab);
         fab1 = (FloatingActionButton)findViewById(R.id.fab_exel);
         fab2 = (FloatingActionButton)findViewById(R.id.fab_create);
+
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
+
         rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward);
         rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward);
         fab.setOnClickListener(this);
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
+        fab_charts.setOnClickListener(this);
+
         ganttlist =(ListView)findViewById(R.id.listView);
+
         Loadlist();
     }
     private void showAlert() {
@@ -256,7 +276,7 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
                 cv.put("start_date",startformatdate);
                 cv.put("end_date",endformatdate);
                 cv.put("percent_complete",PERCENTCOMPLETE.getText().toString());
-                cv.put("project_id",ID);
+                cv.put("project_id",Config.PROJECTID);
                 da.createNewGANTTTASK(cv);
                 Loadlist();
                 dialog.cancel();
@@ -273,7 +293,7 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
         final String _percentcompelete[];
         final String _id[];
         da=new DataBaseHandler(Gantt_Task.this);
-        Cursor cursor= da.getLIST("select * from gant_task where project_id="+ID+" order by _id desc");
+        Cursor cursor= da.getLIST("select * from gant_task where project_id="+Config.PROJECTID+" order by _id desc");
         endtime=new String[cursor.getCount()];
         starttime=new String[cursor.getCount()];
         _percentcompelete=new String[cursor.getCount()];
@@ -310,7 +330,7 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 isLongPress=true;
                 String idid =_id[position];
-                //showAlert(taskname[position],description[position],status[position],_id[position]);
+
 
                 showAlert(_id[position],taskname[position],starttime[position].replace(",","/"),endtime[position].replace(",","/"),_percentcompelete[position]);
                 return isLongPress;
@@ -322,11 +342,11 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
     private  void ToExcel(){
         da=new DataBaseHandler(Gantt_Task.this);
 
-        final Cursor cursor = da.getLIST("select task_name,percent_complete,end_date,start_date,project_id from gant_task ");
+        final Cursor cursor = da.getLIST("select task_name,percent_complete,end_date,start_date,project_id from gant_task where project_id="+Config.PROJECTID);
         File filepath = Environment.getExternalStorageDirectory();
         File sd = new File(filepath.getAbsolutePath()
                 + "/CHRONOS/");
-        String csvFile = ProjectName+"-"+("0000" + ID).substring(ID.length())+".xls";
+        String csvFile = Config.PROJECTNAME+"-"+("0000" + Config.PROJECTID).substring(Config.PROJECTID.length())+".xls";
 
         File directory = new File(sd.getAbsolutePath());
         //create directory if not exist
@@ -342,29 +362,26 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
             WritableWorkbook workbook;
             workbook = Workbook.createWorkbook(file, wbSettings);
             //Excel sheet name. 0 represents first sheet
-            WritableSheet sheet = workbook.createSheet("userList", 0);
+            WritableSheet sheet = workbook.createSheet(Config.PROJECTNAME, 0);
             // column and row
             sheet.addCell(new Label(0, 0, "Task Name"));
             sheet.addCell(new Label(1, 0, "Percent Complete"));
             sheet.addCell(new Label(2, 0, "End Date"));
             sheet.addCell(new Label(3, 0, "Start Date"));
-
+            int i=0;
             if (cursor.moveToFirst()) {
                 do {
-
-
                     String task_name = cursor.getString(cursor.getColumnIndex("task_name"));
                     String percent_complete = cursor.getString(cursor.getColumnIndex("percent_complete"));
                     String end_date = cursor.getString(cursor.getColumnIndex("end_date"));
                     String start_date = cursor.getString(cursor.getColumnIndex("start_date"));
-                    int i = cursor.getPosition() + 1;
+                      i = cursor.getPosition() + 1;
                     sheet.addCell(new Label(0, i, task_name));
                     sheet.addCell(new Label(1, i, percent_complete));
                     sheet.addCell(new Label(2, i, end_date.replace(",","/")));
                     sheet.addCell(new Label(3, i, start_date.replace(",","/")));
                 } while (cursor.moveToNext());
             }
-
             //closing cursor
             cursor.close();
             workbook.write();
@@ -376,9 +393,9 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
             e.printStackTrace();
         }
     }
+    private  void setColumn(){
+    }
     private void showAlert(final String id,String task_name,String start_date,String end_date,String percent_complete) {
-
-
         AlertDialog.Builder alert = new AlertDialog.Builder(Gantt_Task.this);
         LinearLayout layout = new LinearLayout(Gantt_Task.this);
         LinearLayout chkboxholder = new LinearLayout(Gantt_Task.this);
@@ -389,7 +406,6 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
         chkboxholder.setOrientation(LinearLayout.VERTICAL);
         chkboxholder.setGravity(Gravity.LEFT);
         layout.setPadding(10,10,10,10);
-
         TextView taskname=new TextView(Gantt_Task.this);
         taskname.setPadding(0,10,0,0);
         taskname.setText("TASK NAME :");
@@ -568,8 +584,10 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
             fab.startAnimation(rotate_backward);
             fab1.startAnimation(fab_close);
             fab2.startAnimation(fab_close);
+            fab_charts.startAnimation(fab_close);
             fab1.setClickable(false);
             fab2.setClickable(false);
+            fab_charts.setClickable(false);
             isFabOpen = false;
             Log.d("Alfie", "close");
 
@@ -578,11 +596,12 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
             fab.startAnimation(rotate_forward);
             fab1.startAnimation(fab_open);
             fab2.startAnimation(fab_open);
+            fab_charts.startAnimation(fab_open);
             fab1.setClickable(true);
             fab2.setClickable(true);
+            fab_charts.setClickable(true);
             isFabOpen = true;
             Log.d("Alfie","open");
-
         }
     }
 
@@ -601,6 +620,11 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
                 break;
             case R.id.fab_create:
                 showAlert();
+                animateFAB();
+                break;
+            case R.id.fab_charts:
+                Intent startmainactivity = new Intent(getApplicationContext(), Charts.class);
+                startActivity(startmainactivity);
                 animateFAB();
                 break;
         }

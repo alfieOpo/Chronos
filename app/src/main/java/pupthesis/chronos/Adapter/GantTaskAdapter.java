@@ -1,9 +1,11 @@
 package pupthesis.chronos.Adapter;
 
 import android.app.Activity;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,10 +41,55 @@ public class GantTaskAdapter extends ArrayAdapter<String> {
         nameoftask.setText(_nameofprojectTV[position]);
         date.setText(_start_date[position].replace(",","/")+" to "+_end_date[position].replace(",","/"));
         percent_complete.setText(_percent_complete[position]+"%");
-        if(position%2==0){
-            listViewItem.setBackgroundColor(Color.LTGRAY);
-
+        CardView cardComplete=(CardView)listViewItem.findViewById(R.id.cardComplete);
+        CardView carddate =(CardView)listViewItem.findViewById(R.id.carddate);
+        int complete=Integer.valueOf(_percent_complete[position]);
+        if(complete<=10){
+            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan10orequal));
+            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan10orequal));
         }
+        else if(complete<=20){
+            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan20orequal));
+            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan20orequal));
+        }
+        else if(complete<=30){
+            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan30orequal));
+            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan30orequal));
+        }
+        else if(complete<=40){
+            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan40orequal));
+            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan40orequal));
+        }
+        else if(complete<=50){
+            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan50orequal));
+            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan50orequal));
+        }
+        else if(complete<=60){
+            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan60orequal));
+            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan60orequal));
+        }
+        else if(complete<=70){
+            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan70orequal));
+            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan70orequal));
+        }
+        else if(complete<=80){
+
+            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan80orequal));
+            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan80orequal));
+        }
+        else if(complete<=90){
+
+            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan90orequal));
+            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan90orequal));
+        }
+        else if(complete<=100){
+            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan100orequal));
+            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan100orequal));
+        }/*
+if(position%2==0){
+    listViewItem.setBackgroundColor( context.getResources().getColor(R.color.AppbarColorwhite));
+
+}*/
         return  listViewItem;
     }
 }

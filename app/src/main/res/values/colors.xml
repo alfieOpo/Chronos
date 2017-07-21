@@ -5,7 +5,7 @@
     <color name="AppbarColor">#1abc9c</color>
     <color name="undone">#bebebe</color>
     <color name="complete">#00d956</color>
-    <color name="progress">#ceaa1b</color>
+    <color name="progress">#f1c40f</color>
 
     <color name="turquoise">#1abc9c</color>
     <color name="green_sea">#16a085</color>
@@ -21,4 +21,16 @@
     <color name="colorPrimaryDark">#388E3C</color>
     <color name="colorFAB1">#2196F3</color>
     <color name="colorFAB2">#E040FB</color>
+    <color name="ProjectName">#4a5151</color>
+    <color name="lessthan10orequal">#fb5340</color>
+    <color name="lessthan20orequal">#fba440</color>
+    <color name="lessthan30orequal">#fba440</color>
+    <color name="lessthan40orequal">#97d93b</color>
+    <color name="lessthan50orequal">#56bf33</color>
+    <color name="lessthan60orequal">#3a9c26</color>
+    <color name="lessthan70orequal">#269c28</color>
+    <color name="lessthan80orequal">#269c38</color>
+    <color name="lessthan90orequal">#23a136</color>
+    <color name="lessthan100orequal">#00bf1d</color>
+    <color name="AppbarColorwhite">#e0f7fa</color>
 </resources>

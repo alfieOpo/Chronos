@@ -4,44 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="pupthesis.chronos.Gantt_Task">
-    <include layout="@layout/content_gantt__task" android:id="@+id/include3" />
+    tools:context="pupthesis.chronos.Charts">
+
+    <include layout="@layout/content_charts" />
+
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_charts"
+        android:id="@+id/fab_refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="180dp"
+        android:layout_marginBottom="130dp"
         android:layout_marginRight="@dimen/fab_margin"
-        android:src="@drawable/graph"
+        android:src="@android:drawable/ic_menu_rotate"
         android:visibility="invisible"
-        app:backgroundTint="@color/orange"
+        app:backgroundTint="@color/colorPrimaryDark"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp" />
 
-
-
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_exel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="130dp"
-        android:layout_gravity="bottom|end"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:visibility="invisible"
-        app:elevation="6dp"
-        app:backgroundTint="@color/colorPrimaryDark"
-        app:pressedTranslationZ="12dp"
-        android:src="@drawable/excel" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_create"
+        android:id="@+id/fab_toimage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="80dp"
         android:layout_marginRight="@dimen/fab_margin"
-        android:src="@drawable/create"
+        android:src="@android:drawable/ic_menu_gallery"
         android:visibility="invisible"
         app:backgroundTint="@color/wet_asphalt"
         app:elevation="6dp"
@@ -57,6 +44,5 @@
         app:backgroundTint="@color/AppbarColor"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp" />
-
 
 </android.support.design.widget.CoordinatorLayout>
