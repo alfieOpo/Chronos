@@ -8,7 +8,7 @@ import com.sdsmdg.tastytoast.TastyToast;
 
 import io.saeid.fabloading.LoadingView;
 
-public class FlashScreen extends AppCompatActivity {
+public class FlashScreen extends  BaseActivity {
     LoadingView mLoadingView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +32,7 @@ public class FlashScreen extends AppCompatActivity {
                     Intent startmainactivity = new Intent(getApplicationContext(), NavigationActivity.class);
                     startActivity(startmainactivity);
                     finish();
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

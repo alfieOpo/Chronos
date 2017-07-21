@@ -57,8 +57,6 @@ public class Charts extends AppCompatActivity implements  View.OnClickListener{
         fab_refresh.setOnClickListener(this);
         fab_toimage.setOnClickListener(this);
 
-
-
         webView = (WebView) findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setVerticalScrollBarEnabled(true);

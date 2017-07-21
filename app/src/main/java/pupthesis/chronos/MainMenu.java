@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ListView;
 import android.widget.TabHost;
 
@@ -18,7 +19,7 @@ import layout.ReferenceMenu;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MainMenu extends Fragment {
+public class MainMenu extends Fragment  {
 
     FButton btn_create;
     FButton btn_refrence;
@@ -32,6 +33,7 @@ public class MainMenu extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_main_menu, container, false);
+        SlideAnimationUtil.slideInFromLeft(getContext(),view);
         btn_create=(FButton)view.findViewById(R.id.btn_create);
         btn_refrence=(FButton)view.findViewById(R.id.btn_reference);
         btn_about=(FButton)view.findViewById(R.id.btn_about);

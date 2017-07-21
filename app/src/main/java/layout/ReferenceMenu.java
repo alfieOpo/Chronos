@@ -12,6 +12,7 @@ import info.hoang8f.widget.FButton;
 import pupthesis.chronos.Gantt;
 import pupthesis.chronos.Project;
 import pupthesis.chronos.R;
+import pupthesis.chronos.SlideAnimationUtil;
 import pupthesis.chronos.Task;
 
 /**
@@ -27,7 +28,7 @@ public class ReferenceMenu extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_reference_menu, container, false);
-
+        SlideAnimationUtil.slideInFromRight(getContext(),view);
         btn_project=(FButton)view.findViewById(R.id.btn_project);
         btn_project.setOnClickListener(new View.OnClickListener() {
             @Override

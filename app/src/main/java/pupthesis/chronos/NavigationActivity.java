@@ -1,6 +1,12 @@
 package pupthesis.chronos;
 
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -18,14 +24,17 @@ import android.view.MenuItem;
 
 import layout.Create;
 import layout.ReferenceMenu;
+import pupthesis.chronos.Service.BackGroundTask;
 
-public class NavigationActivity extends AppCompatActivity
+public class NavigationActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -49,6 +58,8 @@ public class NavigationActivity extends AppCompatActivity
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.frame, new MainMenu()).commit();
+
+        startService(new Intent(this, BackGroundTask.class));
     }
 
     @Override
@@ -105,4 +116,12 @@ public class NavigationActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+    }
+
+
 }

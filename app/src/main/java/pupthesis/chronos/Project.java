@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.sdsmdg.tastytoast.TastyToast;
 
-public class Project extends AppCompatActivity {
+public class Project extends BaseActivity {
     ListView projectList;
     DataBaseHandler da;
     @Override

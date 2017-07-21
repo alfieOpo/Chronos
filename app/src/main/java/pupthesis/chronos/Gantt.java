@@ -27,7 +27,7 @@ import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import pupthesis.chronos.Adapter.GantAdapter;
 
-public class Gantt extends AppCompatActivity {
+public class Gantt extends BaseActivity {
     boolean isLongPress=false;
     DataBaseHandler da;
     ListView ganttlist;
@@ -36,8 +36,10 @@ public class Gantt extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gantt);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+          setSupportActionBar(toolbar);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -144,8 +146,9 @@ public class Gantt extends AppCompatActivity {
                 dialog.cancel();
             }
         });
-
-        alert.show();
+        AlertDialog dialog = alert.create();
+        dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
+        dialog.show();
     }
     private  void Loadlist(){
         try{
@@ -326,7 +329,10 @@ public class Gantt extends AppCompatActivity {
                 dialog.cancel();
             }
         });
+        AlertDialog dialog = alert.create();
+        dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
+        dialog.show();
 
-        alert.show();
     }
+
 }

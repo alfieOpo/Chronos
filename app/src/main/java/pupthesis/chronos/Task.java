@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import com.sdsmdg.tastytoast.TastyToast;
 
-public class Task extends AppCompatActivity {
+public class Task extends BaseActivity {
     Button btn_project;
     DataBaseHandler da;
     ListView projectList;

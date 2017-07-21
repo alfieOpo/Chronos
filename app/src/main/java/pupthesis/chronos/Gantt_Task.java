@@ -37,45 +37,34 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import jxl.Cell;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
-import jxl.format.Alignment;
-import jxl.format.Border;
-import jxl.format.BorderLineStyle;
-import jxl.format.CellFormat;
-import jxl.format.Colour;
-import jxl.format.Font;
-import jxl.format.Format;
-import jxl.format.Orientation;
-import jxl.format.Pattern;
-import jxl.format.VerticalAlignment;
+
 import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import pupthesis.chronos.Adapter.GantTaskAdapter;
 
-public class Gantt_Task extends AppCompatActivity implements  View.OnClickListener {
-    ImageButton btn_back;
-    Button btn_createtask;
-    ImageButton btn_viewcharts;
-    TextView projecttitleTV;
+public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
+
     ListView ganttlist;
     DataBaseHandler da;
     boolean isLongPress=false;
-    String ProjectName="";
-    String ID="0";
+
+
     String startformatdate="";
     String endformatdate="";
     private Boolean isFabOpen = false;
     private FloatingActionButton fab,fab1,fab2,fab_charts;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
-    ImageButton btn_excel;
+    int counter=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gantt__task);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         /*  fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -108,7 +97,7 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
     private void showAlert() {
 
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(Gantt_Task.this);
+        final AlertDialog.Builder alert = new AlertDialog.Builder(Gantt_Task.this);
         LinearLayout layout = new LinearLayout(Gantt_Task.this);
         LinearLayout chkboxholder = new LinearLayout(Gantt_Task.this);
 
@@ -242,10 +231,12 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
         layout.addView(chkboxholder);
         alert.setView(layout);
         alert.setCancelable(false);
+
+
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-           dialog.cancel();
+                dialog.cancel();
             }
         });
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
@@ -253,37 +244,64 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                if(PROJECTNAME.getText().toString().equals("")){
-                    Toast.makeText(Gantt_Task.this, "Fill-out important data", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(START.getText().toString().equals("")){
-                    Toast.makeText(Gantt_Task.this, "Fill-out important data", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(END.getText().toString().equals("")){
-                    Toast.makeText(Gantt_Task.this, "Fill-out important data", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(PERCENTCOMPLETE.getText().toString().equals("")){
-                    Toast.makeText(Gantt_Task.this, "Fill-out important data", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                da=new DataBaseHandler(Gantt_Task.this);
-                ContentValues cv=new ContentValues();
-                cv.put("task_name",PROJECTNAME.getText().toString());
-                cv.put("task_id",PROJECTNAME.getText().toString()+da.gantttaskcount());
-                cv.put("start_date",startformatdate);
-                cv.put("end_date",endformatdate);
-                cv.put("percent_complete",PERCENTCOMPLETE.getText().toString());
-                cv.put("project_id",Config.PROJECTID);
-                da.createNewGANTTTASK(cv);
-                Loadlist();
-                dialog.cancel();
+
             }
         });
 
-        alert.show();
+      final  AlertDialog dialog = alert.create();
+        dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
+        dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+
+                if(PROJECTNAME.getText().toString().equals("")){
+                    AlertWronInput(PROJECTNAME);
+
+                }
+                  if(START.getText().toString().equals("")){
+                    AlertWronInput(START);
+
+                }
+                  if(END.getText().toString().equals("")){
+                    AlertWronInput(END);
+
+                }
+                  if(PERCENTCOMPLETE.getText().toString().equals("")){
+                    AlertWronInput(PERCENTCOMPLETE);
+                }
+               if(counter==0){
+                   da=new DataBaseHandler(Gantt_Task.this);
+                   ContentValues cv=new ContentValues();
+                   cv.put("task_name",PROJECTNAME.getText().toString());
+                   cv.put("task_id",PROJECTNAME.getText().toString()+da.gantttaskcount());
+                   cv.put("start_date",startformatdate);
+                   cv.put("end_date",endformatdate);
+                   cv.put("percent_complete",PERCENTCOMPLETE.getText().toString());
+                   cv.put("project_id",Config.PROJECTID);
+                   da.createNewGANTTTASK(cv);
+                   Loadlist();
+                   dialog.dismiss();
+               }
+
+                counter=0;
+            }
+        });
+    }
+    private  void AlertWronInput(EditText txt ){
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+        txt .startAnimation(shake);
+        TastyToast.makeText(Gantt_Task.this,  "Fill-out important data", Toast.LENGTH_SHORT,TastyToast.ERROR).show();
+counter++;
+    }
+    private  void AlertWronInput(MaterialBetterSpinner txt ){
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+        txt .startAnimation(shake);
+        TastyToast.makeText(Gantt_Task.this,  "Fill-out important data", Toast.LENGTH_SHORT,TastyToast.ERROR).show();
+
     }
     private  void Loadlist( ){
 
@@ -310,6 +328,7 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
                 _percentcompelete[0]=cursor.getString(3);
                 _id[0]=cursor.getString(0);}catch (Exception xx){}
             while (cursor.moveToNext()){
+                _id[i]=cursor.getString(0);
                 endtime[i]=cursor.getString(4);
                 taskname[i]=cursor.getString(2);
                 starttime[i]=cursor.getString(5);
@@ -318,13 +337,8 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
             }
 
         }
-
-
         GantTaskAdapter adapter=new GantTaskAdapter(Gantt_Task.this,taskname,starttime,endtime,_percentcompelete,null);
         ganttlist.setAdapter(adapter);
-
-
-
         ganttlist.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -375,7 +389,7 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
                     String percent_complete = cursor.getString(cursor.getColumnIndex("percent_complete"));
                     String end_date = cursor.getString(cursor.getColumnIndex("end_date"));
                     String start_date = cursor.getString(cursor.getColumnIndex("start_date"));
-                      i = cursor.getPosition() + 1;
+                    i = cursor.getPosition() + 1;
                     sheet.addCell(new Label(0, i, task_name));
                     sheet.addCell(new Label(1, i, percent_complete));
                     sheet.addCell(new Label(2, i, end_date.replace(",","/")));
@@ -393,10 +407,9 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
             e.printStackTrace();
         }
     }
-    private  void setColumn(){
-    }
+
     private void showAlert(final String id,String task_name,String start_date,String end_date,String percent_complete) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(Gantt_Task.this);
+        final   AlertDialog.Builder alert = new AlertDialog.Builder(Gantt_Task.this);
         LinearLayout layout = new LinearLayout(Gantt_Task.this);
         LinearLayout chkboxholder = new LinearLayout(Gantt_Task.this);
 
@@ -529,36 +542,13 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
         layout.addView(chkboxholder);
         alert.setView(layout);
         alert.setCancelable(false);
+
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                if(PROJECTNAME.getText().toString().equals("")){
-                    TastyToast.makeText(Gantt_Task.this, "Fill-out important data", Toast.LENGTH_SHORT,TastyToast.SUCCESS);
-                    return;
-                }
-                if(START.getText().toString().equals("")){
-                    TastyToast.makeText(Gantt_Task.this, "Fill-out important data", Toast.LENGTH_SHORT,TastyToast.SUCCESS);
-                    return;
-                }
-                if(END.getText().toString().equals("")){
-                    TastyToast.makeText(Gantt_Task.this, "Fill-out important data", Toast.LENGTH_SHORT,TastyToast.SUCCESS);
-                    return;
-                }
-                if(PERCENTCOMPLETE.getText().toString().equals("")){
-                    TastyToast.makeText(Gantt_Task.this, "Fill-out important data", Toast.LENGTH_SHORT,TastyToast.SUCCESS);
-                    return;
-                }
-                da=new DataBaseHandler(Gantt_Task.this);
-
-                da.ExecuteSql("update gant_task set task_name ='"+PROJECTNAME.getText().toString()+
-                        "',task_id='"+PROJECTNAME.getText().toString()+da.gantttaskcount()+
-                        "',start_date='"+START.getText().toString().replace("/",",")+
-                        "',end_date='"+END.getText().toString().replace("/",",")+
-                        "',percent_complete='"+PERCENTCOMPLETE.getText().toString()+"' where _id ="+id);
-                Loadlist();
-                dialog.cancel();
+              //walang gagawin kase laaht ng event dito sa baba mang yayare
             }
         });
         alert.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
@@ -566,6 +556,7 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
             public void onClick(DialogInterface dialog, int which) {
                 da=new DataBaseHandler(Gantt_Task.this);
                 da.ExecuteSql("delete from gant_task where _id ="+id);
+                TastyToast.makeText(Gantt_Task.this,"Successfully Deleted.",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
                 Loadlist( );
             }
         });
@@ -575,7 +566,38 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
                 dialog.cancel();
             }
         });
-        alert.show();
+      final  AlertDialog dialog = alert.create();
+        dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if(PROJECTNAME.getText().toString().equals("")){
+                    AlertWronInput(PROJECTNAME);
+                }
+                  if(START.getText().toString().equals("")){
+                    AlertWronInput(START);
+                }
+                  if(END.getText().toString().equals("")){
+                    AlertWronInput(END);
+                }
+                  if(PERCENTCOMPLETE.getText().toString().equals("")){
+                    AlertWronInput(PERCENTCOMPLETE);
+                }
+                if(counter==0){
+                    da=new DataBaseHandler(Gantt_Task.this);
+                    da.ExecuteSql("update gant_task set task_name ='"+PROJECTNAME.getText().toString()+
+                            "',task_id='"+PROJECTNAME.getText().toString()+da.gantttaskcount()+
+                            "',start_date='"+START.getText().toString().replace("/",",")+
+                            "',end_date='"+END.getText().toString().replace("/",",")+
+                            "',percent_complete='"+PERCENTCOMPLETE.getText().toString()+"' where _id ="+id);
+                    Loadlist();
+                    dialog.dismiss();}
+                counter=0;
+            }
+        });
     }
     public void animateFAB(){
 
@@ -625,8 +647,15 @@ public class Gantt_Task extends AppCompatActivity implements  View.OnClickListen
             case R.id.fab_charts:
                 Intent startmainactivity = new Intent(getApplicationContext(), Charts.class);
                 startActivity(startmainactivity);
+
                 animateFAB();
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
     }
 }
