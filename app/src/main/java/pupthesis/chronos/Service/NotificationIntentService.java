@@ -11,6 +11,7 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
 import pupthesis.chronos.Access.DataBaseHandler;
+import pupthesis.chronos.Activity.Gantt;
 import pupthesis.chronos.Util.Config;
 import pupthesis.chronos.Activity.NavigationActivity;
 import pupthesis.chronos.R;
@@ -49,27 +50,26 @@ public class NotificationIntentService extends IntentService {
             if (ACTION_START.equals(action)) {
 
                 DataBaseHandler da=new DataBaseHandler(getApplicationContext());
-                Cursor cursor=da.getLIST("select * from gant_task order by _id desc");
+                Cursor cursor=da.getLIST("select * from gant_task  _id desc");
                 int i=0;
-                if (cursor.moveToFirst()) {
-                    do {
-                        String task_name = cursor.getString(cursor.getColumnIndex("task_name"));
-                        String percent_complete = cursor.getString(cursor.getColumnIndex("percent_complete"));
-                        String end_date = cursor.getString(cursor.getColumnIndex("end_date"));
-                        String start_date = cursor.getString(cursor.getColumnIndex("start_date"));
-                        String date= Config.Date();
-                        if(start_date.replace(",","/").equals(Config.Date())){
+                try {
+                    if (cursor.moveToFirst()) {
+                        do {
 
-                            processStartNotification(cursor.getCount());
-                        }
+                            String start_date = cursor.getString(cursor.getColumnIndex("start_date"));
 
+                            if (start_date.replace(",", "/").equals(Config.Date())) {
 
-                        i = cursor.getPosition() + 1;
-
-                    } while (cursor.moveToNext());
-                }
+                                processStartNotification(cursor.getCount());
+                            }
 
 
+                            i = cursor.getPosition() + 1;
+
+                        } while (cursor.moveToNext());
+                    }
+
+                }catch (Exception xx){return;}
 
             }
             if (ACTION_DELETE.equals(action)) {
@@ -90,13 +90,14 @@ public class NotificationIntentService extends IntentService {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setContentTitle("CHRONOS")
                 .setAutoCancel(true)
-                .setColor(getResources().getColor(R.color.colorAccent))
+                .setColor(getResources().getColor(R.color.AppbarColor))
                 .setContentText("You have "+1+" task need to process")
+                .setAutoCancel(true)
                 .setSmallIcon(R.drawable.circlelogo);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 NOTIFICATION_ID,
-                new Intent(this, NavigationActivity.class),
+                new Intent(this, Gantt.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
         builder.setDeleteIntent(NotificationEventReceiver.getDeleteIntent(this));

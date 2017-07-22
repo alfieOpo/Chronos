@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
+import jxl.write.Label;
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.Adapter.GantAdapter;
 import pupthesis.chronos.Animation.BaseActivity;
@@ -80,7 +82,7 @@ public class Gantt extends BaseActivity {
 
 
         da=new DataBaseHandler(Gantt.this);
-        Cursor cursor =da.getLIST("select * from projects");
+        Cursor cursor =da.getLIST("select * from projects ");
         ProjectName=new String[cursor.getCount()];
         ArrayAdapter<String> spinnerArrayAdapter;
         try {
@@ -192,34 +194,42 @@ public class Gantt extends BaseActivity {
             final String status[];
             final String _id[];
             da=new DataBaseHandler(Gantt.this);
-            Cursor cursor= da.getLIST("select * from gantt order by _id desc");
+            String sql="select * from gantt order by _id desc";
+if(da.gantttaskcount()>0){
+    sql="select x.* from (select cur._id ,cur.project_name,cur.[description],cur.[status],cur.start_date\n" +
+            "from (select g._id,cast(replace(gt.start_date,',','/') as date) as start_date,g.project_name,g.[description],g.[status] from gantt g left join  gant_task gt on g._id =gt.project_id) cur\n" +
+            "where not exists (\n" +
+            "    select * \n" +
+            "    from (select g._id,cast(replace(gt.start_date,',','/') as date) as start_date,g.project_name,g.[description],g.[status] from gantt g left join  gant_task gt on g._id =gt.project_id) high \n" +
+            "    where high._id = cur._id \n" +
+            "    and high.start_date > cur.start_date\n" +
+            ") )x\n" +
+            "order by start_date desc\n";
+}
+            Cursor cursor= da.getLIST(sql);
             status=new String[cursor.getCount()];
             description=new String[cursor.getCount()];
             taskname=new String[cursor.getCount()];
             _id=new String[cursor.getCount()];
             try{
-                int i=1;
-                if(cursor!=null){
-                    cursor.moveToFirst();
-                    status[0]=cursor.getString(3);
-                    taskname[0]=cursor.getString(1);
-                    description[0]=cursor.getString(2);
-                    _id[0]=cursor.getString(0);
-                    while (cursor.moveToNext()){
-                        status[i]=cursor.getString(3);
-                        _id[i]=cursor.getString(0);
-                        taskname[i]=cursor.getString(1);
-                        description[i]=cursor.getString(2);
-                        i++;
-                    }
+                int i=0;
+                if (cursor.moveToFirst()) {
+                    do {
+                        status[i]=cursor.getString(cursor.getColumnIndex("status"));
+                        _id[i]=cursor.getString(cursor.getColumnIndex("_id"));
+                        taskname[i]=cursor.getString(cursor.getColumnIndex("project_name"));
+                        description[i]=cursor.getString(cursor.getColumnIndex("description"));
+                        i = cursor.getPosition() + 1;
 
+                    } while (cursor.moveToNext());
                 }
-
 
                   adapter=new GantAdapter(this,taskname,status,description,null);
 
                 ganttlist.setAdapter(adapter);}catch (Exception xx){
-
+                String Error=xx.getMessage();
+                String Error1=xx.getMessage();
+                String Error2=xx.getMessage();
             }
 
             ganttlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -364,6 +374,7 @@ public class Gantt extends BaseActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         da=new DataBaseHandler(getApplicationContext());
                         da.ExecuteSql("delete from  gantt where _id="+ID);
+                        da.ExecuteSql("delete from  gant_task where project_id="+ID);
 
 
                         Loadlist();

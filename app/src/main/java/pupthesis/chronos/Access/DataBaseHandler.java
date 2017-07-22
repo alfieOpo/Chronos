@@ -65,7 +65,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 "percent_complete TEXT," +
                 "end_date TEXT," +
                 "start_date TEXT," +
-                "project_id TEXT)";
+                "project_id TEXT," +
+                "isseen INTEGER  DEFAULT 0)";
         return CREATE_MCBMS_TABLE;
     }
     private String PROJECTTABLE() {
