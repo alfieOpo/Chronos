@@ -11,11 +11,9 @@
     <string name="title_activity_gantt">Gantt</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_project">Project</string>
     <string name="title_activity_task">Task</string>
     <string name="title_activity_charts">Charts</string>
-    <string name="service_name">@string/app_name</string>
     <string name="nothingtoshow">Nothing to Show.</string>
     <string name="title_activity_line">Line</string>
 </resources>

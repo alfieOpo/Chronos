@@ -375,16 +375,12 @@ counter++;
 
                 if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
                   fab.hide();
-                    fab1.hide();
-                    fab2.hide();
-                    fab_charts.hide();
+
 
                 } else {
-
+                    //isFabOpen=true;
                     fab.show();
-                    fab1.show();
-                    fab2.show();
-                    fab_charts.show();
+                   // animateFAB();
                 }
             }
 

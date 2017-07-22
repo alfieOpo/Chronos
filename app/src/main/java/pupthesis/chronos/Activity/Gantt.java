@@ -196,7 +196,7 @@ public class Gantt extends BaseActivity {
             da=new DataBaseHandler(Gantt.this);
             String sql="select * from gantt order by _id desc";
 if(da.gantttaskcount()>0){
-    sql="select x.* from (select cur._id ,cur.project_name,cur.[description],cur.[status],cur.start_date\n" +
+    sql="select distinct x.* from (select cur._id ,cur.project_name,cur.[description],cur.[status],cur.start_date\n" +
             "from (select g._id,cast(replace(gt.start_date,',','/') as date) as start_date,g.project_name,g.[description],g.[status] from gantt g left join  gant_task gt on g._id =gt.project_id) cur\n" +
             "where not exists (\n" +
             "    select * \n" +

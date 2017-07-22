@@ -23,7 +23,7 @@
         fbutton:shadowHeight="5dp" />
 
     <info.hoang8f.widget.FButton
-        android:id="@+id/FButton2"
+        android:id="@+id/btn_line"
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:text="Line Charts"

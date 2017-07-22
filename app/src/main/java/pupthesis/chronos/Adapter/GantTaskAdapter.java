@@ -49,46 +49,46 @@ int maxposition=0;
         CardView carddate =(CardView)listViewItem.findViewById(R.id.carddate);
         int complete=Integer.valueOf(_percent_complete[position]);
         if(complete<=10){
-            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan10orequal));
-            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan10orequal));
+            cardComplete.setCardBackgroundColor(Color.rgb(116, 98, 156));
+            carddate.setCardBackgroundColor(Color.rgb(116, 98, 156));
         }
         else if(complete<=20){
-            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan20orequal));
-            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan20orequal));
+            cardComplete.setCardBackgroundColor(Color.rgb(106, 108, 156));
+            carddate.setCardBackgroundColor(Color.rgb(106, 108, 156));
         }
         else if(complete<=30){
-            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan30orequal));
-            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan30orequal));
+            cardComplete.setCardBackgroundColor(Color.rgb(96, 118, 156));
+            carddate.setCardBackgroundColor(Color.rgb(96, 118, 156));
         }
         else if(complete<=40){
-            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan40orequal));
-            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan40orequal));
+            cardComplete.setCardBackgroundColor(Color.rgb(86, 128, 156));
+            carddate.setCardBackgroundColor(Color.rgb(86, 128, 156));
         }
         else if(complete<=50){
-            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan50orequal));
-            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan50orequal));
+            cardComplete.setCardBackgroundColor(Color.rgb(76, 138, 156));
+            carddate.setCardBackgroundColor(Color.rgb(76, 138, 156));
         }
         else if(complete<=60){
-            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan60orequal));
-            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan60orequal));
+            cardComplete.setCardBackgroundColor(Color.rgb(66, 148, 156));
+            carddate.setCardBackgroundColor(Color.rgb(66, 148, 156));
         }
         else if(complete<=70){
-            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan70orequal));
-            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan70orequal));
+            cardComplete.setCardBackgroundColor(Color.rgb(56, 158, 156));
+            carddate.setCardBackgroundColor(Color.rgb(56, 158, 156));
         }
         else if(complete<=80){
 
-            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan80orequal));
-            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan80orequal));
+            cardComplete.setCardBackgroundColor(Color.rgb(46, 168, 156));
+            carddate.setCardBackgroundColor(Color.rgb(46, 168, 156));
         }
         else if(complete<=90){
 
-            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan90orequal));
-            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan90orequal));
+            cardComplete.setCardBackgroundColor(Color.rgb(36, 178, 156));
+            carddate.setCardBackgroundColor(Color.rgb(36, 178, 156));
         }
         else if(complete<=100){
-            cardComplete.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan100orequal));
-            carddate.setCardBackgroundColor(context.getResources().getColor(R.color.lessthan100orequal));
+            cardComplete.setCardBackgroundColor(Color.rgb(26, 188, 156));
+            carddate.setCardBackgroundColor(Color.rgb(26, 188, 156));
         }/*
 if(position%2==0){
     listViewItem.setBackgroundColor( context.getResources().getColor(R.color.AppbarColorwhite));

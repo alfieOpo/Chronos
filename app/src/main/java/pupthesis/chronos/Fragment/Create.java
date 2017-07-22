@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import info.hoang8f.widget.FButton;
 import pupthesis.chronos.Activity.Gantt;
+import pupthesis.chronos.Activity.Line;
 import pupthesis.chronos.R;
 import pupthesis.chronos.Animation.SlideAnimationUtil;
 
@@ -17,7 +18,7 @@ import pupthesis.chronos.Animation.SlideAnimationUtil;
  * A simple {@link Fragment} subclass.
  */
 public class Create extends Fragment {
-    FButton btn_gantt;
+    FButton btn_gantt,btn_line;
 
     public Create() {
         // Required empty public constructor
@@ -37,10 +38,18 @@ public class Create extends Fragment {
             public void onClick(View v) {
                 Intent startmainactivity = new Intent(getActivity(), Gantt.class);
                 startActivity(startmainactivity);
-                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 
             }
         });
+        btn_line=(FButton)view.findViewById(R.id.btn_line);
+        btn_line.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startmainactivity = new Intent(getActivity(), Line.class);
+                startActivity(startmainactivity);
+            }
+        });
+
         return view;
     }
 
