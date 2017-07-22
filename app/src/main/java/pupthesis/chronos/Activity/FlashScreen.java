@@ -1,14 +1,15 @@
-package pupthesis.chronos;
+package pupthesis.chronos.Activity;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.sdsmdg.tastytoast.TastyToast;
 
 import io.saeid.fabloading.LoadingView;
+import pupthesis.chronos.Animation.BaseActivity;
+import pupthesis.chronos.R;
 
-public class FlashScreen extends  BaseActivity {
+public class FlashScreen extends BaseActivity {
     LoadingView mLoadingView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

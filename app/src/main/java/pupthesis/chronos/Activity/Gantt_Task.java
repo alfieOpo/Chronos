@@ -1,4 +1,4 @@
-package pupthesis.chronos;
+package pupthesis.chronos.Activity;
 
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
@@ -17,12 +16,11 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,7 +32,6 @@ import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import jxl.Workbook;
@@ -44,15 +41,19 @@ import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
+import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.Adapter.GantTaskAdapter;
+import pupthesis.chronos.Animation.BaseActivity;
+import pupthesis.chronos.Util.Config;
+import pupthesis.chronos.R;
 
 public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
-
+    GantTaskAdapter adapter;
     ListView ganttlist;
     DataBaseHandler da;
     boolean isLongPress=false;
 
-
+    TextView nothingtoshow;
     String startformatdate="";
     String endformatdate="";
     private Boolean isFabOpen = false;
@@ -281,7 +282,7 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
                    cv.put("start_date",startformatdate);
                    cv.put("end_date",endformatdate);
                    cv.put("percent_complete",PERCENTCOMPLETE.getText().toString());
-                   cv.put("project_id",Config.PROJECTID);
+                   cv.put("project_id", Config.PROJECTID);
                    da.createNewGANTTTASK(cv);
                    Loadlist();
                    dialog.dismiss();
@@ -302,8 +303,13 @@ counter++;
         txt .startAnimation(shake);
         TastyToast.makeText(Gantt_Task.this,  "Fill-out important data", Toast.LENGTH_SHORT,TastyToast.ERROR).show();
 
+        counter++;
     }
     private  void Loadlist( ){
+        nothingtoshow=(TextView)findViewById(R.id.nothingtoshow);
+        nothingtoshow.setVisibility(View.INVISIBLE);
+        ganttlist =(ListView)findViewById(R.id.listView);
+        ganttlist.setAdapter(null);
 
         final String taskname[];
         final String endtime[];
@@ -337,21 +343,45 @@ counter++;
             }
 
         }
-        GantTaskAdapter adapter=new GantTaskAdapter(Gantt_Task.this,taskname,starttime,endtime,_percentcompelete,null);
+         adapter=new GantTaskAdapter(Gantt_Task.this,taskname,starttime,endtime,_percentcompelete,null);
         ganttlist.setAdapter(adapter);
         ganttlist.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 isLongPress=true;
-                String idid =_id[position];
-
 
                 showAlert(_id[position],taskname[position],starttime[position].replace(",","/"),endtime[position].replace(",","/"),_percentcompelete[position]);
                 return isLongPress;
             }
         });
+        try{
+        ganttlist.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
 
+                if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+                  fab.hide();
+                    fab1.hide();
+                    fab2.hide();
+                    fab_charts.hide();
 
+                } else {
+
+                    fab.show();
+                    fab1.show();
+                    fab2.show();
+                    fab_charts.show();
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });}catch (Exception xx){}
+        if(ganttlist.getAdapter()== null){
+            nothingtoshow.setVisibility(View.VISIBLE);
+        }
     }
     private  void ToExcel(){
         da=new DataBaseHandler(Gantt_Task.this);
@@ -554,10 +584,27 @@ counter++;
         alert.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                da=new DataBaseHandler(Gantt_Task.this);
-                da.ExecuteSql("delete from gant_task where _id ="+id);
-                TastyToast.makeText(Gantt_Task.this,"Successfully Deleted.",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
-                Loadlist( );
+                AlertDialog.Builder builder=new AlertDialog.Builder(Gantt_Task.this);
+                builder.setMessage("Are you sure you want to delete "+PROJECTNAME.getText().toString());
+                builder.setTitle("DELETE CONFIRMATION");
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        da=new DataBaseHandler(Gantt_Task.this);
+                        da.ExecuteSql("delete from gant_task where _id ="+id);
+                        TastyToast.makeText(Gantt_Task.this,"Successfully Deleted.",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
+                        Loadlist( );
+                    }
+                });
+                builder.show();
+
             }
         });
         alert.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {

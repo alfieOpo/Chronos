@@ -1,4 +1,4 @@
-package pupthesis.chronos;
+package pupthesis.chronos.Access;
 
 import android.content.ContentValues;
 import android.content.Context;

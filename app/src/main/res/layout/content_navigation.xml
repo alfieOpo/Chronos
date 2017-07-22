@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:padding="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="pupthesis.chronos.NavigationActivity"
+    tools:context="pupthesis.chronos.Activity.NavigationActivity"
     tools:showIn="@layout/app_bar_navigation">
 
 </FrameLayout>

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="pupthesis.chronos.MainMenu">
+    tools:context="pupthesis.chronos.Fragment.MainMenu">
 
     <info.hoang8f.widget.FButton
         android:id="@+id/btn_create"

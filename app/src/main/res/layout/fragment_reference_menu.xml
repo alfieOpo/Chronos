@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context="layout.ReferenceMenu">
+    tools:context=".Fragment.ReferenceMenu">
 
     <!-- TODO: Update blank fragment layout -->
 

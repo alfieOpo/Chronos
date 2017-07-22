@@ -1,4 +1,4 @@
-package pupthesis.chronos;
+package pupthesis.chronos.Activity;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -6,14 +6,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -25,21 +24,28 @@ import android.widget.Toast;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
+import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.Adapter.GantAdapter;
+import pupthesis.chronos.Animation.BaseActivity;
+import pupthesis.chronos.Util.Config;
+import pupthesis.chronos.R;
 
 public class Gantt extends BaseActivity {
     boolean isLongPress=false;
     DataBaseHandler da;
     ListView ganttlist;
     FloatingActionButton fab;
+    TextView nothingtoshow;
+    int counter=0;
+    GantAdapter adapter=null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gantt);
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-          setSupportActionBar(toolbar);
+
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -135,22 +141,51 @@ public class Gantt extends BaseActivity {
             public void onClick(DialogInterface dialog, int which) {
 
 
-                da=new DataBaseHandler(Gantt.this);
-                ContentValues cv=new ContentValues();
-                cv.put("project_name",PROJECTNAME.getText().toString());
-                cv.put("status",STATUSNAME.getText().toString());
-                cv.put("description",DESCRIPTION.getText().toString());
-                da.createNewGANTT(cv);
-                Loadlist();
 
-                dialog.cancel();
             }
         });
-        AlertDialog dialog = alert.create();
+      final  AlertDialog dialog = alert.create();
         dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
         dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+
+                if(DESCRIPTION.getText().toString().equals("")){
+                    AlertWronInput(DESCRIPTION);
+
+                }
+                if(STATUSNAME.getText().toString().equals("")){
+                    AlertWronInput(STATUSNAME);
+
+                }
+                if(PROJECTNAME.getText().toString().equals("")){
+                    AlertWronInput(PROJECTNAME);
+
+                }
+                if(counter==0){
+                    da=new DataBaseHandler(Gantt.this);
+                    ContentValues cv=new ContentValues();
+                    cv.put("project_name",PROJECTNAME.getText().toString());
+                    cv.put("status",STATUSNAME.getText().toString());
+                    cv.put("description",DESCRIPTION.getText().toString());
+                    da.createNewGANTT(cv);
+                    Loadlist();
+
+                    dialog.cancel();
+                }
+                counter=0;
+            }
+        });
     }
     private  void Loadlist(){
+        nothingtoshow=(TextView)findViewById(R.id.nothingtoshow);
+        nothingtoshow.setVisibility(View.INVISIBLE);
+        ganttlist =(ListView)findViewById(R.id.listView);
+        ganttlist.setAdapter(null);
         try{
             final String taskname[];
             final String description[];
@@ -180,9 +215,12 @@ public class Gantt extends BaseActivity {
 
                 }
 
-                ganttlist =(ListView)findViewById(R.id.listView);
-                GantAdapter adapter=new GantAdapter(this,taskname,status,description,null);
-                ganttlist.setAdapter(adapter);}catch (Exception xx){}
+
+                  adapter=new GantAdapter(this,taskname,status,description,null);
+
+                ganttlist.setAdapter(adapter);}catch (Exception xx){
+
+            }
 
             ganttlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -194,6 +232,7 @@ public class Gantt extends BaseActivity {
                         startActivity(startmainactivity);
 
                     }
+
                 }
             });
 
@@ -207,7 +246,32 @@ public class Gantt extends BaseActivity {
                     return isLongPress;
                 }
 
-            });}catch (Exception xx){}
+            });}catch (Exception xx){
+            nothingtoshow.setVisibility(View.VISIBLE);
+        }
+        try{
+        ganttlist.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+                    fab.hide();
+                } else {
+
+                    fab.show();
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });}catch (Exception xx){
+
+
+        }
+        if(ganttlist.getAdapter()==null){
+            nothingtoshow.setVisibility(View.VISIBLE);
+        }
     }
     private void showAlert(String _project_name,String _description,String _status,final String  ID) {
 
@@ -285,13 +349,7 @@ public class Gantt extends BaseActivity {
             public void onClick(DialogInterface dialog, int which) {
 
 
-                da=new DataBaseHandler(Gantt.this);
 
-                da.updateGANTT(DESCRIPTION.getText().toString(),PROJECTNAME.getText().toString(),STATUSNAME.getText().toString(),ID);
-                Loadlist();
-
-                isLongPress=false;
-                dialog.cancel();
 
             }
         });
@@ -301,18 +359,20 @@ public class Gantt extends BaseActivity {
                 final AlertDialog.Builder deletealert = new AlertDialog.Builder(Gantt.this);
                 deletealert.setMessage("Are you sure you want to delete "+PROJECTNAME.getText().toString());
                 deletealert.setTitle("DELETE CONFIRMATION");
-                deletealert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                deletealert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         da=new DataBaseHandler(getApplicationContext());
                         da.ExecuteSql("delete from  gantt where _id="+ID);
+
+
                         Loadlist();
                         TastyToast.makeText(getApplicationContext(),"Successfully Deleted.",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
                         isLongPress=false;
                         dialog.cancel();
                     }
                 });
-                deletealert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                deletealert.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         isLongPress=false;
@@ -329,10 +389,52 @@ public class Gantt extends BaseActivity {
                 dialog.cancel();
             }
         });
-        AlertDialog dialog = alert.create();
+        final    AlertDialog dialog = alert.create();
         dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
         dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
 
+                if(DESCRIPTION.getText().toString().equals("")){
+                    AlertWronInput(PROJECTNAME);
+
+                }
+                if(STATUSNAME.getText().toString().equals("")){
+                    AlertWronInput(STATUSNAME);
+
+                }
+                if(PROJECTNAME.getText().toString().equals("")){
+                    AlertWronInput(PROJECTNAME);
+
+                }
+                if(counter==0){
+                    da=new DataBaseHandler(Gantt.this);
+
+                    da.updateGANTT(DESCRIPTION.getText().toString(),PROJECTNAME.getText().toString(),STATUSNAME.getText().toString(),ID);
+                    Loadlist();
+
+                    isLongPress=false;
+                    dialog.dismiss();
+                }
+                counter=0;
+            }
+        });
+
+    }
+    private  void AlertWronInput(MaterialBetterSpinner txt ){
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+        txt .startAnimation(shake);
+        TastyToast.makeText(Gantt.this,  "Fill-out important data", Toast.LENGTH_SHORT,TastyToast.ERROR).show();
+        counter++;
+    }
+    private  void AlertWronInput(EditText txt ){
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+        txt .startAnimation(shake);
+        TastyToast.makeText(Gantt.this,  "Fill-out important data", Toast.LENGTH_SHORT,TastyToast.ERROR).show();
+        counter++;
     }
 
 }

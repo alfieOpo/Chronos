@@ -1,20 +1,16 @@
-package pupthesis.chronos;
+package pupthesis.chronos.Fragment;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.widget.ListView;
-import android.widget.TabHost;
 
 import info.hoang8f.widget.FButton;
-import layout.Create;
-import layout.ReferenceMenu;
+import pupthesis.chronos.R;
+import pupthesis.chronos.Animation.SlideAnimationUtil;
 
 /**
  * A simple {@link Fragment} subclass.

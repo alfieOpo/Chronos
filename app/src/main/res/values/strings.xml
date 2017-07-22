@@ -16,4 +16,5 @@
     <string name="title_activity_task">Task</string>
     <string name="title_activity_charts">Charts</string>
     <string name="service_name">@string/app_name</string>
+    <string name="nothingtoshow">Nothing to Show.</string>
 </resources>

@@ -7,17 +7,19 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/circlelogo"
         android:label="@string/app_name"
+
         android:roundIcon="@drawable/circlelogo"
         android:supportsRtl="true"
         android:theme="@style/NoActionBar">
-        <activity android:name=".FlashScreen">
+        <activity android:name=".Activity.FlashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,29 +27,43 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NavigationActivity"
+            android:name=".Activity.NavigationActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Gantt_Task"
+            android:name=".Activity.Gantt_Task"
             android:label="@string/title_activity_gantt__task"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".Gantt"
+            android:name=".Activity.Gantt"
             android:label="@string/title_activity_gantt"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".Project"
+            android:name=".Activity.Project"
             android:label="@string/title_activity_project"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".Task"
+            android:name=".Activity.Task"
             android:label="@string/title_activity_task"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".Charts"
+            android:name=".Activity.Charts"
             android:label="@string/title_activity_charts"
             android:theme="@style/NoActionBar"></activity>
+
+        <service
+            android:name=".Service.NotificationIntentService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver android:name=".Service.NotificationEventReceiver" />
+        <receiver android:name=".Service.NotificationServiceStarterReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

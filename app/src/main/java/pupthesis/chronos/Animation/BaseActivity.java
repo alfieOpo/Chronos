@@ -1,8 +1,10 @@
-package pupthesis.chronos;
+package pupthesis.chronos.Animation;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
+
+import pupthesis.chronos.R;
 
 /**
  * Created by ALFIE on 7/21/2017.

@@ -1,4 +1,4 @@
-package layout;
+package pupthesis.chronos.Fragment;
 
 
 import android.content.Intent;
@@ -9,10 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import info.hoang8f.widget.FButton;
-import pupthesis.chronos.Gantt;
+import pupthesis.chronos.Activity.Gantt;
 import pupthesis.chronos.R;
-import pupthesis.chronos.BaseActivity;
-import pupthesis.chronos.SlideAnimationUtil;
+import pupthesis.chronos.Animation.SlideAnimationUtil;
 
 /**
  * A simple {@link Fragment} subclass.

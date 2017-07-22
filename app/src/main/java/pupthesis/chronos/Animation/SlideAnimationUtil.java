@@ -1,8 +1,10 @@
-package pupthesis.chronos;
+package pupthesis.chronos.Animation;
 
 import android.content.Context;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+
+import pupthesis.chronos.R;
 
 /**
  * Created by ALFIE on 7/21/2017.

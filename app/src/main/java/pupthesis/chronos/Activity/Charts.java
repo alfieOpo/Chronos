@@ -1,4 +1,4 @@
-package pupthesis.chronos;
+package pupthesis.chronos.Activity;
 
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -29,7 +28,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static pupthesis.chronos.R.id.fab_charts;
+import pupthesis.chronos.Access.DataBaseHandler;
+import pupthesis.chronos.Util.Config;
+import pupthesis.chronos.R;
 
 public class Charts extends AppCompatActivity implements  View.OnClickListener{
     private WebView webView;
@@ -147,7 +148,7 @@ public class Charts extends AppCompatActivity implements  View.OnClickListener{
         List<String> list = new ArrayList<String>();
         DataBaseHandler da=new DataBaseHandler(getApplicationContext());
 
-        String sql="select * from gant_task where project_id="+Config.PROJECTID+" order by _id desc";
+        String sql="select * from gant_task where project_id="+ Config.PROJECTID+" order by _id desc";
         Cursor cursor= da.getLIST(sql);
         final String taskname[];
         final String task_id[];

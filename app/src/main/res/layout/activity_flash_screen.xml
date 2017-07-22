@@ -7,7 +7,7 @@
     android:background="@android:color/background_light"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="pupthesis.chronos.FlashScreen">
+    tools:context="pupthesis.chronos.Activity.FlashScreen">
 
     <io.saeid.fabloading.LoadingView
         android:id="@+id/loading_view"
