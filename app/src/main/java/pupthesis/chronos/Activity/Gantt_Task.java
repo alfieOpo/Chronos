@@ -31,6 +31,7 @@ import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -274,7 +275,15 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
                   if(PERCENTCOMPLETE.getText().toString().equals("")){
                     AlertWronInput(PERCENTCOMPLETE);
                 }
-               if(counter==0){
+                try {
+                    if(!Config.ValidDate(START.getText().toString(),END.getText().toString())){
+                        AlertWronInput("Invalid Date");
+                    }
+                } catch (ParseException e) {
+                    AlertWronInput("Invalid Date");
+                    e.printStackTrace();
+                }
+                if(counter==0){
                    da=new DataBaseHandler(Gantt_Task.this);
                    ContentValues cv=new ContentValues();
                    cv.put("task_name",PROJECTNAME.getText().toString());
@@ -297,6 +306,11 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
         txt .startAnimation(shake);
         TastyToast.makeText(Gantt_Task.this,  "Fill-out important data", Toast.LENGTH_SHORT,TastyToast.ERROR).show();
 counter++;
+    }
+    private  void AlertWronInput( String Message ){
+
+        TastyToast.makeText(Gantt_Task.this,  Message, Toast.LENGTH_SHORT,TastyToast.ERROR).show();
+        counter++;
     }
     private  void AlertWronInput(MaterialBetterSpinner txt ){
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);

@@ -44,13 +44,13 @@ public class NotificationIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(getClass().getSimpleName(), "onHandleIntent, started handling a notification event");
+        Log.d(Config.TAG, "onHandleIntent, started handling a notification event");
         try {
             String action = intent.getAction();
             if (ACTION_START.equals(action)) {
 
                 DataBaseHandler da=new DataBaseHandler(getApplicationContext());
-                Cursor cursor=da.getLIST("select * from gant_task  _id desc");
+                Cursor cursor=da.getLIST("select * from gant_task ");
                 int i=0;
                 try {
                     if (cursor.moveToFirst()) {
@@ -69,7 +69,12 @@ public class NotificationIntentService extends IntentService {
                         } while (cursor.moveToNext());
                     }
 
-                }catch (Exception xx){return;}
+                }catch (Exception xx){
+                    String Error1=xx.getMessage();
+                    String Error2=xx.getMessage();
+                    String Error3=xx.getMessage();
+                    return;
+                }
 
             }
             if (ACTION_DELETE.equals(action)) {

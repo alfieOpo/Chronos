@@ -10,6 +10,8 @@ import android.util.Log;
 import java.util.Calendar;
 import java.util.Date;
 
+import pupthesis.chronos.Util.Config;
+
 /**
  * Created by ALFIE on 7/22/2017.
  */
@@ -34,10 +36,10 @@ public class NotificationEventReceiver extends WakefulBroadcastReceiver {
         String action = intent.getAction();
         Intent serviceIntent = null;
         if (ACTION_START_NOTIFICATION_SERVICE.equals(action)) {
-            Log.i(getClass().getSimpleName(), "onReceive from alarm, starting notification service");
+            Log.i(Config.TAG, "onReceive from alarm, starting notification service");
             serviceIntent = NotificationIntentService.createIntentStartNotificationService(context);
         } else if (ACTION_DELETE_NOTIFICATION.equals(action)) {
-            Log.i(getClass().getSimpleName(), "onReceive delete notification action, starting notification service to handle delete");
+            Log.i(Config.TAG, "onReceive delete notification action, starting notification service to handle delete");
             serviceIntent = NotificationIntentService.createIntentDeleteNotification(context);
         }
 
