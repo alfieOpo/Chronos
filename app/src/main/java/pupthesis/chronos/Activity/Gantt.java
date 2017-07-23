@@ -37,7 +37,7 @@ public class Gantt extends BaseActivity {
     DataBaseHandler da;
     ListView ganttlist;
     FloatingActionButton fab;
-    TextView nothingtoshow;
+
     int counter=0;
     GantAdapter adapter=null;
 
@@ -146,7 +146,7 @@ public class Gantt extends BaseActivity {
 
             }
         });
-      final  AlertDialog dialog = alert.create();
+        final  AlertDialog dialog = alert.create();
         dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
         dialog.show();
 
@@ -166,7 +166,6 @@ public class Gantt extends BaseActivity {
                 }
                 if(PROJECTNAME.getText().toString().equals("")){
                     AlertWronInput(PROJECTNAME);
-
                 }
                 if(counter==0){
                     da=new DataBaseHandler(Gantt.this);
@@ -184,8 +183,62 @@ public class Gantt extends BaseActivity {
         });
     }
     private  void Loadlist(){
-        nothingtoshow=(TextView)findViewById(R.id.nothingtoshow);
-        nothingtoshow.setVisibility(View.INVISIBLE);
+
+
+        da=new DataBaseHandler(getApplicationContext());
+        if(da.getCountProjects().equals("0")){
+            AlertDialog.Builder createproject=new AlertDialog.Builder(Gantt.this);
+
+            createproject.setMessage("Create new project reference?");
+            createproject.setTitle("No project reference found!");
+            createproject.setCancelable(false);
+            createproject.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent startmainactivity = new Intent(getApplicationContext(), Project.class);
+                    startActivity(startmainactivity);
+                    dialog.dismiss();
+                }
+            });
+            createproject.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent startmainactivity = new Intent(getApplicationContext(), NavigationActivity.class);
+                    startActivity(startmainactivity);
+                    finish();
+                    dialog.dismiss();
+                }
+            });
+            createproject.show();
+        }
+        if(da.getCountGantt().equals("0")){
+            AlertDialog.Builder creategannt=new AlertDialog.Builder(Gantt.this);
+
+            creategannt  .setMessage("Create Project?");
+            creategannt   .setTitle("No project found yet");
+            creategannt  .setCancelable(false);
+            creategannt  .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    showAlert();
+
+                }
+            });
+            creategannt   .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    Intent startmainactivity = new Intent(getApplicationContext(), NavigationActivity.class);
+                    startActivity(startmainactivity);
+                    finish();
+
+                }
+            });
+            creategannt.show();
+        }
+        /////
+
         ganttlist =(ListView)findViewById(R.id.listView);
         ganttlist.setAdapter(null);
         try{
@@ -195,17 +248,17 @@ public class Gantt extends BaseActivity {
             final String _id[];
             da=new DataBaseHandler(Gantt.this);
             String sql="select * from gantt order by _id desc";
-if(da.gantttaskcount()>0){
-    sql="select distinct x.* from (select cur._id ,cur.project_name,cur.[description],cur.[status],cur.start_date\n" +
-            "from (select g._id,cast(replace(gt.start_date,',','/') as date) as start_date,g.project_name,g.[description],g.[status] from gantt g left join  gant_task gt on g._id =gt.project_id) cur\n" +
-            "where not exists (\n" +
-            "    select * \n" +
-            "    from (select g._id,cast(replace(gt.start_date,',','/') as date) as start_date,g.project_name,g.[description],g.[status] from gantt g left join  gant_task gt on g._id =gt.project_id) high \n" +
-            "    where high._id = cur._id \n" +
-            "    and high.start_date > cur.start_date\n" +
-            ") )x\n" +
-            "order by start_date desc\n";
-}
+            if(da.gantttaskcount()>0){
+                sql="select distinct x.* from (select cur._id ,cur.project_name,cur.[description],cur.[status],cur.start_date\n" +
+                        "from (select g._id,cast(replace(gt.start_date,',','/') as date) as start_date,g.project_name,g.[description],g.[status] from gantt g left join  gant_task gt on g._id =gt.project_id) cur\n" +
+                        "where not exists (\n" +
+                        "    select * \n" +
+                        "    from (select g._id,cast(replace(gt.start_date,',','/') as date) as start_date,g.project_name,g.[description],g.[status] from gantt g left join  gant_task gt on g._id =gt.project_id) high \n" +
+                        "    where high._id = cur._id \n" +
+                        "    and high.start_date > cur.start_date\n" +
+                        ") )x\n" +
+                        "order by start_date desc\n";
+            }
             Cursor cursor= da.getLIST(sql);
             status=new String[cursor.getCount()];
             description=new String[cursor.getCount()];
@@ -224,7 +277,7 @@ if(da.gantttaskcount()>0){
                     } while (cursor.moveToNext());
                 }
 
-                  adapter=new GantAdapter(this,taskname,status,description,null);
+                adapter=new GantAdapter(this,taskname,status,description,_id);
 
                 ganttlist.setAdapter(adapter);}catch (Exception xx){
                 String Error=xx.getMessage();
@@ -240,6 +293,7 @@ if(da.gantttaskcount()>0){
                         Config.PROJECTNAME=taskname[position];
                         Intent startmainactivity = new Intent(Gantt.this, Gantt_Task.class);
                         startActivity(startmainactivity);
+
 
                     }
 
@@ -257,30 +311,30 @@ if(da.gantttaskcount()>0){
                 }
 
             });}catch (Exception xx){
-            nothingtoshow.setVisibility(View.VISIBLE);
+
         }
         try{
-        ganttlist.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
-                    fab.hide();
-                } else {
+            ganttlist.setOnScrollListener(new AbsListView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(AbsListView view, int scrollState) {
+                    if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+                        fab.hide();
+                    } else {
 
-                    fab.show();
+                        fab.show();
+                    }
                 }
-            }
 
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                @Override
+                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-            }
-        });}catch (Exception xx){
+                }
+            });}catch (Exception xx){
 
 
         }
         if(ganttlist.getAdapter()==null){
-            nothingtoshow.setVisibility(View.VISIBLE);
+
         }
     }
     private void showAlert(String _project_name,String _description,String _status,final String  ID) {
@@ -369,6 +423,7 @@ if(da.gantttaskcount()>0){
                 final AlertDialog.Builder deletealert = new AlertDialog.Builder(Gantt.this);
                 deletealert.setMessage("Are you sure you want to delete "+PROJECTNAME.getText().toString());
                 deletealert.setTitle("DELETE CONFIRMATION");
+
                 deletealert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -448,4 +503,9 @@ if(da.gantttaskcount()>0){
         counter++;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Loadlist();
+    }
 }

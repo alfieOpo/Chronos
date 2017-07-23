@@ -6,7 +6,7 @@
     <color name="undone">#bebebe</color>
     <color name="complete">#00d956</color>
     <color name="progress">#f1c40f</color>
-
+    <color name="red">#ff0000</color>
     <color name="turquoise">#1abc9c</color>
     <color name="green_sea">#16a085</color>
     <color name="peter_river">#3498db</color>

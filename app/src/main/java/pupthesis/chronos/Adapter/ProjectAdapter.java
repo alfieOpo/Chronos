@@ -12,43 +12,42 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.R;
 
-public class LineAdapter extends ArrayAdapter<String> {
-    private String[] days;
-    private String[] linename;
-    private String[] status;
+public class ProjectAdapter extends ArrayAdapter<String> {
+    private String[] ProjectName;
+    String[] ProjectID;
     private Activity context;
     int maxposition=0;
-    public LineAdapter(Activity context, String[] days,  String[] linename,String[] status) {
-        super(context, R.layout.activity_line_adapter, days);
+    public ProjectAdapter(Activity context, String[] ProjectName,String[] ProjectID) {
+        super(context, R.layout.activity_project_adapter, ProjectName);
         this.context = context;
-        this.days = days;
-        this.linename = linename;
-        this.status = status;
+        this.ProjectName = ProjectName;
+this.ProjectID=ProjectID;
 
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
-        View listViewItem = inflater.inflate(R.layout.activity_line_adapter, null, true);
-        TextView DaysTV,StatusTV,LinenameTV;
-        CardView cardDays,cardLinename,cardStatus;
-        DaysTV=(TextView)listViewItem.findViewById(R.id.DaysTV);
-        StatusTV=(TextView)listViewItem.findViewById(R.id.StatusTV);
-        LinenameTV=(TextView)listViewItem.findViewById(R.id.LinenameTV);
+        View listViewItem = inflater.inflate(R.layout.activity_project_adapter, null, true);
+        CardView cardprojecttaskCount;
+        TextView projecttaskCountTV,projectnameTV;
+        projecttaskCountTV=(TextView)listViewItem.findViewById(R.id.projecttaskCountTV);
+        projectnameTV=(TextView)listViewItem.findViewById(R.id.projectnameTV);
+        cardprojecttaskCount=(CardView)listViewItem.findViewById(R.id.cardprojecttaskCount);
+        ///
+        DataBaseHandler da=new DataBaseHandler(context);
+        projecttaskCountTV.setText(da.getCountTaskforProject(ProjectID[position])+" Task");
+        projectnameTV.setText(ProjectName[position]);
+        ///
 
 
-        cardDays=(CardView)listViewItem.findViewById(R.id.cardDays);
-        cardLinename=(CardView)listViewItem.findViewById(R.id.cardLinename);
-        cardStatus=(CardView)listViewItem.findViewById(R.id.cardStatus);
-
-
+        //
         if (position != maxposition) {
             AnimationSet set = new AnimationSet(true);
 

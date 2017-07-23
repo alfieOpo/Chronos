@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sdsmdg.tastytoast.TastyToast;
 
@@ -27,13 +28,20 @@ public class Task extends BaseActivity {
     Button btn_project;
     DataBaseHandler da;
     ListView projectList;
-    ImageButton btn_back;
+     String ProjectID="0";
+    String ProjectNAME="0";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        ProjectID = getIntent().getStringExtra("project_id");
+        ProjectNAME=getIntent().getStringExtra("project_name");
+        TextView project_nameTV=(TextView)findViewById(R.id.project_nameTV);
+        project_nameTV.setText("LIST OF "+ProjectNAME+" TASK REFERENCES");
         projectList=(ListView)findViewById(R.id.projectList);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -53,6 +61,9 @@ public class Task extends BaseActivity {
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         TextView label=new TextView(Task.this);
         final EditText txt_project=new EditText(Task.this);
+
+        ///
+
         linearLayout.addView(label);
         linearLayout.addView(txt_project);
         alert.setView(linearLayout);
@@ -63,6 +74,7 @@ public class Task extends BaseActivity {
                 da=new DataBaseHandler(Task.this);
                 ContentValues contentValues=new ContentValues();
                 contentValues.put("task_name",txt_project.getText().toString());
+                contentValues.put("project_id",ProjectID);
                 da.createNewTASK(contentValues);
                 TastyToast.makeText(getApplicationContext(),"Successfully Saved.",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
                 LoadList();
@@ -76,7 +88,7 @@ public class Task extends BaseActivity {
         try{
 
             da=new DataBaseHandler(Task.this);
-            Cursor cursor =da.getLIST("select * from tasks");
+            Cursor cursor =da.getLIST("select * from tasks where project_id="+ProjectID);
             final String ProjectName[]=new String[cursor.getCount()];
             final String ID[]=new String[cursor.getCount()];
             int i=1;

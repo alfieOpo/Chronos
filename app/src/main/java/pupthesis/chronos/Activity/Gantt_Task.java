@@ -69,13 +69,8 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        /*  fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAlert();
-            }
-        });*/
+        da=new DataBaseHandler(getApplicationContext());
+         da.ExecuteSql("update gant_task set isseen =1 where project_id="+Config.PROJECTID);
 
         fab_charts=(FloatingActionButton)findViewById(R.id.fab_charts);
         fab = (FloatingActionButton)findViewById(R.id.fab);
@@ -292,6 +287,7 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
                    cv.put("end_date",endformatdate);
                    cv.put("percent_complete",PERCENTCOMPLETE.getText().toString());
                    cv.put("project_id", Config.PROJECTID);
+                    cv.put("isseen", 1);
                    da.createNewGANTTTASK(cv);
                    Loadlist();
                    dialog.dismiss();
@@ -331,7 +327,11 @@ counter++;
         final String _percentcompelete[];
         final String _id[];
         da=new DataBaseHandler(Gantt_Task.this);
-        Cursor cursor= da.getLIST("select * from gant_task where project_id="+Config.PROJECTID+" order by _id desc");
+        String sql=" select x.* from (select * from gant_task where project_id="+Config.PROJECTID+" and start_date='"+Config.Date().replace("/",",")+"' " +
+                     " union all" +
+                     " select * from gant_task where project_id="+Config.PROJECTID+" and start_date <> '"+Config.Date().replace("/",",")+"'  )x   ";
+
+        Cursor cursor= da.getLIST(sql);
         endtime=new String[cursor.getCount()];
         starttime=new String[cursor.getCount()];
         _percentcompelete=new String[cursor.getCount()];

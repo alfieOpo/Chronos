@@ -50,8 +50,9 @@ public class NotificationIntentService extends IntentService {
             if (ACTION_START.equals(action)) {
 
                 DataBaseHandler da=new DataBaseHandler(getApplicationContext());
-                Cursor cursor=da.getLIST("select * from gant_task ");
+                Cursor cursor=da.getLIST("select * from gant_task where isseen=0");
                 int i=0;
+                int countertask=0;
                 try {
                     if (cursor.moveToFirst()) {
                         do {
@@ -59,8 +60,11 @@ public class NotificationIntentService extends IntentService {
                             String start_date = cursor.getString(cursor.getColumnIndex("start_date"));
 
                             if (start_date.replace(",", "/").equals(Config.Date())) {
+                                countertask++;
 
-                                processStartNotification(cursor.getCount());
+                            }
+                            if(countertask!=0){
+                                processStartNotification(countertask);
                             }
 
 
@@ -96,7 +100,7 @@ public class NotificationIntentService extends IntentService {
         builder.setContentTitle("CHRONOS")
                 .setAutoCancel(true)
                 .setColor(getResources().getColor(R.color.AppbarColor))
-                .setContentText("You have "+1+" task need to process")
+                .setContentText("You have "+i+" task need to process")
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.circlelogo);
 

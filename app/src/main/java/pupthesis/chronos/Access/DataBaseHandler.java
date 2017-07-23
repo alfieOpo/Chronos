@@ -2,10 +2,14 @@ package pupthesis.chronos.Access;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.ConfigurationInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
 import android.util.Log;
+
+import pupthesis.chronos.Util.Config;
 
 /**
  * Created by ALFIE on 7/13/2017.
@@ -80,7 +84,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         String CREATE_MCBMS_TABLE = "CREATE TABLE " + TABLE_TASK + "( " +
                 "_id INTEGER PRIMARY KEY  AUTOINCREMENT," +
-                "task_name TEXT)";
+                "task_name TEXT," +
+                "project_id TEXT)";
         return CREATE_MCBMS_TABLE;
     }
     public void createNewGANTT(ContentValues v) {
@@ -141,7 +146,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor=null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-              cursor = db.rawQuery(query, null);
+            cursor = db.rawQuery(query, null);
         }catch (Exception xx){
 
             return null;
@@ -171,5 +176,61 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return cursor.getCount();
 
     }
+    public String getCountofProjectUnseen(String Project_id) {
+        String countTask="0";
+        try {
+            String sql =" select * from gant_task where project_id = "+Project_id+" and start_date ='"+ Config.Date().replace("/",",")+"' and isseen =0";
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(sql, null);
+            countTask=String.valueOf(cursor.getCount());
+            return countTask;
 
+        }catch (Exception dd){
+            String Error1=dd.getMessage();
+            String Error2=dd.getMessage();
+            String Error3=dd.getMessage();
+            return countTask;
+        }
+    }
+
+    public String getCountTaskforProject(String Project_id) {
+        String countTask="0";
+        try {
+            String sql =" select * from tasks where project_id = "+Project_id;
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(sql, null);
+            countTask=String.valueOf(cursor.getCount());
+            return countTask;
+
+        }catch (Exception dd){
+            return countTask;
+        }
+    }
+    public String getCountGantt() {
+        String countProject="0";
+        try {
+            String sql =" select * from gantt";
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(sql, null);
+            countProject=String.valueOf(cursor.getCount());
+            return countProject;
+
+        }catch (Exception dd){
+            return countProject;
+        }
+    }
+
+    public String getCountProjects() {
+        String countProject="0";
+        try {
+            String sql =" select * from projects";
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(sql, null);
+            countProject=String.valueOf(cursor.getCount());
+            return countProject;
+
+        }catch (Exception dd){
+            return countProject;
+        }
+    }
 }

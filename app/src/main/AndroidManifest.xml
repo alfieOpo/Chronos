@@ -67,7 +67,6 @@
             android:name=".Activity.Line"
             android:label="@string/title_activity_line"
             android:theme="@style/NoActionBar" />
-
     </application>
 
 </manifest>

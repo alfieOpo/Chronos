@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    tools:context="pupthesis.chronos.Adapter.ProjectAdapter">
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardprojecttaskCount"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_gravity="left"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="5dp"
+        app:cardBackgroundColor="@color/AppbarColor" >
+        <TextView
+            android:id="@+id/projecttaskCountTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="1000 Task"
+            android:textAllCaps="true"
+            android:textColor="@color/White" />
+    </android.support.v7.widget.CardView>
+<TextView
+    android:id="@+id/projectnameTV"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="10dp"
+    android:textAllCaps="true"
+    android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+    android:textColor="@color/ProjectName"
+    android:text="Name of Project"/>
+
+</LinearLayout>

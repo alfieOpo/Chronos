@@ -6,8 +6,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context="pupthesis.chronos.Adapter.GantAdapter">
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,6 +19,7 @@
             app:cardBackgroundColor="@color/ProjectName"
             app:cardCornerRadius="15dp"
             app:cardElevation="5dp">
+
 
             <ImageView
                 android:id="@+id/taskimage"
@@ -38,13 +37,12 @@
 
             <android.support.v7.widget.CardView
                 android:id="@+id/cardprojectname"
-                android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
+                android:layout_weight="1"
                 app:cardCornerRadius="5dp"
                 app:cardElevation="2dp">
-
                 <TextView
                     android:id="@+id/nameoftaskTV"
                     android:layout_width="match_parent"
@@ -56,25 +54,56 @@
                     android:textColor="@color/White" />
             </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/cardstatus"
-                android:layout_weight="1"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                app:cardCornerRadius="5dp"
-                app:cardElevation="2dp">
+                android:layout_weight="1"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/dateTV"
+                <android.support.v7.widget.CardView
+                    android:id="@+id/cardtasknotif"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="start"
+                    android:visibility="visible"
+                    app:cardBackgroundColor="@color/red"
+                    app:cardCornerRadius="10dp">
+
+                    <TextView
+                        android:id="@+id/taskcountTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dp"
+                        android:text="100"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textColor="@color/White" />
+
+                </android.support.v7.widget.CardView>
+
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/cardstatus"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:paddingBottom="5dp"
-                    android:text="Status"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/White" />
-            </android.support.v7.widget.CardView>
+                    android:layout_marginBottom="5dp"
+
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="2dp">
+
+                    <TextView
+                        android:id="@+id/dateTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:paddingBottom="5dp"
+                        android:text="Status"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/White" />
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 <android.support.v7.widget.CardView
