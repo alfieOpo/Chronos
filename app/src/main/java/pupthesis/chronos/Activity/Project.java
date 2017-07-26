@@ -63,12 +63,19 @@ public class Project extends BaseActivity {
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                da=new DataBaseHandler(Project.this);
-                ContentValues contentValues=new ContentValues();
-                contentValues.put("project_name",txt_project.getText().toString());
-                da.createNewPROJECT(contentValues);
-                TastyToast.makeText(Project.this,"Successfully Saved",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
-                LoadList();
+                if(txt_project.getText().toString().equals("")){
+                    TastyToast.makeText(getApplicationContext(),"No Project Saved.",TastyToast.LENGTH_SHORT,TastyToast.CONFUSING);
+                }
+                else{
+                    da=new DataBaseHandler(Project.this);
+                    ContentValues contentValues=new ContentValues();
+                    contentValues.put("project_name",txt_project.getText().toString());
+                    if(da.createNewPROJECT(contentValues)){
+                        TastyToast.makeText(Project.this,"Successfully Saved",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
+                        LoadList();
+                    }
+                }
+
             }
         });
         alert.show();
@@ -92,7 +99,7 @@ public class Project extends BaseActivity {
 
                     } while (cursor.moveToNext());
                 }
-            ProjectAdapter adapter = new ProjectAdapter(Project.this,ProjectName,ID);
+            ProjectAdapter adapter = new ProjectAdapter(Project.this,ProjectName,ID,true);
             projectList.setAdapter(adapter);
             projectList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

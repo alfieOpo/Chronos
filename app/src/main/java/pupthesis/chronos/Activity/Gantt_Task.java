@@ -5,14 +5,19 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -47,6 +52,7 @@ import pupthesis.chronos.Adapter.GantTaskAdapter;
 import pupthesis.chronos.Animation.BaseActivity;
 import pupthesis.chronos.Util.Config;
 import pupthesis.chronos.R;
+import pupthesis.chronos.Util.InputFilterMinMax;
 
 public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
     GantTaskAdapter adapter;
@@ -109,7 +115,7 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
         taskname.setText("TASK NAME :");
         String ProjectName[];
         da=new DataBaseHandler(Gantt_Task.this);
-        Cursor cursor =da.getLIST("select * from tasks");
+        Cursor cursor =da.getLIST("select * from tasks where project_id="+Config.REF_PROJECT_ID);
         ProjectName=new String[cursor.getCount()];
         ArrayAdapter<String> spinnerArrayAdapter;
         try {
@@ -140,6 +146,10 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
         TextView starttime=new TextView(Gantt_Task.this);
         starttime.setText("START :");
         final EditText START=new EditText(Gantt_Task.this);
+START.setFocusable(false);
+        START.setFocusableInTouchMode(false);
+
+
         START.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,6 +186,9 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
         TextView endtime=new TextView(Gantt_Task.this);
         endtime.setText("END :");
         final   EditText END=new EditText(Gantt_Task.this);
+
+        END.setFocusable(false);
+        END.setFocusableInTouchMode(false);
         END.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -256,19 +269,29 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
             {
 
                 if(PROJECTNAME.getText().toString().equals("")){
+                    PROJECTNAME.setError("No Value Found");
                     AlertWronInput(PROJECTNAME);
-
                 }
-                  if(START.getText().toString().equals("")){
+                if(START.getText().toString().equals("")){
                     AlertWronInput(START);
+                    END.setError("No Date Found");
 
                 }
-                  if(END.getText().toString().equals("")){
+                if(END.getText().toString().equals("")){
                     AlertWronInput(END);
-
+                    END.setError("No Date Found");
                 }
-                  if(PERCENTCOMPLETE.getText().toString().equals("")){
+                if(PERCENTCOMPLETE.getText().toString().equals("")){
                     AlertWronInput(PERCENTCOMPLETE);
+                }
+                int Percent=0;
+                try{
+                    Percent=Integer.parseInt(PERCENTCOMPLETE.getText().toString());}catch (Exception xx){
+                    PERCENTCOMPLETE.setError("Empty");
+                }
+                if(Percent>100){
+                    AlertWronInput(PERCENTCOMPLETE);
+                    PERCENTCOMPLETE.setError("Input is greater than 100");
                 }
                 try {
                     if(!Config.ValidDate(START.getText().toString(),END.getText().toString())){
@@ -287,9 +310,13 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
                    cv.put("end_date",endformatdate);
                    cv.put("percent_complete",PERCENTCOMPLETE.getText().toString());
                    cv.put("project_id", Config.PROJECTID);
-                    cv.put("isseen", 1);
-                   da.createNewGANTTTASK(cv);
-                   Loadlist();
+                    if(startformatdate.replace(",","/").equals(Config.Date())){
+                        cv.put("isseen", 1);
+                    }
+                    if(da.createNewGANTTTASK(cv)){
+                        Loadlist();
+                        TastyToast.makeText(Gantt_Task.this,"Successfully Saved",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
+                    }
                    dialog.dismiss();
                }
 
@@ -464,7 +491,7 @@ counter++;
         taskname.setText("TASK NAME :");
         String ProjectName[];
         da=new DataBaseHandler(Gantt_Task.this);
-        Cursor cursor =da.getLIST("select * from tasks ");
+        Cursor cursor =da.getLIST("select * from tasks where project_id="+Config.REF_PROJECT_ID);
         ProjectName=new String[cursor.getCount()];
         ArrayAdapter<String> spinnerArrayAdapter;
         try {
@@ -494,6 +521,9 @@ counter++;
         TextView starttime=new TextView(Gantt_Task.this);
         starttime.setText("START :");
         final EditText START=new EditText(Gantt_Task.this);
+
+        START.setFocusable(false);
+        START.setFocusableInTouchMode(false);
         START.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -531,6 +561,8 @@ counter++;
         TextView endtime=new TextView(Gantt_Task.this);
         endtime.setText("END :");
         final   EditText END=new EditText(Gantt_Task.this);
+        END.setFocusable(false);
+        END.setFocusableInTouchMode(false);
         END.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -566,15 +598,21 @@ counter++;
         chkboxholder.addView(END);
 
         END.setText(end_date);
-        TextView percent=new TextView(Gantt_Task.this);
+        final TextView percent=new TextView(Gantt_Task.this);
 
         percent.setText("PERCENT COMPLETE :");
 
 
 
         final   EditText  PERCENTCOMPLETE=new EditText(Gantt_Task.this);
+
+
+
         PERCENTCOMPLETE.setInputType(InputType.TYPE_CLASS_NUMBER);
+         PERCENTCOMPLETE.setFilters(new InputFilter[]{new InputFilterMinMax("1", "12")});
         PERCENTCOMPLETE.setText(percent_complete);
+
+
         chkboxholder.addView(percent);
         chkboxholder.addView(PERCENTCOMPLETE);
 
@@ -631,18 +669,30 @@ counter++;
             @Override
             public void onClick(View v)
             {
+
+
                 if(PROJECTNAME.getText().toString().equals("")){
+                    PROJECTNAME.setError("No Value Found");
                     AlertWronInput(PROJECTNAME);
                 }
                   if(START.getText().toString().equals("")){
                     AlertWronInput(START);
+
                 }
                   if(END.getText().toString().equals("")){
                     AlertWronInput(END);
+                      END.setError("Invalid Date");
                 }
                   if(PERCENTCOMPLETE.getText().toString().equals("")){
                     AlertWronInput(PERCENTCOMPLETE);
                 }
+                int Percent=0;
+                try{
+                  Percent=Integer.parseInt(PERCENTCOMPLETE.getText().toString());}catch (Exception xx){}
+            if(Percent>100){
+                AlertWronInput(PERCENTCOMPLETE);
+                PERCENTCOMPLETE.setError("Input is greater than 100");
+            }
                 if(counter==0){
                     da=new DataBaseHandler(Gantt_Task.this);
                     da.ExecuteSql("update gant_task set task_name ='"+PROJECTNAME.getText().toString()+
@@ -715,4 +765,5 @@ counter++;
         super.onBackPressed();
 
     }
+
 }

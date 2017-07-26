@@ -12,6 +12,7 @@ import java.util.Date;
 public class Config {
     public static  String PROJECTID="0";
     public static  String PROJECTNAME="N/A";
+    public static  String REF_PROJECT_ID="0";
     public static  String Date(){
         Calendar c = Calendar.getInstance();
         int seconds = c.get(Calendar.SECOND);

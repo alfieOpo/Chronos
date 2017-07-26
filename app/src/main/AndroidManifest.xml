@@ -12,9 +12,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/circlelogo"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/circlelogo"
+        android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/NoActionBar">
         <activity android:name=".Activity.FlashScreen">
@@ -67,6 +67,14 @@
             android:name=".Activity.Line"
             android:label="@string/title_activity_line"
             android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".Activity.Project_Line"
+            android:label="@string/title_activity_project__line"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".Activity.Task_Line"
+            android:label="@string/title_activity_task__line"
+            android:theme="@style/NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -45,17 +45,12 @@ public class Gantt extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gantt);
-
-
-
-
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showAlert();
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                //        .setAction("Action", null).show();
+
             }
         });
         Loadlist();
@@ -79,42 +74,38 @@ public class Gantt extends BaseActivity {
         taskname.setPadding(0,10,0,0);
         taskname.setText("PROJECT NAME :");
         String ProjectName[];
-
+        final String ref_ProjectID[];
 
         da=new DataBaseHandler(Gantt.this);
         Cursor cursor =da.getLIST("select * from projects ");
         ProjectName=new String[cursor.getCount()];
-        ArrayAdapter<String> spinnerArrayAdapter;
+        ref_ProjectID=new String[cursor.getCount()];
+        final ArrayAdapter<String> spinnerArrayAdapter;
         try {
             int i = 1;
             if (cursor != null) {
                 cursor.moveToFirst();
                 ProjectName[0] = cursor.getString(1);
+                ref_ProjectID[0] = cursor.getString(0);
                 while (cursor.moveToNext()) {
                     ProjectName[i] = cursor.getString(1);
+                    ref_ProjectID[i] = cursor.getString(0);
                     i++;
                 }
             }
-            spinnerArrayAdapter  = new ArrayAdapter<String>(Gantt.this,R.layout.dropdownadapter,ProjectName); //selected item will look like a spinner set from XML
+            spinnerArrayAdapter  = new ArrayAdapter<String>(Gantt.this,R.layout.dropdownadapter,ProjectName);
             spinnerArrayAdapter.setDropDownViewResource(R.layout.dropdownadapter);
         }catch (Exception xx){
             TastyToast.makeText(Gantt.this, "No Project Found.", Toast.LENGTH_SHORT,TastyToast.WARNING);
             return;
         }
-
-
-
         final MaterialBetterSpinner PROJECTNAME=new MaterialBetterSpinner(Gantt.this);
         PROJECTNAME.setAdapter(spinnerArrayAdapter);
-
         TextView status=new TextView(Gantt.this);
         status.setPadding(0,5,0,0);
         status.setText("STATUS :");
-
-
         ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<String>(Gantt.this, R.layout.dropdownadapter,getResources().getStringArray( R.array.STATUS)); //selected item will look like a spinner set from XML
         spinnerArrayAdapter2.setDropDownViewResource(R.layout.dropdownadapter);
-
         final MaterialBetterSpinner STATUSNAME=new MaterialBetterSpinner(Gantt.this);
         STATUSNAME.setAdapter(spinnerArrayAdapter2);
 
@@ -173,9 +164,13 @@ public class Gantt extends BaseActivity {
                     cv.put("project_name",PROJECTNAME.getText().toString());
                     cv.put("status",STATUSNAME.getText().toString());
                     cv.put("description",DESCRIPTION.getText().toString());
-                    da.createNewGANTT(cv);
-                    Loadlist();
+                    int position=spinnerArrayAdapter.getPosition(PROJECTNAME.getText().toString());
 
+
+                    if(da.createNewGANTT(cv)){
+                        TastyToast.makeText(Gantt.this,"Successfully Saved",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
+                        Loadlist();
+                    }
                     dialog.cancel();
                 }
                 counter=0;
@@ -191,7 +186,6 @@ public class Gantt extends BaseActivity {
 
             createproject.setMessage("Create new project reference?");
             createproject.setTitle("No project reference found!");
-            createproject.setCancelable(false);
             createproject.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -211,12 +205,11 @@ public class Gantt extends BaseActivity {
             });
             createproject.show();
         }
-        if(da.getCountGantt().equals("0")){
+        else if(da.getCountGantt().equals("0")){
             AlertDialog.Builder creategannt=new AlertDialog.Builder(Gantt.this);
 
             creategannt  .setMessage("Create Project?");
             creategannt   .setTitle("No project found yet");
-            creategannt  .setCancelable(false);
             creategannt  .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -245,15 +238,16 @@ public class Gantt extends BaseActivity {
             final String taskname[];
             final String description[];
             final String status[];
+            final String ref_project_id[];
             final String _id[];
             da=new DataBaseHandler(Gantt.this);
             String sql="select * from gantt order by _id desc";
             if(da.gantttaskcount()>0){
-                sql="select distinct x.* from (select cur._id ,cur.project_name,cur.[description],cur.[status],cur.start_date\n" +
-                        "from (select g._id,cast(replace(gt.start_date,',','/') as date) as start_date,g.project_name,g.[description],g.[status] from gantt g left join  gant_task gt on g._id =gt.project_id) cur\n" +
+                sql="select distinct x.* from (select cur._id ,cur.project_name,cur.[description],cur.[status],cur.ref_project_id,cur.start_date\n" +
+                        "from (select g._id,cast(replace(gt.start_date,',','/') as date) as start_date,g.project_name,g.[description],g.[status],g.ref_project_id from gantt g left join  gant_task gt on g._id =gt.project_id) cur\n" +
                         "where not exists (\n" +
                         "    select * \n" +
-                        "    from (select g._id,cast(replace(gt.start_date,',','/') as date) as start_date,g.project_name,g.[description],g.[status] from gantt g left join  gant_task gt on g._id =gt.project_id) high \n" +
+                        "    from (select g._id,cast(replace(gt.start_date,',','/') as date) as start_date,g.project_name,g.[description],g.[status],g.ref_project_id from gantt g left join  gant_task gt on g._id =gt.project_id) high \n" +
                         "    where high._id = cur._id \n" +
                         "    and high.start_date > cur.start_date\n" +
                         ") )x\n" +
@@ -263,6 +257,7 @@ public class Gantt extends BaseActivity {
             status=new String[cursor.getCount()];
             description=new String[cursor.getCount()];
             taskname=new String[cursor.getCount()];
+            ref_project_id=new String[cursor.getCount()];
             _id=new String[cursor.getCount()];
             try{
                 int i=0;
@@ -272,6 +267,7 @@ public class Gantt extends BaseActivity {
                         _id[i]=cursor.getString(cursor.getColumnIndex("_id"));
                         taskname[i]=cursor.getString(cursor.getColumnIndex("project_name"));
                         description[i]=cursor.getString(cursor.getColumnIndex("description"));
+                        ref_project_id[i]=cursor.getString(cursor.getColumnIndex("ref_project_id"));
                         i = cursor.getPosition() + 1;
 
                     } while (cursor.moveToNext());
@@ -280,9 +276,7 @@ public class Gantt extends BaseActivity {
                 adapter=new GantAdapter(this,taskname,status,description,_id);
 
                 ganttlist.setAdapter(adapter);}catch (Exception xx){
-                String Error=xx.getMessage();
-                String Error1=xx.getMessage();
-                String Error2=xx.getMessage();
+              xx.printStackTrace();
             }
 
             ganttlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -291,6 +285,7 @@ public class Gantt extends BaseActivity {
                     if(!isLongPress){
                         Config.PROJECTID=_id[position];
                         Config.PROJECTNAME=taskname[position];
+                        Config.REF_PROJECT_ID=ref_project_id[position];
                         Intent startmainactivity = new Intent(Gantt.this, Gantt_Task.class);
                         startActivity(startmainactivity);
 
@@ -355,9 +350,11 @@ public class Gantt extends BaseActivity {
         taskname.setPadding(0,10,0,0);
         taskname.setText("PROJECT NAME :");
         String ProjectName[];
+        final String ref_ProjectID[];
         da=new DataBaseHandler(Gantt.this);
         Cursor cursor =da.getLIST("select * from projects");
         ProjectName=new String[cursor.getCount()];
+        ref_ProjectID=new String[cursor.getCount()];
         ArrayAdapter<String> spinnerArrayAdapter;
 
         int i = 1;
@@ -366,11 +363,12 @@ public class Gantt extends BaseActivity {
             ProjectName[0] = cursor.getString(1);
             while (cursor.moveToNext()) {
                 ProjectName[i] = cursor.getString(1);
+                ref_ProjectID[i] = cursor.getString(0);
                 i++;
             }
         }
-        spinnerArrayAdapter  = new ArrayAdapter<String>(Gantt.this, android.R.layout.simple_spinner_item,ProjectName); //selected item will look like a spinner set from XML
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        spinnerArrayAdapter  = new ArrayAdapter<String>(Gantt.this, R.layout.dropdownadapter,ProjectName); //selected item will look like a spinner set from XML
+        spinnerArrayAdapter.setDropDownViewResource( R.layout.dropdownadapter);
 
 
         final  MaterialBetterSpinner PROJECTNAME=new MaterialBetterSpinner(Gantt.this);

@@ -21,19 +21,21 @@ import pupthesis.chronos.R;
 
 public class ProjectAdapter extends ArrayAdapter<String> {
     private String[] ProjectName;
-    String[] ProjectID;
+    private String[] ProjectID;
     private Activity context;
-    int maxposition=0;
-    public ProjectAdapter(Activity context, String[] ProjectName,String[] ProjectID) {
+    private  int maxposition=0;
+    private  boolean gantt=false;
+    public ProjectAdapter(Activity context, String[] ProjectName,String[] ProjectID,boolean gantt) {
         super(context, R.layout.activity_project_adapter, ProjectName);
         this.context = context;
         this.ProjectName = ProjectName;
-this.ProjectID=ProjectID;
-
+        this.ProjectID=ProjectID;
+        this.gantt=gantt;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
+
         View listViewItem = inflater.inflate(R.layout.activity_project_adapter, null, true);
         CardView cardprojecttaskCount;
         TextView projecttaskCountTV,projectnameTV;
@@ -42,11 +44,16 @@ this.ProjectID=ProjectID;
         cardprojecttaskCount=(CardView)listViewItem.findViewById(R.id.cardprojecttaskCount);
         ///
         DataBaseHandler da=new DataBaseHandler(context);
-        projecttaskCountTV.setText(da.getCountTaskforProject(ProjectID[position])+" Task");
+        if(gantt){
+            projecttaskCountTV.setText(da.getCountTaskforProject(ProjectID[position])+" Task");
+        }
+        else
+        {
+            projecttaskCountTV.setText(da.getCountTaskforProjectLine(ProjectID[position])+" Task");
+        }
+
         projectnameTV.setText(ProjectName[position]);
         ///
-
-
         //
         if (position != maxposition) {
             AnimationSet set = new AnimationSet(true);
@@ -69,3 +76,4 @@ this.ProjectID=ProjectID;
         return  listViewItem;
     }
 }
+

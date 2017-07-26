@@ -25,10 +25,9 @@ public class LineAdapter extends ArrayAdapter<String> {
     private String[] status;
     private Activity context;
     int maxposition=0;
-    public LineAdapter(Activity context, String[] days,  String[] linename,String[] status) {
-        super(context, R.layout.activity_line_adapter, days);
+    public LineAdapter(Activity context,  String[] linename,String[] status) {
+        super(context, R.layout.activity_line_adapter, linename);
         this.context = context;
-        this.days = days;
         this.linename = linename;
         this.status = status;
 

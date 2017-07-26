@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import info.hoang8f.widget.FButton;
 import pupthesis.chronos.Activity.Project;
+import pupthesis.chronos.Activity.Project_Line;
 import pupthesis.chronos.R;
 import pupthesis.chronos.Animation.SlideAnimationUtil;
 import pupthesis.chronos.Activity.Task;
@@ -19,7 +20,7 @@ import pupthesis.chronos.Activity.Task;
  */
 public class ReferenceMenu extends Fragment {
    FButton btn_project;
-    FButton btn_task;
+    FButton btn_line;
     public ReferenceMenu() {
         // Required empty public constructor
     }
@@ -36,11 +37,11 @@ public class ReferenceMenu extends Fragment {
                 startActivity(startmainactivity);
             }
         });
-        btn_task=(FButton)view.findViewById(R.id.btn_task);
-        btn_task.setOnClickListener(new View.OnClickListener() {
+        btn_line=(FButton)view.findViewById(R.id.btn_line);
+        btn_line.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent startmainactivity = new Intent(getActivity(), Task.class);
+                Intent startmainactivity = new Intent(getActivity(), Project_Line.class);
                 startActivity(startmainactivity);
             }
         });

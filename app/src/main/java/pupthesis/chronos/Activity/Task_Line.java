@@ -5,18 +5,18 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sdsmdg.tastytoast.TastyToast;
 
@@ -24,17 +24,16 @@ import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.Animation.BaseActivity;
 import pupthesis.chronos.R;
 
-public class Task extends BaseActivity {
+public class Task_Line extends BaseActivity {
     Button btn_project;
     DataBaseHandler da;
     ListView projectList;
-     String ProjectID="0";
+    String ProjectID="0";
     String ProjectNAME="0";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task);
+        setContentView(R.layout.activity_task__line);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -47,20 +46,21 @@ public class Task extends BaseActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-              //          .setAction("Action", null).show();
+                // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //          .setAction("Action", null).show();
                 PopupEntry();
             }
         });
         LoadList();
     }
+
     private  void PopupEntry(){
 
-        AlertDialog.Builder alert=new AlertDialog.Builder(Task.this);
-        LinearLayout linearLayout=new LinearLayout(Task.this);
+        AlertDialog.Builder alert=new AlertDialog.Builder(Task_Line.this);
+        LinearLayout linearLayout=new LinearLayout(Task_Line.this);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
-        TextView label=new TextView(Task.this);
-        final EditText txt_project=new EditText(Task.this);
+        TextView label=new TextView(Task_Line.this);
+        final EditText txt_project=new EditText(Task_Line.this);
 
         ///
 
@@ -75,14 +75,15 @@ public class Task extends BaseActivity {
                     TastyToast.makeText(getApplicationContext(),"No Project Saved.",TastyToast.LENGTH_SHORT,TastyToast.CONFUSING);
                 }
                 else{
-                da=new DataBaseHandler(Task.this);
-                ContentValues contentValues=new ContentValues();
-                contentValues.put("task_name",txt_project.getText().toString());
-                contentValues.put("project_id",ProjectID);
-                if( da.createNewTASK(contentValues)){
-                    TastyToast.makeText(getApplicationContext(),"Successfully Saved.",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
-                    LoadList();
-                }
+                    da=new DataBaseHandler(Task_Line.this);
+                    ContentValues contentValues=new ContentValues();
+                    contentValues.put("task_name",txt_project.getText().toString());
+                    contentValues.put("project_id",ProjectID);
+
+
+                    if( da.createNewTASKLINE(contentValues)){
+                        TastyToast.makeText(getApplicationContext(),"Successfully Saved.",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
+                        LoadList();}
                 }
 
             }
@@ -94,8 +95,8 @@ public class Task extends BaseActivity {
 
         try{
 
-            da=new DataBaseHandler(Task.this);
-            Cursor cursor =da.getLIST("select * from tasks where project_id="+ProjectID);
+            da=new DataBaseHandler(Task_Line.this);
+            Cursor cursor =da.getLIST("select * from tasksline where project_id="+ProjectID);
             final String ProjectName[]=new String[cursor.getCount()];
             final String ID[]=new String[cursor.getCount()];
             int i=1;
@@ -109,7 +110,7 @@ public class Task extends BaseActivity {
                     i++;
                 }
             }
-            ArrayAdapter adapter = new ArrayAdapter<String>(Task.this,
+            ArrayAdapter adapter = new ArrayAdapter<String>(Task_Line.this,
                     R.layout.dropdownadapter, ProjectName);
             projectList.setAdapter(adapter);
             projectList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -117,13 +118,13 @@ public class Task extends BaseActivity {
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
                     final  String DELETEID=ID[position];
-                    AlertDialog.Builder deletealert=new AlertDialog.Builder(Task.this);
+                    AlertDialog.Builder deletealert=new AlertDialog.Builder(Task_Line.this);
                     deletealert.setTitle("Delete Confirmation");
                     deletealert.setMessage("Are you sure you want to delete '"+ProjectName[position]+"'");
                     deletealert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            da.DeleteTask(DELETEID);
+                            da.ExecuteSql("delete from tasksline where _id ="+DELETEID);
                             TastyToast.makeText(getApplicationContext(),"Successfully Deleted",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
                             LoadList();
                         }

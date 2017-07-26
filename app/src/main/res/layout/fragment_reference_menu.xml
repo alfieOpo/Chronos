@@ -23,11 +23,11 @@
         fbutton:shadowHeight="5dp" />
 
     <info.hoang8f.widget.FButton
-        android:id="@+id/btn_task"
+        android:id="@+id/btn_line"
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:layout_marginBottom="10dp"
-        android:text="Create Task"
+        android:text="Create Line"
         android:textAlignment="center"
         android:textColor="@color/White"
         fbutton:buttonColor="@color/peter_river"

@@ -20,8 +20,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "chronos";
     private static final String TABLE_GANTT= "gantt";
     private static final String TABLE_PROJECT= "projects";
+    private static final String TABLE_PROJECTLINE= "projectsline";
     private static final String TABLE_TASK= "tasks";
     private static final String TABLE_GANT_TASK= "gant_task";
+    private static final String TABLE_LINE= "line";
+    private static final String TABLE_TASKLINE= "tasksline";
+
     public DataBaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -37,11 +41,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         } catch (Exception xx) {
         }
         try {
+            db.execSQL( PROJECTTABLELINE());
+        } catch (Exception xx) {
+        }
+        try {
             db.execSQL( TASKTABLE());
         } catch (Exception xx) {
         }
         try {
             db.execSQL( GANTTTASKTABLE());
+        } catch (Exception xx) {
+        }
+        try {
+            db.execSQL( LINETABLE());
+        } catch (Exception xx) {
+        }
+        try {
+            db.execSQL( TASKTABLELINE());
         } catch (Exception xx) {
         }
     }
@@ -52,16 +68,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
     private String GANTTTABLE() {
 
-        String CREATE_MCBMS_TABLE = "CREATE TABLE " + TABLE_GANTT + "( " +
+        String CREATE_CHRONOS_TABLE = "CREATE TABLE " + TABLE_GANTT + "( " +
                 "_id INTEGER PRIMARY KEY  AUTOINCREMENT," +
                 "project_name TEXT," +
                 "description TEXT," +
-                "status TEXT)";
-        return CREATE_MCBMS_TABLE;
+                "status TEXT," +
+                "ref_project_id INTEGER)";
+        return CREATE_CHRONOS_TABLE;
     }
     private String GANTTTASKTABLE() {
 
-        String CREATE_MCBMS_TABLE = "CREATE TABLE " + TABLE_GANT_TASK + "( " +
+        String CREATE_CHRONOS_TABLE = "CREATE TABLE " + TABLE_GANT_TASK + "( " +
                 "_id INTEGER PRIMARY KEY  AUTOINCREMENT," +
 
                 "task_id TEXT," +
@@ -71,63 +88,133 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 "start_date TEXT," +
                 "project_id TEXT," +
                 "isseen INTEGER  DEFAULT 0)";
-        return CREATE_MCBMS_TABLE;
+        return CREATE_CHRONOS_TABLE;
     }
     private String PROJECTTABLE() {
 
-        String CREATE_MCBMS_TABLE = "CREATE TABLE " + TABLE_PROJECT + "( " +
+        String CREATE_CHRONOS_TABLE = "CREATE TABLE " + TABLE_PROJECT + "( " +
                 "_id INTEGER PRIMARY KEY  AUTOINCREMENT," +
                 "project_name TEXT)";
-        return CREATE_MCBMS_TABLE;
+        return CREATE_CHRONOS_TABLE;
+    }
+
+    private String PROJECTTABLELINE() {
+
+        String CREATE_CHRONOS_TABLE = "CREATE TABLE " + TABLE_PROJECTLINE + "( " +
+                "_id INTEGER PRIMARY KEY  AUTOINCREMENT," +
+                "project_name TEXT)";
+        return CREATE_CHRONOS_TABLE;
     }
     private String TASKTABLE() {
 
-        String CREATE_MCBMS_TABLE = "CREATE TABLE " + TABLE_TASK + "( " +
+        String CREATE_CHRONOS_TABLE = "CREATE TABLE " + TABLE_TASK + "( " +
                 "_id INTEGER PRIMARY KEY  AUTOINCREMENT," +
                 "task_name TEXT," +
                 "project_id TEXT)";
-        return CREATE_MCBMS_TABLE;
+        return CREATE_CHRONOS_TABLE;
     }
-    public void createNewGANTT(ContentValues v) {
+    private String TASKTABLELINE() {
+
+        String CREATE_CHRONOS_TABLE = "CREATE TABLE " + TABLE_TASKLINE + "( " +
+                "_id INTEGER PRIMARY KEY  AUTOINCREMENT," +
+                "task_name TEXT," +
+                "project_id TEXT)";
+        return CREATE_CHRONOS_TABLE;
+    }
+    private String LINETABLE() {
+
+        String CREATE_CHRONOS_TABLE = "CREATE TABLE " + TABLE_LINE + "( " +
+                "_id INTEGER PRIMARY KEY  AUTOINCREMENT," +
+                "line_name TEXT," +
+                "status TEXT," +
+                "ref_project_id INTEGER)";
+        return CREATE_CHRONOS_TABLE;
+    }
+
+    public boolean createNewLINE(ContentValues v) {
+        boolean retval=false;
+        SQLiteDatabase db = this.getWritableDatabase();
+        long rowInserted = db.insert(TABLE_LINE, null, v);
+        if (rowInserted != -1) {
+            retval= true;
+        } else {
+            retval= false;
+        }
+        db.close();
+        return retval;
+    }
+    public boolean createNewGANTT(ContentValues v) {
+        boolean retval=false;
         SQLiteDatabase db = this.getWritableDatabase();
         long rowInserted = db.insert(TABLE_GANTT, null, v);
         if (rowInserted != -1) {
-            Log.i("1st INSERT", "SUCCESS");
+            retval= true;
         } else {
-            Log.i("1st INSERT", "FAILED");
+            retval= false;
         }
         db.close();
+        return retval;
     }
 
-    public void createNewGANTTTASK(ContentValues v) {
+    public boolean createNewGANTTTASK(ContentValues v) {
+        boolean retval=false;
         SQLiteDatabase db = this.getWritableDatabase();
         long rowInserted = db.insert(TABLE_GANT_TASK, null, v);
         if (rowInserted != -1) {
-            Log.i("1st INSERT", "SUCCESS");
+            retval= true;
         } else {
-            Log.i("1st INSERT", "FAILED");
+            retval= false;
         }
         db.close();
+        return retval;
     }
-    public void createNewPROJECT(ContentValues v) {
+    public boolean createNewPROJECT(ContentValues v) {
+        boolean retval=false;
         SQLiteDatabase db = this.getWritableDatabase();
         long rowInserted = db.insert(TABLE_PROJECT, null, v);
         if (rowInserted != -1) {
-            Log.i("1st INSERT", "SUCCESS");
+            retval= true;
         } else {
-            Log.i("1st INSERT", "FAILED");
+            retval= false;
         }
         db.close();
+        return retval;
     }
-    public void createNewTASK(ContentValues v) {
+    public boolean createNewPROJECTLINE(ContentValues v) {
+        boolean retval=false;
+        SQLiteDatabase db = this.getWritableDatabase();
+        long rowInserted = db.insert(TABLE_PROJECTLINE, null, v);
+        if (rowInserted != -1) {
+            retval= true;
+        } else {
+            retval= false;
+        }
+        db.close();
+        return retval;
+    }
+    public boolean createNewTASK(ContentValues v) {
+        boolean retval=false;
         SQLiteDatabase db = this.getWritableDatabase();
         long rowInserted = db.insert(TABLE_TASK, null, v);
         if (rowInserted != -1) {
-            Log.i("1st INSERT", "SUCCESS");
+            retval= true;
         } else {
-            Log.i("1st INSERT", "FAILED");
+            retval= false;
         }
         db.close();
+        return retval;
+    }
+    public boolean createNewTASKLINE(ContentValues v) {
+        boolean retval=false;
+        SQLiteDatabase db = this.getWritableDatabase();
+        long rowInserted = db.insert(TABLE_TASKLINE, null, v);
+        if (rowInserted != -1) {
+            retval= true;
+        } else {
+            retval= false;
+        }
+        db.close();
+        return retval;
     }
     public void updateGANTT(String description,String project_name,String status,String _id) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -231,6 +318,21 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         }catch (Exception dd){
             return countProject;
+        }
+    }
+
+
+    public String getCountTaskforProjectLine(String Project_id) {
+        String countTask="0";
+        try {
+            String sql =" select * from tasksline where project_id = "+Project_id;
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(sql, null);
+            countTask=String.valueOf(cursor.getCount());
+            return countTask;
+
+        }catch (Exception dd){
+            return countTask;
         }
     }
 }

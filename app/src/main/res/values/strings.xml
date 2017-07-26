@@ -16,4 +16,6 @@
     <string name="title_activity_charts">Charts</string>
     <string name="nothingtoshow">Nothing to Show.</string>
     <string name="title_activity_line">Line</string>
+    <string name="title_activity_project__line">Project_Line</string>
+    <string name="title_activity_task__line">Task_Line</string>
 </resources>
