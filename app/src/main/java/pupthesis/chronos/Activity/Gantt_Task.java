@@ -63,6 +63,9 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
     TextView nothingtoshow;
     String startformatdate="";
     String endformatdate="";
+    String _ProjectID="0";
+    String _RefProjectID="0";
+    String _ProjectNAME="N/A";
     private Boolean isFabOpen = false;
     private FloatingActionButton fab,fab1,fab2,fab_charts;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
@@ -75,8 +78,12 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        _ProjectID = getIntent().getStringExtra("project_id");
+        _ProjectNAME=getIntent().getStringExtra("project_name");
+        _RefProjectID=getIntent().getStringExtra("ref_project_id");
         da=new DataBaseHandler(getApplicationContext());
-         da.ExecuteSql("update gant_task set isseen =1 where project_id="+Config.PROJECTID);
+         da.ExecuteSql("update gant_task set isseen =1 where project_id="+_ProjectID);
 
         fab_charts=(FloatingActionButton)findViewById(R.id.fab_charts);
         fab = (FloatingActionButton)findViewById(R.id.fab);
@@ -115,7 +122,7 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
         taskname.setText("TASK NAME :");
         String ProjectName[];
         da=new DataBaseHandler(Gantt_Task.this);
-        Cursor cursor =da.getLIST("select * from tasks where project_id="+Config.REF_PROJECT_ID);
+        Cursor cursor =da.getLIST("select * from tasks where project_id="+_RefProjectID);
         ProjectName=new String[cursor.getCount()];
         ArrayAdapter<String> spinnerArrayAdapter;
         try {
@@ -309,7 +316,7 @@ START.setFocusable(false);
                    cv.put("start_date",startformatdate);
                    cv.put("end_date",endformatdate);
                    cv.put("percent_complete",PERCENTCOMPLETE.getText().toString());
-                   cv.put("project_id", Config.PROJECTID);
+                   cv.put("project_id", _ProjectID);
                     if(startformatdate.replace(",","/").equals(Config.Date())){
                         cv.put("isseen", 1);
                     }
@@ -354,9 +361,9 @@ counter++;
         final String _percentcompelete[];
         final String _id[];
         da=new DataBaseHandler(Gantt_Task.this);
-        String sql=" select x.* from (select * from gant_task where project_id="+Config.PROJECTID+" and start_date='"+Config.Date().replace("/",",")+"' " +
+        String sql=" select x.* from (select * from gant_task where project_id="+_ProjectID+" and start_date='"+Config.Date().replace("/",",")+"' " +
                      " union all" +
-                     " select * from gant_task where project_id="+Config.PROJECTID+" and start_date <> '"+Config.Date().replace("/",",")+"'  )x   ";
+                     " select * from gant_task where project_id="+_ProjectID+" and start_date <> '"+Config.Date().replace("/",",")+"'  )x   ";
 
         Cursor cursor= da.getLIST(sql);
         endtime=new String[cursor.getCount()];
@@ -423,11 +430,11 @@ counter++;
     private  void ToExcel(){
         da=new DataBaseHandler(Gantt_Task.this);
 
-        final Cursor cursor = da.getLIST("select task_name,percent_complete,end_date,start_date,project_id from gant_task where project_id="+Config.PROJECTID);
+        final Cursor cursor = da.getLIST("select task_name,percent_complete,end_date,start_date,project_id from gant_task where project_id="+_ProjectID);
         File filepath = Environment.getExternalStorageDirectory();
         File sd = new File(filepath.getAbsolutePath()
                 + "/CHRONOS/");
-        String csvFile = Config.PROJECTNAME+"-"+("0000" + Config.PROJECTID).substring(Config.PROJECTID.length())+".xls";
+        String csvFile = _ProjectNAME+"-"+("0000" + _ProjectID).substring(_ProjectID.length())+".xls";
 
         File directory = new File(sd.getAbsolutePath());
         //create directory if not exist
@@ -443,7 +450,7 @@ counter++;
             WritableWorkbook workbook;
             workbook = Workbook.createWorkbook(file, wbSettings);
             //Excel sheet name. 0 represents first sheet
-            WritableSheet sheet = workbook.createSheet(Config.PROJECTNAME, 0);
+            WritableSheet sheet = workbook.createSheet(_ProjectNAME, 0);
             // column and row
             sheet.addCell(new Label(0, 0, "Task Name"));
             sheet.addCell(new Label(1, 0, "Percent Complete"));
@@ -491,7 +498,7 @@ counter++;
         taskname.setText("TASK NAME :");
         String ProjectName[];
         da=new DataBaseHandler(Gantt_Task.this);
-        Cursor cursor =da.getLIST("select * from tasks where project_id="+Config.REF_PROJECT_ID);
+        Cursor cursor =da.getLIST("select * from tasks where project_id="+_ProjectID);
         ProjectName=new String[cursor.getCount()];
         ArrayAdapter<String> spinnerArrayAdapter;
         try {
@@ -753,6 +760,9 @@ counter++;
                 break;
             case R.id.fab_charts:
                 Intent startmainactivity = new Intent(getApplicationContext(), Charts.class);
+                startmainactivity.putExtra("project_id", _ProjectID);
+                startmainactivity.putExtra("project_name", _ProjectNAME);
+                startmainactivity.putExtra("ref_project_id", _RefProjectID);
                 startActivity(startmainactivity);
 
                 animateFAB();

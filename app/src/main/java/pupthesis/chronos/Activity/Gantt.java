@@ -45,6 +45,8 @@ public class Gantt extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gantt);
+
+
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,8 +167,7 @@ public class Gantt extends BaseActivity {
                     cv.put("status",STATUSNAME.getText().toString());
                     cv.put("description",DESCRIPTION.getText().toString());
                     int position=spinnerArrayAdapter.getPosition(PROJECTNAME.getText().toString());
-
-
+                    cv.put("ref_project_id",ref_ProjectID[position]);
                     if(da.createNewGANTT(cv)){
                         TastyToast.makeText(Gantt.this,"Successfully Saved",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
                         Loadlist();
@@ -283,11 +284,13 @@ public class Gantt extends BaseActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     if(!isLongPress){
-                        Config.PROJECTID=_id[position];
-                        Config.PROJECTNAME=taskname[position];
-                        Config.REF_PROJECT_ID=ref_project_id[position];
+
                         Intent startmainactivity = new Intent(Gantt.this, Gantt_Task.class);
+                        startmainactivity.putExtra("project_id", _id[position]);
+                        startmainactivity.putExtra("project_name", taskname[position].toUpperCase());
+                        startmainactivity.putExtra("ref_project_id", ref_project_id[position]);
                         startActivity(startmainactivity);
+
 
 
                     }

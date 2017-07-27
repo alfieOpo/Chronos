@@ -1,9 +1,11 @@
 package pupthesis.chronos.Activity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import pupthesis.chronos.Fragment.Create;
 import pupthesis.chronos.Fragment.ReferenceMenu;
@@ -55,15 +58,7 @@ public class NavigationActivity extends BaseActivity
         NotificationEventReceiver.setupAlarm(getApplicationContext());
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,5 +111,37 @@ public class NavigationActivity extends BaseActivity
         super.onResume();
     }
 
+    @Override
+    public void onBackPressed() {
 
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+       
+        else {
+
+            final AlertDialog.Builder deletealert = new AlertDialog.Builder(this);
+            deletealert.setMessage("Are you sure you want to close CHRONOS.");
+            deletealert.setTitle("EXIT?");
+            deletealert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                    dialog.cancel();
+                }
+            });
+            deletealert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    dialog.cancel();
+                }
+            });
+            deletealert.show();
+
+
+        }
+    }
 }

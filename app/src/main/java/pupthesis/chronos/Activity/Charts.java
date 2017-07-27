@@ -37,6 +37,9 @@ public class Charts extends AppCompatActivity implements  View.OnClickListener{
     private FloatingActionButton fab,fab_toimage,fab_refresh;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
     private Boolean isFabOpen = false;
+    private String _ProjectID="0";
+    private String _RefProjectID="0";
+    private String _ProjectNAME="N/A";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +47,9 @@ public class Charts extends AppCompatActivity implements  View.OnClickListener{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
+        _ProjectID = getIntent().getStringExtra("project_id");
+        _ProjectNAME=getIntent().getStringExtra("project_name");
+        _RefProjectID=getIntent().getStringExtra("ref_project_id");
         fab = (FloatingActionButton)findViewById(R.id.fab);
         fab_refresh = (FloatingActionButton)findViewById(R.id.fab_refresh);
         fab_toimage = (FloatingActionButton)findViewById(R.id.fab_toimage);
@@ -148,7 +153,7 @@ public class Charts extends AppCompatActivity implements  View.OnClickListener{
         List<String> list = new ArrayList<String>();
         DataBaseHandler da=new DataBaseHandler(getApplicationContext());
 
-        String sql="select * from gant_task where project_id="+ Config.PROJECTID+" order by _id desc";
+        String sql="select * from gant_task where project_id="+ _ProjectID+" order by _id desc";
         Cursor cursor= da.getLIST(sql);
         final String taskname[];
         final String task_id[];
@@ -224,7 +229,7 @@ public class Charts extends AppCompatActivity implements  View.OnClickListener{
         File dir = new File(filepath.getAbsolutePath()
                 + "/CHRONOS/");
         dir.mkdirs();
-        File file = new File(dir, Config.PROJECTNAME+"-"+("0000" + Config.PROJECTID).substring(Config.PROJECTID.length())+".png");
+        File file = new File(dir, _ProjectNAME+"-"+("0000" + _ProjectID).substring( _ProjectID.length())+".png");
 
         // Show a toast message on successful save
         TastyToast.makeText(getApplicationContext(), "Image Saved", Toast.LENGTH_SHORT,TastyToast.SUCCESS) ;

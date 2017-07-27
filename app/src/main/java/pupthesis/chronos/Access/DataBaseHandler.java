@@ -23,6 +23,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String TABLE_PROJECTLINE= "projectsline";
     private static final String TABLE_TASK= "tasks";
     private static final String TABLE_GANT_TASK= "gant_task";
+    private static final String TABLE_LINE_TASK= "gant_line_task";
     private static final String TABLE_LINE= "line";
     private static final String TABLE_TASKLINE= "tasksline";
 
@@ -60,6 +61,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db.execSQL( TASKTABLELINE());
         } catch (Exception xx) {
         }
+        try {
+            db.execSQL( LINETASKTABLE());
+        } catch (Exception xx) {
+        }
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -80,7 +85,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         String CREATE_CHRONOS_TABLE = "CREATE TABLE " + TABLE_GANT_TASK + "( " +
                 "_id INTEGER PRIMARY KEY  AUTOINCREMENT," +
-
                 "task_id TEXT," +
                 "task_name TEXT," +
                 "percent_complete TEXT," +
@@ -90,6 +94,20 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 "isseen INTEGER  DEFAULT 0)";
         return CREATE_CHRONOS_TABLE;
     }
+
+    private String LINETASKTABLE() {
+
+        String CREATE_CHRONOS_TABLE = "CREATE TABLE " + TABLE_LINE_TASK + "( " +
+                "_id INTEGER PRIMARY KEY  AUTOINCREMENT," +
+                "task_id TEXT," +
+                "task_name TEXT," +
+                "measure TEXT," +
+                "start_date TEXT," +
+                "project_id TEXT," +
+                "isseen INTEGER  DEFAULT 0)";
+        return CREATE_CHRONOS_TABLE;
+    }
+
     private String PROJECTTABLE() {
 
         String CREATE_CHRONOS_TABLE = "CREATE TABLE " + TABLE_PROJECT + "( " +
