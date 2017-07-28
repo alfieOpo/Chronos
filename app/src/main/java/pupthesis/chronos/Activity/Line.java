@@ -2,6 +2,7 @@ package pupthesis.chronos.Activity;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -25,9 +26,10 @@ import org.w3c.dom.Text;
 
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.Adapter.LineAdapter;
+import pupthesis.chronos.Animation.BaseActivity;
 import pupthesis.chronos.R;
 
-public class Line extends AppCompatActivity {
+public class Line extends BaseActivity {
     DataBaseHandler da;
     boolean islongpress=false;
     ListView linelist;
@@ -56,6 +58,7 @@ public class Line extends AppCompatActivity {
         final String LineName[]=new String[cursor.getCount()];
         final String Status[]=new String[cursor.getCount()];
         final String ID[]=new String[cursor.getCount()];
+        final String ref_project_id[]=new String[cursor.getCount()];
         int i=0;
         if (cursor.moveToFirst()) {
             do {
@@ -63,18 +66,22 @@ public class Line extends AppCompatActivity {
                 LineName[i]=cursor.getString(cursor.getColumnIndex("line_name"));
                 Status[i]=cursor.getString(cursor.getColumnIndex("status"));
                 ID[i]=cursor.getString(cursor.getColumnIndex("_id"));
-
+                ref_project_id[i]=cursor.getString(cursor.getColumnIndex("ref_project_id"));
                 i = cursor.getPosition() + 1;
 
             } while (cursor.moveToNext());
         }
-        LineAdapter adapter=new LineAdapter(Line.this,LineName,Status);
+        LineAdapter adapter=new LineAdapter(Line.this,LineName,Status,ID);
         linelist.setAdapter(adapter);
         linelist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(!islongpress){
-
+                    Intent startmainactivity = new Intent(Line.this, LineTask.class);
+                    startmainactivity.putExtra("project_id", ID[position]);
+                    startmainactivity.putExtra("project_name", LineName[position].toUpperCase());
+                    startmainactivity.putExtra("ref_project_id", ref_project_id[position]);
+                    startActivity(startmainactivity);
                 }
             }
         });
@@ -159,5 +166,11 @@ public class Line extends AppCompatActivity {
         final    AlertDialog dialog = builder.create();
         dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
         dialog.show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LoadList();
     }
 }

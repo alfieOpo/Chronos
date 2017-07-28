@@ -1,6 +1,7 @@
 package pupthesis.chronos.Adapter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -20,40 +21,33 @@ import org.w3c.dom.Text;
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.R;
 
-public class LineAdapter extends ArrayAdapter<String> {
-    private String[] days;
-    private String[] linename;
-    private String[] status;
-    private String[] id;
-    private Activity context;
+public class LineTaskAdapter extends ArrayAdapter<String> {
+    TextView measureTV,projectnameTV,dateTV;
+    CardView cardmeasure,cardnameoftask,carddate;
     int maxposition=0;
-    DataBaseHandler da;
-    public LineAdapter(Activity context,  String[] linename,String[] status,String id[]) {
-        super(context, R.layout.activity_line_adapter, linename);
+    Activity context;
+    String[] taskname;String[] date; String[] measure;
+    public LineTaskAdapter(Activity context, String[] taskname, String[] date, String[] measure) {
+        super(context, R.layout.activity_line_task_adapter, taskname);
         this.context = context;
-        this.linename = linename;
-        this.status = status;
-        this.id=id;
+        this.taskname=taskname;
+        this.date=date;
+        this.measure=measure;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
-        View listViewItem = inflater.inflate(R.layout.activity_line_adapter, null, true);
-        TextView DaysTV,StatusTV,LinenameTV;
-        CardView cardDays,cardLinename,cardStatus;
-        DaysTV=(TextView)listViewItem.findViewById(R.id.DaysTV);
-        StatusTV=(TextView)listViewItem.findViewById(R.id.StatusTV);
-        LinenameTV=(TextView)listViewItem.findViewById(R.id.LinenameTV);
+        View listViewItem = inflater.inflate(R.layout.activity_line_task_adapter, null, true);
+
+        measureTV=(TextView)listViewItem.findViewById(R.id.measureTV);
+        projectnameTV=(TextView)listViewItem.findViewById(R.id.projectnameTV);
+        dateTV=(TextView)listViewItem.findViewById(R.id.dateTV);
+
+        measureTV.setText(measure[position]);
+        projectnameTV.setText(taskname[position]);
+        dateTV.setText(date[position]);
 
 
-        cardDays=(CardView)listViewItem.findViewById(R.id.cardDays);
-        cardLinename=(CardView)listViewItem.findViewById(R.id.cardLinename);
-        cardStatus=(CardView)listViewItem.findViewById(R.id.cardStatus);
-        da=new DataBaseHandler(context);
-        int countdays=da.getCountlineTask(id[position]);
-        DaysTV.setText(countdays+" Day/s");
-        LinenameTV.setText(linename[position]);
-        StatusTV.setText(status[position]);
         if (position != maxposition) {
             AnimationSet set = new AnimationSet(true);
 

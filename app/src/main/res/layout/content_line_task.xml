@@ -9,7 +9,7 @@
     tools:context="pupthesis.chronos.Activity.LineTask"
     tools:showIn="@layout/activity_line_task">
     <ListView
-        android:id="@+id/listView"
+        android:id="@+id/projectList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"

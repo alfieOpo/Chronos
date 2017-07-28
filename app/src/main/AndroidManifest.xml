@@ -78,6 +78,10 @@
         <activity
             android:name=".Activity.LineTask"
             android:label="@string/title_activity_line_task"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".Activity.LineCharts"
+            android:label="@string/title_activity_line_charts"
             android:theme="@style/NoActionBar"></activity>
     </application>
 

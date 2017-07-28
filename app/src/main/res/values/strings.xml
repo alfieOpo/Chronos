@@ -19,4 +19,5 @@
     <string name="title_activity_project__line">Project_Line</string>
     <string name="title_activity_task__line">Task_Line</string>
     <string name="title_activity_line_task">LineTask</string>
+    <string name="title_activity_line_charts">LineCharts</string>
 </resources>

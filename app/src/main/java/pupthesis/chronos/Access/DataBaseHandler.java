@@ -23,7 +23,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String TABLE_PROJECTLINE= "projectsline";
     private static final String TABLE_TASK= "tasks";
     private static final String TABLE_GANT_TASK= "gant_task";
-    private static final String TABLE_LINE_TASK= "gant_line_task";
+    private static final String TABLE_LINE_TASK= "line_task";
     private static final String TABLE_LINE= "line";
     private static final String TABLE_TASKLINE= "tasksline";
 
@@ -173,7 +173,18 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.close();
         return retval;
     }
-
+    public boolean createNewLINETASK(ContentValues v) {
+        boolean retval=false;
+        SQLiteDatabase db = this.getWritableDatabase();
+        long rowInserted = db.insert(TABLE_LINE_TASK, null, v);
+        if (rowInserted != -1) {
+            retval= true;
+        } else {
+            retval= false;
+        }
+        db.close();
+        return retval;
+    }
     public boolean createNewGANTTTASK(ContentValues v) {
         boolean retval=false;
         SQLiteDatabase db = this.getWritableDatabase();
@@ -291,9 +302,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             return countTask;
 
         }catch (Exception dd){
-            String Error1=dd.getMessage();
-            String Error2=dd.getMessage();
-            String Error3=dd.getMessage();
+
             return countTask;
         }
     }
@@ -347,6 +356,20 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor cursor = db.rawQuery(sql, null);
             countTask=String.valueOf(cursor.getCount());
+            return countTask;
+
+        }catch (Exception dd){
+            return countTask;
+        }
+    }
+
+    public int getCountlineTask(String Project_id) {
+        int countTask=0;
+        try {
+            String sql =" select * from line_task where project_id = "+Project_id;
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(sql, null);
+            countTask=cursor.getCount();
             return countTask;
 
         }catch (Exception dd){

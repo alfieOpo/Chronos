@@ -82,7 +82,7 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
         _ProjectID = getIntent().getStringExtra("project_id");
         _ProjectNAME=getIntent().getStringExtra("project_name");
         _RefProjectID=getIntent().getStringExtra("ref_project_id");
-        da=new DataBaseHandler(getApplicationContext());
+         da=new DataBaseHandler(getApplicationContext());
          da.ExecuteSql("update gant_task set isseen =1 where project_id="+_ProjectID);
 
         fab_charts=(FloatingActionButton)findViewById(R.id.fab_charts);
