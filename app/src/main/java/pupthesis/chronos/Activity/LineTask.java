@@ -2,8 +2,10 @@ package pupthesis.chronos.Activity;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.renderscript.ScriptGroup;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -24,20 +27,32 @@ import android.widget.Toast;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Locale;
+
+import jxl.Workbook;
+import jxl.WorkbookSettings;
 import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.Adapter.LineTaskAdapter;
 import pupthesis.chronos.Animation.BaseActivity;
 import pupthesis.chronos.R;
 import pupthesis.chronos.Util.Config;
 
-public class LineTask extends BaseActivity {
+public class LineTask extends BaseActivity implements  View.OnClickListener {
     String _ProjectID="0";
     String _RefProjectID="0";
     String _ProjectNAME="N/A";
-       int counter=0;
+    int counter=0;
     DataBaseHandler da;
     ListView projectList;
+    private Boolean isFabOpen = false;
+    private FloatingActionButton fab,fab1,fab2,fab_charts;
+    private Animation fab_open,fab_close,rotate_forward,rotate_backward;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,14 +63,21 @@ public class LineTask extends BaseActivity {
         _ProjectNAME=getIntent().getStringExtra("project_name");
         _RefProjectID=getIntent().getStringExtra("ref_project_id");
         projectList=(ListView)findViewById(R.id.projectList);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Toast.makeText(LineTask.this, "sfwef", Toast.LENGTH_SHORT).show();
-               EntryEntry();
-            }
-        });
+
+        fab_charts=(FloatingActionButton)findViewById(R.id.fab_charts);
+        fab = (FloatingActionButton)findViewById(R.id.fab);
+        fab1 = (FloatingActionButton)findViewById(R.id.fab_exel);
+        fab2 = (FloatingActionButton)findViewById(R.id.fab_create);
+
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
+
+        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward);
+        fab.setOnClickListener(this);
+        fab1.setOnClickListener(this);
+        fab2.setOnClickListener(this);
+        fab_charts.setOnClickListener(this);
         LoadList();
     }
     private  void EntryEntry(){
@@ -97,7 +119,7 @@ public class LineTask extends BaseActivity {
         MEASURE.setInputType(InputType.TYPE_CLASS_NUMBER);
 
         linearLayout.addView(taskname);
-       linearLayout.addView(TASKNAME);
+        linearLayout.addView(TASKNAME);
 
         linearLayout.addView(measure);
         linearLayout.addView(MEASURE);
@@ -126,33 +148,50 @@ public class LineTask extends BaseActivity {
                 WronInput(MEASURE);
                 WronInput(TASKNAME);
                 if(counter==0){
-                    ContentValues cv=new ContentValues();
-                    cv.put("task_id",_ProjectNAME+_ProjectID);
-                    cv.put("task_name",TASKNAME.getText().toString());
-                    cv.put("measure",MEASURE.getText().toString());
-                    cv.put("start_date", Config.Date());
-                    cv.put("project_id",_ProjectID);
                     da=new DataBaseHandler(LineTask.this);
-                    if(da.createNewLINETASK(cv)){
+                    if(isExist(Config.Date(),TASKNAME.getText().toString())){
+                        da.ExecuteSql("update line_task set measure=measure+"+MEASURE.getText().toString()+" where start_date='"+Config.Date()+"' and task_name='"+TASKNAME.getText().toString()+"' and project_id="+_ProjectID);
                         TastyToast.makeText(LineTask.this,"Successfully Saved",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
                         LoadList();
+                        dialog.cancel();
                     }
+                    else {
+                        ContentValues cv=new ContentValues();
+                        cv.put("task_id",_ProjectNAME+_ProjectID);
+                        cv.put("task_name",TASKNAME.getText().toString());
+                        cv.put("measure",MEASURE.getText().toString());
+                        cv.put("start_date", Config.Date());
+                        cv.put("project_id",_ProjectID);
+
+                        if(da.createNewLINETASK(cv)){
+                            TastyToast.makeText(LineTask.this,"Successfully Saved",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
+                            LoadList();
+                            dialog.cancel();
+                        }}
                 }
             }
         });
     }
+    private  boolean isExist(String date,String name){
+        da=new DataBaseHandler(LineTask.this);
+        Cursor cursor=da.getLIST("select * from line_task where start_date='"+date+"' and task_name='"+name+"' and project_id="+_ProjectID);
+        try{return cursor.getCount()!=0;}catch
+                (Exception xx)
+        {return  false;}
+
+    }
     private  void WronInput(MaterialBetterSpinner view){
 
 
-            if(view.getText().toString().equals("")){
-                Animation    shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-                view.setAnimation(shake);
-                view.setError("No value found");
-                TastyToast.makeText(LineTask.this,  "Fill-out important data", Toast.LENGTH_SHORT,TastyToast.ERROR).show();
+        if(view.getText().toString().equals("")){
+            Animation    shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+            view.setAnimation(shake);
+            view.setError("No value found");
+            TastyToast.makeText(LineTask.this,  "Fill-out important data", Toast.LENGTH_SHORT,TastyToast.ERROR).show();
 
-                counter++;
+            counter++;
 
-            }
+        }
 
     }
     private  void WronInput(EditText view){
@@ -192,5 +231,114 @@ public class LineTask extends BaseActivity {
 
         LineTaskAdapter adapter=new LineTaskAdapter(LineTask.this,_taskname,_date,_measure);
         projectList.setAdapter(adapter);
+    }
+    private  void ToExcel(){
+        /*da=new DataBaseHandler(LineTask.this);
+
+        final Cursor cursor = da.getLIST("select task_name,percent_complete,end_date,start_date,project_id from gant_task where project_id="+_ProjectID);
+        File filepath = Environment.getExternalStorageDirectory();
+        File sd = new File(filepath.getAbsolutePath()
+                + "/CHRONOS/");
+        String csvFile = _ProjectNAME+"-"+("0000" + _ProjectID).substring(_ProjectID.length())+".xls";
+
+        File directory = new File(sd.getAbsolutePath());
+        //create directory if not exist
+        if (!directory.isDirectory()) {
+            directory.mkdirs();
+        }
+        try {
+
+            //file path
+            File file = new File(directory, csvFile);
+            WorkbookSettings wbSettings = new WorkbookSettings();
+            wbSettings.setLocale(new Locale("en", "EN"));
+            WritableWorkbook workbook;
+            workbook = Workbook.createWorkbook(file, wbSettings);
+            //Excel sheet name. 0 represents first sheet
+            WritableSheet sheet = workbook.createSheet(_ProjectNAME, 0);
+            // column and row
+            sheet.addCell(new Label(0, 0, "Task Name"));
+            sheet.addCell(new Label(1, 0, "Percent Complete"));
+            sheet.addCell(new Label(2, 0, "End Date"));
+            sheet.addCell(new Label(3, 0, "Start Date"));
+            int i=0;
+            if (cursor.moveToFirst()) {
+                do {
+                    String task_name = cursor.getString(cursor.getColumnIndex("task_name"));
+                    String percent_complete = cursor.getString(cursor.getColumnIndex("percent_complete"));
+                    String end_date = cursor.getString(cursor.getColumnIndex("end_date"));
+                    String start_date = cursor.getString(cursor.getColumnIndex("start_date"));
+                    i = cursor.getPosition() + 1;
+                    sheet.addCell(new Label(0, i, task_name));
+                    sheet.addCell(new Label(1, i, percent_complete));
+                    sheet.addCell(new Label(2, i, end_date.replace(",","/")));
+                    sheet.addCell(new Label(3, i, start_date.replace(",","/")));
+                } while (cursor.moveToNext());
+            }
+            //closing cursor
+            cursor.close();
+            workbook.write();
+            workbook.close();
+            TastyToast.makeText(LineTask.this,"Data Exported in a Excel Sheet", Toast.LENGTH_SHORT,TastyToast.SUCCESS);
+        }   catch (WriteException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+    }
+    public void animateFAB(){
+
+        if(isFabOpen){
+
+            fab.startAnimation(rotate_backward);
+            fab1.startAnimation(fab_close);
+            fab2.startAnimation(fab_close);
+            fab_charts.startAnimation(fab_close);
+            fab1.setClickable(false);
+            fab2.setClickable(false);
+            fab_charts.setClickable(false);
+            isFabOpen = false;
+            Log.d("Alfie", "close");
+
+        } else {
+
+            fab.startAnimation(rotate_forward);
+            fab1.startAnimation(fab_open);
+            fab2.startAnimation(fab_open);
+            fab_charts.startAnimation(fab_open);
+            fab1.setClickable(true);
+            fab2.setClickable(true);
+            fab_charts.setClickable(true);
+            isFabOpen = true;
+            Log.d("Alfie","open");
+        }
+    }
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id){
+            case R.id.fab:
+
+                animateFAB();
+                break;
+            case R.id.fab_exel:
+                ToExcel();
+                animateFAB();
+
+                break;
+            case R.id.fab_create:
+                EntryEntry();
+                animateFAB();
+                break;
+            case R.id.fab_charts:
+                Intent startmainactivity = new Intent(getApplicationContext(), LineCharts.class);
+                startmainactivity.putExtra("project_id", _ProjectID);
+                startmainactivity.putExtra("project_name", _ProjectNAME);
+                startmainactivity.putExtra("ref_project_id", _RefProjectID);
+                startActivity(startmainactivity);
+
+                animateFAB();
+                break;
+        }
     }
 }

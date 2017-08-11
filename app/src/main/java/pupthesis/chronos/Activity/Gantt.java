@@ -119,7 +119,7 @@ public class Gantt extends BaseActivity {
 
         TextView description=new TextView(Gantt.this);
         final EditText DESCRIPTION=new EditText(Gantt.this);
-        description.setText("Descrition :");
+        description.setText("Description :");
 
         chkboxholder.addView(description);
         chkboxholder.addView(DESCRIPTION);
@@ -398,7 +398,7 @@ public class Gantt extends BaseActivity {
 
         TextView description=new TextView(Gantt.this);
         final EditText DESCRIPTION=new EditText(Gantt.this);
-        description.setText("Descrition :");
+        description.setText("Description :");
 
         DESCRIPTION.setText(_description);
         chkboxholder.addView(description);

@@ -99,11 +99,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         String CREATE_CHRONOS_TABLE = "CREATE TABLE " + TABLE_LINE_TASK + "( " +
                 "_id INTEGER PRIMARY KEY  AUTOINCREMENT," +
-                "task_id TEXT," +
-                "task_name TEXT," +
-                "measure TEXT," +
-                "start_date TEXT," +
-                "project_id TEXT," +
+                "task_id varchar(255)," +
+                "task_name varchar(255)," +
+                "measure decimal (18,2)," +
+                "start_date date," +
+                "project_id int," +
                 "isseen INTEGER  DEFAULT 0)";
         return CREATE_CHRONOS_TABLE;
     }
@@ -264,7 +264,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             cursor = db.rawQuery(query, null);
         }catch (Exception xx){
-
+String xa=xx.getMessage();
             return null;
         }
         return cursor;

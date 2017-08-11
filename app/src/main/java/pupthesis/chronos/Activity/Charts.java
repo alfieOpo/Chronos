@@ -121,17 +121,17 @@ public class Charts extends AppCompatActivity implements  View.OnClickListener{
             public void onPageStarted(WebView view, String url, Bitmap favicon)
             {
 
-                TastyToast.makeText(getApplicationContext(), "Please Wait", Toast.LENGTH_SHORT,TastyToast.INFO) ;
-                //   progressDialog = ProgressDialog.show( getApplicationContext(), "Please wait ", "Loading...", true);
-                // TODO show you progress image
+
                 super.onPageStarted(view, url, favicon);
+
+                TastyToast.makeText(getApplicationContext(), "Please Wait", Toast.LENGTH_SHORT,TastyToast.INFO) ;
             }
 
             @Override
             public void onPageFinished(WebView view, String url)
             {
                 super.onPageFinished(view, url);
-                TastyToast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT,TastyToast.SUCCESS) ;
+                TastyToast.makeText(getApplicationContext(), "Redering", Toast.LENGTH_SHORT,TastyToast.DEFAULT) ;
 
 
             }
