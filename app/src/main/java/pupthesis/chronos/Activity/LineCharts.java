@@ -1,10 +1,12 @@
 package pupthesis.chronos.Activity;
 
+import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +21,7 @@ import android.view.animation.AnimationUtils;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import com.sdsmdg.tastytoast.TastyToast;
@@ -43,8 +46,7 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
     List<String> items;
     String MASTERDATA="";
     DataBaseHandler da;
-    int height=400;
-    int width=600;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
@@ -52,11 +54,6 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-          height = displayMetrics.heightPixels;
-          width = displayMetrics.widthPixels;
         _ProjectID = getIntent().getStringExtra("project_id");
         _ProjectNAME = getIntent().getStringExtra("project_name");
         _RefProjectID = getIntent().getStringExtra("ref_project_id");
@@ -75,8 +72,14 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         fab_refresh.setOnClickListener(this);
         fab_toimage.setOnClickListener(this);
 
+        LoadList();
+    }
+    @SuppressLint("SetJavaScriptEnabled")
+    private  void LoadList(){
         webView = (WebView) findViewById(R.id.webViewline);
+
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebChromeClient(new WebChromeClient());
         webView.getSettings().setLoadsImagesAutomatically(true);
         webView.setVerticalScrollBarEnabled(true);
         webView.setHorizontalScrollBarEnabled(true);
@@ -84,17 +87,48 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         webView.getSettings().setSupportZoom(true);
 
         webView.getSettings().setUseWideViewPort(true);
-        webView.getSettings().setLoadWithOverviewMode(true);
-        webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
-        webView.getSettings().setAllowFileAccessFromFileURLs(true);
-        webView.setWebChromeClient(new WebChromeClient());
-        LoadList();
-    }
+        //webView.getSettings().setLoadWithOverviewMode(true);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+            webView.getSettings().setAllowFileAccessFromFileURLs(true);
+        }
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels/2;
+        int width = displayMetrics.widthPixels/2;
+        String customHtml = "<html>\n" +
+                "<head>\n" +
+                "    <script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" +
+                "    <script language=\"JavaScript\">\n" +
+                " google.charts.load('current', {packages: ['corechart']});\n" +
+                "google.charts.setOnLoadCallback(drawChart);\n" +
+                "function drawChart() {\n" +
+                "   // Define the chart to be drawn.\n" +
+                "   var data = google.visualization.arrayToDataTable(["+MASTERDATA+"]);\n" +
+                "\n" +
+                "   var options = {" +
+                "title:'"+_ProjectNAME+"'," +
 
-    private  void LoadList(){
+                "        legend: { position: 'bottom', maxLines: 3 },\n" +
+                "        bar: { groupWidth: '40%' },\n" +
+                "        isStacked: true    };\n" +
+                "\n" +
+                "   // Instantiate and draw the chart.\n" +
+                "   var chart = new google.visualization.BarChart(document.getElementById('container'));\n" +
+                "   chart.draw(data, options);\n" +
+                "}\n" +
+
+                "</script>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "\n" +
+                "\n" +
+                "<div id=\"container\" style=\"width: "+width+"px; height: "+height+"px;\"></div>\n" +
+                "</body>\n" +
+                "</html>";
 
 
-        webView.loadUrl("file:///android_asset/barchart.html");
+        webView.loadData(customHtml, "text/html", "UTF-8");
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon)
@@ -105,7 +139,6 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
             @Override
             public void onPageFinished(WebView view, String url)
             {
-                webView.loadUrl("javascript:drawChart("+MASTERDATA+","+width+","+height+","+_ProjectNAME+")");
                 TastyToast.makeText(getApplicationContext(), "Rendering", Toast.LENGTH_LONG,TastyToast.DEFAULT) ;
             }
         });
@@ -141,7 +174,7 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         if(cursor.moveToFirst()){
             do {
                 for(int j =0; j<cursor.getColumnCount(); j++){
-                     data[i][j]=cursor.getString(j);
+                    data[i][j]=cursor.getString(j);
                 }
                 i++;
             }while (cursor.moveToNext());
@@ -269,5 +302,27 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onStop() {
+
+        try{
+            webView.stopLoading();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        super.onStop();
+    }
+
+    @Override
+    public void onBackPressed() {
+        try{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }catch (Exception xx){
+
+        }
+        finish();
+        super.onBackPressed();
     }
 }

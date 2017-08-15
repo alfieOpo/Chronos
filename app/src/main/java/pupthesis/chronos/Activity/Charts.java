@@ -113,9 +113,9 @@ public class Charts extends AppCompatActivity implements  View.OnClickListener{
                 "  <div id=\"chart_div\"></div>\n" +
                 "</body>\n" +
                 "</html>\n";
-
         // webView.loadUrl(customHtml);
         webView.loadData(customHtml, "text/html", "UTF-8");
+        //webView.loadData(customHtml, "text/html", "UTF-8");
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon)

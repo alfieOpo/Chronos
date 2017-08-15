@@ -1,26 +1,17 @@
 <html>
 <head>
-    <title>Google Charts Tutorial</title>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-     google.charts.load('current', {packages: ['corechart']});
-   </script>
-</head>
-<body>
-<div id="container" style="width: 550px; height: 400px; margin: 0 auto"></div>
-<script language="JavaScript">
-function drawChart(data,_width,_height,_title) {
+    <script language="JavaScript">
+ google.charts.load('current', {packages: ['corechart']});
+function drawChart() {
    // Define the chart to be drawn.
-   var data = google.visualization.arrayToDataTable([data]);
+   var data = google.visualization.arrayToDataTable([MASTERDATA]);
 
-   var options = {
-           title: _title,
-            width: _width,
-            height: _height ,
-            legend: { position: 'bottom', maxLines: 3 },
-            bar: { groupWidth: '75%' },
-            isStacked: true
-   };
+   var options = { width: 960,
+        height: 540,
+        legend: { position: 'bottom', maxLines: 3 },
+        bar: { groupWidth: '75%' },
+        isStacked: true    };
 
    // Instantiate and draw the chart.
    var chart = new google.visualization.BarChart(document.getElementById('container'));
@@ -28,5 +19,10 @@ function drawChart(data,_width,_height,_title) {
 }
 google.charts.setOnLoadCallback(drawChart);
 </script>
+</head>
+<body>
+
+
+<div id="container"></div>
 </body>
 </html>
