@@ -25,7 +25,7 @@ import pupthesis.chronos.Animation.BaseActivity;
 import pupthesis.chronos.R;
 
 public class Task_Line extends BaseActivity {
-    Button btn_project;
+
     DataBaseHandler da;
     ListView projectList;
     String ProjectID="0";
@@ -40,7 +40,7 @@ public class Task_Line extends BaseActivity {
         ProjectID = getIntent().getStringExtra("project_id");
         ProjectNAME=getIntent().getStringExtra("project_name");
         TextView project_nameTV=(TextView)findViewById(R.id.project_nameTV);
-        project_nameTV.setText("LIST OF "+ProjectNAME+" TASK REFERENCES");
+        project_nameTV.setText("LIST OF "+ProjectNAME+" ITEM REFERENCES");
         projectList=(ListView)findViewById(R.id.projectList);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

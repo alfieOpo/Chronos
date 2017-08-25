@@ -2,6 +2,7 @@ package pupthesis.chronos.Activity;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -60,10 +62,13 @@ public class Task extends BaseActivity {
         LinearLayout linearLayout=new LinearLayout(Task.this);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         TextView label=new TextView(Task.this);
-        final EditText txt_project=new EditText(Task.this);
+        final AutoCompleteTextView txt_project=new AutoCompleteTextView (Task.this);
 
         ///
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line,  getResources().getStringArray( R.array.TASK));
 
+        txt_project.setAdapter(adapter);
         linearLayout.addView(label);
         linearLayout.addView(txt_project);
         alert.setView(linearLayout);
@@ -89,6 +94,8 @@ public class Task extends BaseActivity {
         });
         alert.show();
     }
+
+
     private  void LoadList()
     {
 

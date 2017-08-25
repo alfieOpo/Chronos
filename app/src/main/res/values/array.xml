@@ -10,4 +10,142 @@
         <item>In progress</item>
         <item>Complete</item>
     </string-array>
+    <string-array name="TASK">
+        <item>Aggregate Base Course</item>
+        <item>Aggregate Stockpile</item>
+        <item>Aggregate Subbase Course </item>
+        <item>Aggregate Surface Course </item>
+        <item>Aggregates </item>
+        <item>Asphalt Stabilized Road Mix Base Course</item>
+        <item>Bituminous Concrete Surface Course, Hot Laid </item>
+        <item>Bituminous Materials </item>
+        <item>Bituminous Penetration Macadam Pavement</item>
+        <item>Bituminous Plant-Mix (Stockpile Maintenance Mixture) </item>
+        <item>Bituminous Plant-Mix Surface Course-General</item>
+        <item>Bituminous Prime Coat</item>
+        <item>Bituminous Road Mix Surface Course </item>
+        <item>Bituminous Seal Coat </item>
+        <item>Bituminous Surface Treatment </item>
+        <item>Bituminous Tack Coat </item>
+        <item>Blasting </item>
+        <item>Brush Hammered Finish</item>
+        <item>Cement Plaster </item>
+        <item>Chemical Admixtures For Concrete </item>
+        <item>Cleaning and Reconditioning Existing Drainage Structures </item>
+        <item>Clearing and Grubbing</item>
+        <item>Cold Asphalt Plant-Mix </item>
+        <item>Compaction Equipment and Density Control Strips</item>
+        <item>Concrete Clay, Plastic and Fiber Pipe</item>
+        <item>Concrete Slope Protection</item>
+        <item>Concrete Structures</item>
+        <item>Conduit Work </item>
+        <item>Construction Lime (Hydrated) </item>
+        <item>Crushed Aggregate Base Course</item>
+        <item>Curb and/or Gutter </item>
+        <item>Drainage Steel Grating with Frame</item>
+        <item>Drainage System</item>
+        <item>Elastomeric Bearing Pads </item>
+        <item>Electrical Works </item>
+        <item>Embankment </item>
+        <item>Erection </item>
+        <item>Excavation </item>
+        <item>Excavation </item>
+        <item>Excavation Omitted </item>
+        <item>Fabrication</item>
+        <item>Fence and Guard Rail </item>
+        <item>Fencing</item>
+        <item>Field Painting </item>
+        <item>Filling And Grading</item>
+        <item>Gabions and Mattresses </item>
+        <item>Geotextiles</item>
+        <item>Granite Wash Out </item>
+        <item>Granolithic Marble Finish</item>
+        <item>Grounding Installation </item>
+        <item>Guardrail</item>
+        <item>Hand-Laid Rock Embankment</item>
+        <item>Hydraulic Cement </item>
+        <item>Inspection </item>
+        <item>Installation of Corrugated Metal Roofing </item>
+        <item>Installation of Feeders and Feeders Duct </item>
+        <item>Installation of Formworks</item>
+        <item>Installation of Lighting Fixtures</item>
+        <item>Installation of Lighting Outlets </item>
+        <item>Installation of Outlet And Switches</item>
+        <item>Installation of Panel Boards </item>
+        <item>Installation of Pre-Painted Metal Sheet</item>
+        <item>Installation of Scaffolding</item>
+        <item>Installation of Steel Doors</item>
+        <item>Installation of Steel Windows</item>
+        <item>Installation of Wall Switches And Reception</item>
+        <item>Installation of Wiring </item>
+        <item>Joint Materials</item>
+        <item>Lime Stabilized Road Mix Base Course </item>
+        <item>Manholes. Inlets and Catch Basin </item>
+        <item>Marking</item>
+        <item>Masonry Units</item>
+        <item>Materials and Workmanship</item>
+        <item>Metal Pipe </item>
+        <item>Metal Structures </item>
+        <item>Mineral Filler </item>
+        <item>Monuments, Markers and Guide Posts </item>
+        <item>Overhaul </item>
+        <item>Paint</item>
+        <item>Painting Works </item>
+        <item>Paints </item>
+        <item>Pavement </item>
+        <item>Pavement Markings</item>
+        <item>Pea Gravel </item>
+        <item>Pebble Wash Out Finish </item>
+        <item>Piling </item>
+        <item>Pipe Culverts and Storm Drains </item>
+        <item>Plain Cement Plaster Finish</item>
+        <item>Plumbing Works </item>
+        <item>Portland Cement Concrete Pavement</item>
+        <item>Portland Cement Stabilized Road Mix Base Course</item>
+        <item>Power Load Center</item>
+        <item>Pre Molded Joint Filler for Concrete Paving and Structural Construction</item>
+        <item>Prestressed Concrete Structures</item>
+        <item>Protection Of Adjoining Property </item>
+        <item>Protection Of Trees</item>
+        <item>Protection-Puming Maintenance</item>
+        <item>Railings </item>
+        <item>Reflective Pavement Studs</item>
+        <item>Reflective Thermoplastic Stripping Material (Solid Form) </item>
+        <item>Reinforcing Steel</item>
+        <item>Reinforcing Steel and Wire Rope</item>
+        <item>Rejection</item>
+        <item>Removal of Structures and Obstruction</item>
+        <item>Re-Tampering </item>
+        <item>Riprap and Grouted Riprap</item>
+        <item>Road Sign</item>
+        <item>Rubble Concrete</item>
+        <item>Service Metering Facilities</item>
+        <item>Sheet Piles</item>
+        <item>Shop Painting</item>
+        <item>Sidewalk </item>
+        <item>Sodding</item>
+        <item>Sprigging</item>
+        <item>Steel Bridges</item>
+        <item>Stone Masonry</item>
+        <item>Structural Concrete</item>
+        <item>Structural Metal </item>
+        <item>Structure Excavation </item>
+        <item>Stucco Finish</item>
+        <item>Subgrade Preparation </item>
+        <item>Temporary Easement </item>
+        <item>Test And Guarantee </item>
+        <item>Timber Structures</item>
+        <item>Top Soil Stripping And Grading </item>
+        <item>Topsoil</item>
+        <item>Treated and Untreated Timber </item>
+        <item>Treated and Untreated Timber </item>
+        <item>Tree Planting</item>
+        <item>Unauthorized Excavation</item>
+        <item>Underdrains</item>
+        <item>Under-Grade Service Entrance </item>
+        <item>Utilities</item>
+        <item>Water</item>
+        <item>Welded Structural Steel</item>
+        <item>Welding</item>
+    </string-array>
 </resources>

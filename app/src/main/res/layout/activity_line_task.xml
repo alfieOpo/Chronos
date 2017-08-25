@@ -8,6 +8,8 @@
 
 
     <include layout="@layout/content_line_task" />
+
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_charts"
         android:layout_width="wrap_content"
