@@ -20,4 +20,6 @@
     <string name="title_activity_task__line">Task_Line</string>
     <string name="title_activity_line_task">LineTask</string>
     <string name="title_activity_line_charts">LineCharts</string>
+    <string name="about">CHRONOS is an Appplication Software that is more specific and efficient in construction planning and scheduling in the field of Civil Engineering. This mobile application is compatible for mobiles and tablets and print-ready.</string>
+
 </resources>

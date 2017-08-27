@@ -19,9 +19,9 @@ public class FlashScreen extends BaseActivity {
         mLoadingView = (LoadingView) findViewById(R.id.loading_view);
 
         mLoadingView.addAnimation(R.color.White,R.drawable.labor_man,LoadingView.FROM_LEFT);
-        mLoadingView.addAnimation(R.color.White,R.drawable.graph,LoadingView.FROM_TOP);
         mLoadingView.addAnimation(R.color.White,R.drawable.building,LoadingView.FROM_RIGHT);
         mLoadingView.addAnimation(R.color.White,R.drawable.road,LoadingView.FROM_BOTTOM);
+        mLoadingView.addAnimation(R.color.White,R.drawable.graphmo,LoadingView.FROM_LEFT);
         mLoadingView.addAnimation(R.color.White,R.drawable.circlelogo,LoadingView.FROM_BOTTOM);
 
         mLoadingView.startAnimation();

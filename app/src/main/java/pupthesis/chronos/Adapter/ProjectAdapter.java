@@ -43,13 +43,25 @@ public class ProjectAdapter extends ArrayAdapter<String> {
         projectnameTV=(TextView)listViewItem.findViewById(R.id.projectnameTV);
         cardprojecttaskCount=(CardView)listViewItem.findViewById(R.id.cardprojecttaskCount);
         ///
+
+
         DataBaseHandler da=new DataBaseHandler(context);
+
+        String item="Item found";
+
         if(gantt){
-            projecttaskCountTV.setText(da.getCountTaskforProject(ProjectID[position])+" Task");
+            int count=Integer.parseInt(da.getCountTaskforProject(ProjectID[position]));
+            if(count>1){
+                item=" Items found";
+            }
+                projecttaskCountTV.setText(da.getCountTaskforProject(ProjectID[position])+item);
         }
         else
-        {
-            projecttaskCountTV.setText(da.getCountTaskforProjectLine(ProjectID[position])+" Task");
+        {int count=Integer.parseInt(da.getCountTaskforProjectLine(ProjectID[position]));
+            if(count>1){
+                item=" Items found";
+            }
+            projecttaskCountTV.setText(da.getCountTaskforProjectLine(ProjectID[position])+item);
         }
 
         projectnameTV.setText(ProjectName[position]);

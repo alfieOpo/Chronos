@@ -4,13 +4,12 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.renderscript.ScriptGroup;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
@@ -48,6 +47,7 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
     String _RefProjectID="0";
     String _ProjectNAME="N/A";
     int counter=0;
+
     DataBaseHandler da;
     ListView projectList;
     private Boolean isFabOpen = false;
@@ -79,7 +79,68 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
         fab2.setOnClickListener(this);
         fab_charts.setOnClickListener(this);
         LoadList();
+
     }
+
+
+    private  void ToExcel(){
+        da=new DataBaseHandler(LineTask.this);
+
+        final Cursor cursor = da.getLIST("select task_name,percent_complete,end_date,start_date,project_id from gant_task where project_id="+_ProjectID);
+        File filepath = Environment.getExternalStorageDirectory();
+        File sd = new File(filepath.getAbsolutePath()
+                + "/CHRONOS/");
+        String csvFile = _ProjectNAME+"-"+("0000" + _ProjectID).substring(_ProjectID.length())+".xls";
+
+        File directory = new File(sd.getAbsolutePath());
+        //create directory if not exist
+        if (!directory.isDirectory()) {
+            directory.mkdirs();
+        }
+        try {
+
+            //file path
+            File file = new File(directory, csvFile);
+            WorkbookSettings wbSettings = new WorkbookSettings();
+            wbSettings.setLocale(new Locale("en", "EN"));
+            WritableWorkbook workbook;
+            workbook = Workbook.createWorkbook(file, wbSettings);
+            //Excel sheet name. 0 represents first sheet
+            WritableSheet sheet = workbook.createSheet(_ProjectNAME, 0);
+            // column and row
+
+            sheet.addCell(new Label(0, 0, "Task Name"));
+            sheet.addCell(new Label(1, 0, "Percent Complete"));
+            sheet.addCell(new Label(2, 0, "End Date"));
+            sheet.addCell(new Label(3, 0, "Start Date"));
+
+            int i=0;
+            if (cursor.moveToFirst()) {
+                do {
+                    String task_name = cursor.getString(cursor.getColumnIndex("task_name"));
+                    String percent_complete = cursor.getString(cursor.getColumnIndex("percent_complete"));
+                    String end_date = cursor.getString(cursor.getColumnIndex("end_date"));
+                    String start_date = cursor.getString(cursor.getColumnIndex("start_date"));
+                    i = cursor.getPosition() + 1;
+                    sheet.addCell(new Label(0, i, task_name));
+                    sheet.addCell(new Label(1, i, percent_complete));
+                    sheet.addCell(new Label(2, i, end_date.replace(",","/")));
+                    sheet.addCell(new Label(3, i, start_date.replace(",","/")));
+                } while (cursor.moveToNext());
+            }
+            //closing cursor
+            cursor.close();
+            workbook.write();
+            workbook.close();
+            TastyToast.makeText(LineTask.this,"Data Exported in a Excel Sheet", Toast.LENGTH_SHORT,TastyToast.SUCCESS);
+        }   catch (WriteException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     private  void EntryEntry(){
 
         LinearLayout linearLayout=new LinearLayout(LineTask.this);
@@ -232,60 +293,7 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
         LineTaskAdapter adapter=new LineTaskAdapter(LineTask.this,_taskname,_date,_measure);
         projectList.setAdapter(adapter);
     }
-    private  void ToExcel(){
-        /*da=new DataBaseHandler(LineTask.this);
 
-        final Cursor cursor = da.getLIST("select task_name,percent_complete,end_date,start_date,project_id from gant_task where project_id="+_ProjectID);
-        File filepath = Environment.getExternalStorageDirectory();
-        File sd = new File(filepath.getAbsolutePath()
-                + "/CHRONOS/");
-        String csvFile = _ProjectNAME+"-"+("0000" + _ProjectID).substring(_ProjectID.length())+".xls";
-
-        File directory = new File(sd.getAbsolutePath());
-        //create directory if not exist
-        if (!directory.isDirectory()) {
-            directory.mkdirs();
-        }
-        try {
-
-            //file path
-            File file = new File(directory, csvFile);
-            WorkbookSettings wbSettings = new WorkbookSettings();
-            wbSettings.setLocale(new Locale("en", "EN"));
-            WritableWorkbook workbook;
-            workbook = Workbook.createWorkbook(file, wbSettings);
-            //Excel sheet name. 0 represents first sheet
-            WritableSheet sheet = workbook.createSheet(_ProjectNAME, 0);
-            // column and row
-            sheet.addCell(new Label(0, 0, "Task Name"));
-            sheet.addCell(new Label(1, 0, "Percent Complete"));
-            sheet.addCell(new Label(2, 0, "End Date"));
-            sheet.addCell(new Label(3, 0, "Start Date"));
-            int i=0;
-            if (cursor.moveToFirst()) {
-                do {
-                    String task_name = cursor.getString(cursor.getColumnIndex("task_name"));
-                    String percent_complete = cursor.getString(cursor.getColumnIndex("percent_complete"));
-                    String end_date = cursor.getString(cursor.getColumnIndex("end_date"));
-                    String start_date = cursor.getString(cursor.getColumnIndex("start_date"));
-                    i = cursor.getPosition() + 1;
-                    sheet.addCell(new Label(0, i, task_name));
-                    sheet.addCell(new Label(1, i, percent_complete));
-                    sheet.addCell(new Label(2, i, end_date.replace(",","/")));
-                    sheet.addCell(new Label(3, i, start_date.replace(",","/")));
-                } while (cursor.moveToNext());
-            }
-            //closing cursor
-            cursor.close();
-            workbook.write();
-            workbook.close();
-            TastyToast.makeText(LineTask.this,"Data Exported in a Excel Sheet", Toast.LENGTH_SHORT,TastyToast.SUCCESS);
-        }   catch (WriteException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-    }
     public void animateFAB(){
 
         if(isFabOpen){
@@ -327,7 +335,9 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
 
                 break;
             case R.id.fab_create:
-                EntryEntry();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
+                    EntryEntry();
+                }
                 animateFAB();
                 break;
             case R.id.fab_charts:

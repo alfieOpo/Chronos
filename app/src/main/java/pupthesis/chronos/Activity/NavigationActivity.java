@@ -1,6 +1,7 @@
 package pupthesis.chronos.Activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -97,8 +98,9 @@ public class NavigationActivity extends BaseActivity
         }else if (id == R.id.nav_home) {
             FragmentManager fragmentManager =  getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.frame, new MainMenu()).commit();
-        }else if (id == R.id.btn_about) {
-
+        }else if (id == R.id.nav_about) {
+            Intent startmainactivity = new Intent(getApplicationContext(), About.class);
+            startActivity(startmainactivity);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

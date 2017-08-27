@@ -1,6 +1,7 @@
 package pupthesis.chronos.Fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import info.hoang8f.widget.FButton;
+import pupthesis.chronos.Activity.About;
 import pupthesis.chronos.R;
 import pupthesis.chronos.Animation.SlideAnimationUtil;
 
@@ -53,9 +55,11 @@ public class MainMenu extends Fragment  {
          btn_about.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
-
+                 Intent startmainactivity = new Intent(getActivity(), About.class);
+                 startActivity(startmainactivity);
              }
          });
+
         return view;
     }
 

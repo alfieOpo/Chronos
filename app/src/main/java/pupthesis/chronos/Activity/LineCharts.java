@@ -1,29 +1,36 @@
 package pupthesis.chronos.Activity;
 
-import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.HorizontalBarChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.sdsmdg.tastytoast.TastyToast;
 
 import java.io.File;
@@ -34,8 +41,12 @@ import java.util.List;
 
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.R;
+import pupthesis.chronos.Util.Colors;
+import pupthesis.chronos.Util.MyAxisValueFormatter;
+import pupthesis.chronos.Util.MyValueFormatter;
 
-public class LineCharts extends AppCompatActivity implements  View.OnClickListener{
+
+public class LineCharts extends AppCompatActivity implements  View.OnClickListener, OnChartValueSelectedListener {
     private FloatingActionButton fab,fab_toimage,fab_refresh;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
     private WebView webView;
@@ -47,6 +58,7 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
     String MASTERDATA="";
     DataBaseHandler da;
 
+    private HorizontalBarChart   mChart;
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
@@ -58,7 +70,7 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         _ProjectNAME = getIntent().getStringExtra("project_name");
         _RefProjectID = getIntent().getStringExtra("ref_project_id");
 
-        LoadItem();//load all the names
+        //LoadItem();//load all the names
         fab = (FloatingActionButton)findViewById(R.id.fab);
         fab_refresh = (FloatingActionButton)findViewById(R.id.fab_refresh);
         fab_toimage = (FloatingActionButton)findViewById(R.id.fab_toimage);
@@ -72,78 +84,54 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         fab_refresh.setOnClickListener(this);
         fab_toimage.setOnClickListener(this);
 
+
+
+        mChart = (HorizontalBarChart) findViewById(R.id.mChart);
+        mChart.setOnChartValueSelectedListener(this);
+
+        mChart.getDescription().setEnabled(false);
+
+        // if more than 60 entries are displayed in the chart, no values will be
+        // drawn
+        mChart.setMaxVisibleValueCount(40);
+
+        // scaling can now only be done on x- and y-axis separately
+        mChart.setPinchZoom(false);
+
+        mChart.setDrawGridBackground(false);
+        mChart.setDrawBarShadow(false);
+
+        mChart.setDrawValueAboveBar(false);
+        mChart.setHighlightFullBarEnabled(false);
+
+        // change the position of the y-labels
+        YAxis leftAxis = mChart.getAxisLeft();
+        leftAxis.setValueFormatter(new MyAxisValueFormatter());
+        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        mChart.getAxisRight().setEnabled(false);
+
+        XAxis xLabels = mChart.getXAxis();
+        xLabels.setPosition(XAxis.XAxisPosition.TOP);
+
+        // mChart.setDrawXLabels(false);
+        // mChart.setDrawYLabels(false);
+
+        // setting data
+
+
+        Legend l = mChart.getLegend();
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setDrawInside(false);
+        l.setFormSize(8f);
+        l.setFormToTextSpace(4f);
+        l.setXEntrySpace(6f);
+        l.setExtra(ColorTemplate.VORDIPLOM_COLORS, new String[] { "abc",
+                "def", "ghj", "ikl", "mno" });
         LoadList();
     }
-    @SuppressLint("SetJavaScriptEnabled")
-    private  void LoadList(){
-        webView = (WebView) findViewById(R.id.webViewline);
 
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebChromeClient(new WebChromeClient());
-        webView.getSettings().setLoadsImagesAutomatically(true);
-        webView.setVerticalScrollBarEnabled(true);
-        webView.setHorizontalScrollBarEnabled(true);
-        webView.getSettings().setBuiltInZoomControls(true);
-        webView.getSettings().setSupportZoom(true);
-
-        webView.getSettings().setUseWideViewPort(true);
-        //webView.getSettings().setLoadWithOverviewMode(true);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
-            webView.getSettings().setAllowFileAccessFromFileURLs(true);
-        }
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int height = displayMetrics.heightPixels/2;
-        int width = displayMetrics.widthPixels/2;
-        String customHtml = "<html>\n" +
-                "<head>\n" +
-                "    <script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" +
-                "    <script language=\"JavaScript\">\n" +
-                " google.charts.load('current', {packages: ['corechart']});\n" +
-                "google.charts.setOnLoadCallback(drawChart);\n" +
-                "function drawChart() {\n" +
-                "   // Define the chart to be drawn.\n" +
-                "   var data = google.visualization.arrayToDataTable(["+MASTERDATA+"]);\n" +
-                "\n" +
-                "   var options = {" +
-                "title:'"+_ProjectNAME+"'," +
-
-                "        legend: { position: 'bottom', maxLines: 3 },\n" +
-                "        bar: { groupWidth: '40%' },\n" +
-                "        isStacked: true    };\n" +
-                "\n" +
-                "   // Instantiate and draw the chart.\n" +
-                "   var chart = new google.visualization.BarChart(document.getElementById('container'));\n" +
-                "   chart.draw(data, options);\n" +
-                "}\n" +
-
-                "</script>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "\n" +
-                "\n" +
-                "<div id=\"container\" style=\"width: "+width+"px; height: "+height+"px;\"></div>\n" +
-                "</body>\n" +
-                "</html>";
-
-
-        webView.loadData(customHtml, "text/html", "UTF-8");
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon)
-            {
-                TastyToast.makeText(getApplicationContext(), "Please Wait", Toast.LENGTH_SHORT,TastyToast.INFO) ;
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url)
-            {
-                TastyToast.makeText(getApplicationContext(), "Rendering", Toast.LENGTH_LONG,TastyToast.DEFAULT) ;
-            }
-        });
-
-    }
     private void LoadItem() {
         items = new ArrayList<String>();
         da = new DataBaseHandler(LineCharts.this);
@@ -226,6 +214,51 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
                 break;
 
         }
+    }
+
+    private void LoadList() {
+
+        ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
+
+
+        float val1 =5f ;
+        float val2 =100f  ;
+        float val3 = 50f ;
+        float val4 = 20f ;
+        float val31 =5f ;
+        float val32 =2f  ;
+        float val33 = 5f ;
+        float val34 = 3f ;
+        yVals1.add(new BarEntry(0, new float[]{val1, val2, val3,val4},"2017/11/21"));
+        yVals1.add(new BarEntry(1, new float[]{val31, val32, val33,val34},"description 2"));
+
+
+        BarDataSet set1;
+
+        if (mChart.getData() != null &&
+                mChart.getData().getDataSetCount() > 0) {
+            set1 = (BarDataSet) mChart.getData().getDataSetByIndex(0);
+            set1.setValues(yVals1);
+            mChart.getData().notifyDataChanged();
+            mChart.notifyDataSetChanged();
+        } else {
+            set1 = new BarDataSet(yVals1, "Statistics Vienna 2014");
+            set1.setDrawIcons(false);
+            set1.setColors(Colors.getColors());
+            set1.setStackLabels(new String[]{"Sunday", "Monday", "Tuesday","Wed"});
+
+            ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
+            dataSets.add(set1);
+
+            BarData data = new BarData(dataSets);
+            data.setValueFormatter(new MyValueFormatter());
+            data.setValueTextColor(Color.WHITE);
+
+            mChart.setData(data);
+        }
+
+        mChart.setFitBars(true);
+        mChart.invalidate();
     }
 
     public void animateFAB(){
@@ -324,5 +357,15 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         }
         finish();
         super.onBackPressed();
+    }
+
+    @Override
+    public void onValueSelected(Entry e, Highlight h) {
+
+    }
+
+    @Override
+    public void onNothingSelected() {
+
     }
 }

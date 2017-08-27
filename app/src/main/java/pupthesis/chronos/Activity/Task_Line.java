@@ -5,15 +5,12 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -60,14 +57,18 @@ public class Task_Line extends BaseActivity {
         LinearLayout linearLayout=new LinearLayout(Task_Line.this);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         TextView label=new TextView(Task_Line.this);
-        final EditText txt_project=new EditText(Task_Line.this);
+        final AutoCompleteTextView txt_project=new AutoCompleteTextView (Task_Line.this);
+
+        ///
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line,  getResources().getStringArray( R.array.TASK));
 
         ///
 
         linearLayout.addView(label);
         linearLayout.addView(txt_project);
         alert.setView(linearLayout);
-        alert.setTitle("NEW TASK");
+        alert.setTitle("NEW ACTIVITY");
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
