@@ -2,12 +2,9 @@ package pupthesis.chronos.Access;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.pm.ConfigurationInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
-import android.util.Log;
 
 import pupthesis.chronos.Util.Config;
 
@@ -120,6 +117,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         String CREATE_CHRONOS_TABLE = "CREATE TABLE " + TABLE_PROJECTLINE + "( " +
                 "_id INTEGER PRIMARY KEY  AUTOINCREMENT," +
+
                 "project_name TEXT)";
         return CREATE_CHRONOS_TABLE;
     }
@@ -145,6 +143,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 "_id INTEGER PRIMARY KEY  AUTOINCREMENT," +
                 "line_name TEXT," +
                 "status TEXT," +
+                "start_date date," +
+                "end_date date," +
                 "ref_project_id INTEGER)";
         return CREATE_CHRONOS_TABLE;
     }
@@ -366,7 +366,59 @@ String xa=xx.getMessage();
     public int getCountlineTask(String Project_id) {
         int countTask=0;
         try {
-            String sql =" select * from line_task where project_id = "+Project_id;
+            String sql =" select distinct start_date from line_task where project_id = "+Project_id;
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(sql, null);
+            countTask=cursor.getCount();
+            return countTask;
+
+        }catch (Exception dd){
+            return countTask;
+        }
+    }
+    public void CheckData(String _ProjectID,String refproject_id,String _ProjectNAME){
+
+        try {
+            String sql =" select count(_id) from line_task where project_id = "+_ProjectID+" and start_date='"+Config.Date()+"'";
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(sql, null);
+            if(cursor.moveToFirst()){
+String val=cursor.getString(0);
+                    if(val.equals("0")){
+                        String sql2 =" select project_id,task_name from tasksline where project_id = "+refproject_id+"";
+
+                        Cursor cursor1 = db.rawQuery(sql2, null);
+                        if(cursor1.moveToFirst()){
+                            do{
+                                ContentValues cv=new ContentValues();
+                                cv.put("task_id",_ProjectNAME+_ProjectID);
+                                cv.put("task_name",cursor1.getString(1));
+                                cv.put("measure",0);
+                                cv.put("start_date", Config.Date());
+                                cv.put("project_id",_ProjectID);
+
+                                if(createNewLINETASK(cv)){
+
+                                }
+
+                            }while (cursor1.moveToNext());
+                        }
+
+                    }
+                }
+
+
+        }catch (Exception dd){
+            String a=dd.getMessage();
+            String a1=dd.getMessage();
+        }
+
+    }
+    public int countoftask(String ref_id){
+
+        int countTask=0;
+        try {
+            String sql =" select distinct task_name from "+TABLE_TASKLINE+" where project_id = "+ref_id;
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor cursor = db.rawQuery(sql, null);
             countTask=cursor.getCount();

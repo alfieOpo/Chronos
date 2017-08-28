@@ -12,9 +12,8 @@ import android.util.Log;
 
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.Activity.Gantt;
-import pupthesis.chronos.Util.Config;
-import pupthesis.chronos.Activity.NavigationActivity;
 import pupthesis.chronos.R;
+import pupthesis.chronos.Util.Config;
 
 /**
  * Created by ALFIE on 7/22/2017.
@@ -74,11 +73,11 @@ public class NotificationIntentService extends IntentService {
                     }
 
                 }catch (Exception xx){
-                    String Error1=xx.getMessage();
-                    String Error2=xx.getMessage();
-                    String Error3=xx.getMessage();
+
                     return;
                 }
+
+
 
             }
             if (ACTION_DELETE.equals(action)) {

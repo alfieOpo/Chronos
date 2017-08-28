@@ -1,19 +1,20 @@
 package pupthesis.chronos.Activity;
 
+import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -22,7 +23,7 @@ import android.widget.Toast;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
-import org.w3c.dom.Text;
+import java.util.Calendar;
 
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.Adapter.LineAdapter;
@@ -33,6 +34,8 @@ public class Line extends BaseActivity {
     DataBaseHandler da;
     boolean islongpress=false;
     ListView linelist;
+    String startformatdate="";
+      String endformatdate="";
     ArrayAdapter<String>   spinnerArrayAdapter2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,12 +149,87 @@ public class Line extends BaseActivity {
         STATUS.setAdapter(spinnerArrayAdapter2);
         layout.addView(status);
         layout.addView(STATUS);
+        TextView lbl_start_date=new TextView(this);
+        lbl_start_date.setText("Date Start");
+        TextView lbl_end_date=new TextView(this);
+        lbl_end_date.setText("Date End");
+
+     final   EditText txt_start=new EditText(this);
+        txt_start.setFocusableInTouchMode(false);
+        txt_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // calender class's instance and get current date , month and year from calender
+                final Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR); // current year
+                int mMonth = c.get(Calendar.MONTH); // current month
+                int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                // date picker dialog
+                DatePickerDialog datePickerDialog = new DatePickerDialog(Line.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // set day of month , month and year value in the edit text
+
+                                int _year=year;
+                                int _month=(monthOfYear + 1);
+                                int _day=dayOfMonth;
+                                  startformatdate = _year + "," + _month + "," + _day;
+                                txt_start.setText(_year+"/"+_month+"/"+_day);
+
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
+
+        final   EditText txt_end=new EditText(this);
+        txt_end.setFocusableInTouchMode(false);
+        txt_end.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // calender class's instance and get current date , month and year from calender
+                final Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR); // current year
+                int mMonth = c.get(Calendar.MONTH); // current month
+                int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                // date picker dialog
+                DatePickerDialog datePickerDialog = new DatePickerDialog(Line.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // set day of month , month and year value in the edit text
+
+                                int _year=year;
+                                int _month=(monthOfYear + 1);
+                                int _day=dayOfMonth;
+                                  endformatdate = _year + "," + _month + "," + _day;
+                                txt_end.setText(_year+"/"+_month+"/"+_day);
+
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
+        layout.addView(lbl_start_date);
+        layout.addView(txt_start);
+layout.addView(lbl_end_date);
+        layout.addView(txt_end);
         ////
         builder.setView(layout);
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ContentValues cv=new ContentValues();
+
+                cv.put("start_date",txt_start.getText().toString());
+                cv.put("end_date",txt_end.getText().toString());
                 cv.put("line_name",LINEPROJECT.getText().toString());
                 cv.put("status",STATUS.getText().toString());
                 int position=spinnerArrayAdapter.getPosition(LINEPROJECT.getText().toString());

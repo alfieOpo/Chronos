@@ -20,8 +20,8 @@ public class MyValueFormatter implements IValueFormatter
 
     @Override
     public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-       // return mFormat.format(value) +"\n"+entry.getData();
-        return String.valueOf(entry.getData());
+       return mFormat.format(value) +"\n"+entry.getData();
+      //  return String.valueOf(entry.getData());
     }
 
 }
