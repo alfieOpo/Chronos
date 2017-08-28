@@ -4,23 +4,23 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
+import android.view.View;
 
-import pupthesis.chronos.Fragment.Create;
-import pupthesis.chronos.Fragment.ReferenceMenu;
 import pupthesis.chronos.Animation.BaseActivity;
+import pupthesis.chronos.Fragment.Create;
+import pupthesis.chronos.Fragment.Files;
 import pupthesis.chronos.Fragment.MainMenu;
+import pupthesis.chronos.Fragment.ReferenceMenu;
 import pupthesis.chronos.R;
 import pupthesis.chronos.Service.NotificationEventReceiver;
 
@@ -75,10 +75,7 @@ public class NavigationActivity extends BaseActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -101,6 +98,10 @@ public class NavigationActivity extends BaseActivity
         }else if (id == R.id.nav_about) {
             Intent startmainactivity = new Intent(getApplicationContext(), About.class);
             startActivity(startmainactivity);
+        }
+        else if (id == R.id.nav_files) {
+            FragmentManager fragmentManager =  getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.frame, new Files()).commit();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

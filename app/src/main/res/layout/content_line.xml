@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="pupthesis.chronos.Activity.Line"
     tools:showIn="@layout/activity_line">
@@ -12,6 +13,8 @@
         android:id="@+id/linelist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:dividerHeight="10.0sp"
+        android:divider="@android:color/transparent"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

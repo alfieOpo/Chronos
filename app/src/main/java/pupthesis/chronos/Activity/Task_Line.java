@@ -37,7 +37,7 @@ public class Task_Line extends BaseActivity {
         ProjectID = getIntent().getStringExtra("project_id");
         ProjectNAME=getIntent().getStringExtra("project_name");
         TextView project_nameTV=(TextView)findViewById(R.id.project_nameTV);
-        project_nameTV.setText("LIST OF "+ProjectNAME+" ITEM REFERENCES");
+        project_nameTV.setText("LIST OF \""+ProjectNAME+"\" ITEM REFERENCES");
         projectList=(ListView)findViewById(R.id.projectList);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +64,7 @@ public class Task_Line extends BaseActivity {
                 android.R.layout.simple_dropdown_item_1line,  getResources().getStringArray( R.array.TASK));
 
         ///
-
+        txt_project.setAdapter(adapter);
         linearLayout.addView(label);
         linearLayout.addView(txt_project);
         alert.setView(linearLayout);

@@ -30,6 +30,7 @@
         android:id="@+id/projectList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:dividerHeight="10.0sp"
         android:divider="@null"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="8dp" />

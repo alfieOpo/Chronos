@@ -5,10 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="pupthesis.chronos.Activity.LineTask">
-
-
     <include layout="@layout/content_line_task" />
-
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_charts"
@@ -58,5 +55,7 @@
         android:layout_margin="@dimen/fab_margin"
         android:background="@color/AppbarColor"
         app:srcCompat="@drawable/add" />
+
+
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,8 +1,6 @@
 package pupthesis.chronos.Adapter;
 
 import android.app.Activity;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +11,6 @@ import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.R;
@@ -47,19 +43,19 @@ public class ProjectAdapter extends ArrayAdapter<String> {
 
         DataBaseHandler da=new DataBaseHandler(context);
 
-        String item="Item found";
+        String item="Item";
 
         if(gantt){
             int count=Integer.parseInt(da.getCountTaskforProject(ProjectID[position]));
             if(count>1){
-                item=" Items found";
+                item=" Items";
             }
                 projecttaskCountTV.setText(da.getCountTaskforProject(ProjectID[position])+item);
         }
         else
         {int count=Integer.parseInt(da.getCountTaskforProjectLine(ProjectID[position]));
             if(count>1){
-                item=" Items found";
+                item=" Items";
             }
             projecttaskCountTV.setText(da.getCountTaskforProjectLine(ProjectID[position])+item);
         }

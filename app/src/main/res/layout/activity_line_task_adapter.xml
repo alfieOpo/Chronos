@@ -9,11 +9,11 @@
     tools:context="pupthesis.chronos.Adapter.LineTaskAdapter">
     <android.support.v7.widget.CardView
         android:id="@+id/cardmeasure"
-        android:layout_width="150dp"
+        android:layout_width="90dp"
         android:layout_height="100dp"
         app:cardBackgroundColor="@color/AppbarColor"
         app:cardElevation="5dp"
-        app:cardCornerRadius="20dp">
+        app:cardCornerRadius="45dp">
 
         <TextView
             android:id="@+id/measureTV"
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="1000 m."
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
             android:textColor="@color/White" />
     </android.support.v7.widget.CardView>
     <LinearLayout
@@ -40,7 +40,7 @@
                 android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
                 android:paddingTop="5dp"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                 android:text="Name of the project"
 
                 android:textColor="@color/ProjectName" />
@@ -50,9 +50,9 @@
             android:id="@+id/carddate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="10dp"
+            app:cardCornerRadius="3dp"
             app:cardBackgroundColor="@color/AppbarColor"
-            app:cardElevation="5dp">
+            app:cardElevation="2dp">
 
             <TextView
                 android:id="@+id/dateTV"
@@ -61,6 +61,7 @@
                 android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
                 android:paddingTop="5dp"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:text="date here"
                 android:textColor="@color/White" />
         </android.support.v7.widget.CardView>

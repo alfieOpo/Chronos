@@ -11,11 +11,13 @@
 
     <com.github.mikephil.charting.charts.HorizontalBarChart
         android:layout_width="match_parent"
+        android:background="@color/White"
         android:id="@+id/mChart"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent" >
 
     </com.github.mikephil.charting.charts.HorizontalBarChart>
+
+
 
 
 </FrameLayout>

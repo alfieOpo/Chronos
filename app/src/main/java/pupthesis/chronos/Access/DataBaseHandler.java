@@ -414,7 +414,7 @@ String val=cursor.getString(0);
         }
 
     }
-    public int countoftask(String ref_id){
+    public int countoftask(String ref_id){//getting the list of task inside the [project it will be use for the series of colors in chart
 
         int countTask=0;
         try {
@@ -427,5 +427,25 @@ String val=cursor.getString(0);
         }catch (Exception dd){
             return countTask;
         }
+    }
+    public String enddate(String project_id){//getting the end date use for validating insert
+
+
+        try {
+            String sql ="select end_date from  line where _id="+project_id;
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(sql, null);
+           if(cursor.moveToFirst()){
+               return  cursor.getString(0);
+           }
+           else {
+
+               return Config.Date();
+           }
+
+        }catch (Exception dd){
+
+        }
+        return Config.Date();
     }
 }

@@ -2,7 +2,6 @@ package pupthesis.chronos.Activity;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,12 +12,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sdsmdg.tastytoast.TastyToast;
 
@@ -43,7 +39,7 @@ public class Task extends BaseActivity {
         ProjectID = getIntent().getStringExtra("project_id");
         ProjectNAME=getIntent().getStringExtra("project_name");
         TextView project_nameTV=(TextView)findViewById(R.id.project_nameTV);
-        project_nameTV.setText("LIST OF "+ProjectNAME+" TASK REFERENCES");
+        project_nameTV.setText("LIST OF \""+ProjectNAME+"\" TASK REFERENCES");
         projectList=(ListView)findViewById(R.id.projectList);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

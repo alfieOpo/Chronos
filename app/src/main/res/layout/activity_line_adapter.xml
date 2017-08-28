@@ -27,6 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+
         android:paddingLeft="10dp"
         android:gravity="center">
         <android.support.v7.widget.CardView
@@ -43,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/White"
                 android:text="Name of Line"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"/>
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
         </android.support.v7.widget.CardView>
 <android.support.v7.widget.CardView
     android:id="@+id/cardStatus"
@@ -57,7 +58,7 @@
         android:id="@+id/StatusTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
         android:textColor="@color/White"
         android:text="Status"/>
 </android.support.v7.widget.CardView>

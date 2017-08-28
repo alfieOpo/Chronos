@@ -83,7 +83,8 @@
             android:name=".Activity.LineCharts"
             android:label="@string/title_activity_line_charts"
             android:theme="@style/NoActionBar" />
-        <activity android:name=".Activity.About"></activity>
+        <activity android:name=".Activity.About" />
+
     </application>
 
 </manifest>

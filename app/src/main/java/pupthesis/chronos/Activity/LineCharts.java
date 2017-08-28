@@ -3,9 +3,7 @@ package pupthesis.chronos.Activity;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -114,8 +112,8 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         mChart.getAxisRight().setEnabled(false);
 
         XAxis xLabels = mChart.getXAxis();
-        xLabels.setPosition(XAxis.XAxisPosition.TOP);
 
+        xLabels.setPosition(XAxis.XAxisPosition.TOP);
         // mChart.setDrawXLabels(false);
         // mChart.setDrawYLabels(false);
 
@@ -215,7 +213,11 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
             mChart.setData(data);
         }
 
+        //mChart.setExtraBottomOffset(5f);
+        mChart.setExtraOffsets(10, 10, 10, 10);
         mChart.setFitBars(true);
+        mChart.setDragEnabled(true);
+        mChart.getLegend().setWordWrapEnabled(true);
         mChart.invalidate();
     }
 
@@ -297,32 +299,15 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
             Log.d("Alfie","open");
         }
     }
-    public static Bitmap Image(HorizontalBarChart webView) {
-        webView.measure(View.MeasureSpec.makeMeasureSpec(
-                View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        webView.layout(0, 0, webView.getMeasuredWidth(), webView.getMeasuredHeight());
-        webView.setDrawingCacheEnabled(true);
-        webView.buildDrawingCache();
-        Bitmap bitmap = Bitmap.createBitmap(webView.getMeasuredWidth(),
-                webView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-
-        Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint();
-        int iHeight = bitmap.getHeight();
-        canvas.drawBitmap(bitmap,0, iHeight, paint);
-        webView.draw(canvas);
-        return bitmap;
-    }
 
     private  void SaveImage(){
 
-        Bitmap bitmap;
+
         OutputStream output;
 
         // Retrieve the image from the res folder
-        bitmap =  Image(mChart);
-
+        mChart.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(mChart.getDrawingCache());
         // Find the SD Card path
         File filepath = Environment.getExternalStorageDirectory();
 

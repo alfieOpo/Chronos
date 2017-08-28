@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -29,6 +30,7 @@ import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Locale;
 
 import jxl.Workbook;
@@ -65,7 +67,14 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
         _RefProjectID=getIntent().getStringExtra("ref_project_id");
         projectList=(ListView)findViewById(R.id.projectList);
         da=new DataBaseHandler(LineTask.this);
-        da.CheckData( _ProjectID, _RefProjectID, _ProjectNAME);
+        try {
+            if(Config.ValidDate(Config.Date(),da.enddate(_ProjectID))){
+                da.CheckData( _ProjectID, _RefProjectID, _ProjectNAME);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         fab_charts=(FloatingActionButton)findViewById(R.id.fab_charts);
         fab = (FloatingActionButton)findViewById(R.id.fab);
         fab1 = (FloatingActionButton)findViewById(R.id.fab_exel);
@@ -88,7 +97,7 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
     private  void ToExcel(){
         da=new DataBaseHandler(LineTask.this);
 
-        final Cursor cursor = da.getLIST("select task_name,percent_complete,end_date,start_date,project_id from gant_task where project_id="+_ProjectID);
+        final Cursor cursor = da.getLIST("select task_name,measure,start_date from line_task where project_id="+_ProjectID);
         File filepath = Environment.getExternalStorageDirectory();
         File sd = new File(filepath.getAbsolutePath()
                 + "/CHRONOS/");
@@ -112,22 +121,21 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
             // column and row
 
             sheet.addCell(new Label(0, 0, "Task Name"));
-            sheet.addCell(new Label(1, 0, "Percent Complete"));
-            sheet.addCell(new Label(2, 0, "End Date"));
-            sheet.addCell(new Label(3, 0, "Start Date"));
+            sheet.addCell(new Label(1, 0, "Measure"));
+            sheet.addCell(new Label(2, 0, "Date Added"));
 
             int i=0;
             if (cursor.moveToFirst()) {
                 do {
                     String task_name = cursor.getString(cursor.getColumnIndex("task_name"));
-                    String percent_complete = cursor.getString(cursor.getColumnIndex("percent_complete"));
-                    String end_date = cursor.getString(cursor.getColumnIndex("end_date"));
+                    String measure = cursor.getString(cursor.getColumnIndex("measure"));
+
                     String start_date = cursor.getString(cursor.getColumnIndex("start_date"));
                     i = cursor.getPosition() + 1;
                     sheet.addCell(new Label(0, i, task_name));
-                    sheet.addCell(new Label(1, i, percent_complete));
-                    sheet.addCell(new Label(2, i, end_date.replace(",","/")));
-                    sheet.addCell(new Label(3, i, start_date.replace(",","/")));
+                    sheet.addCell(new Label(1, i, measure));
+                    sheet.addCell(new Label(2, i, start_date.replace(",","/")));
+
                 } while (cursor.moveToNext());
             }
             //closing cursor
@@ -193,7 +201,7 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
 /////////............................................
         final AlertDialog.Builder builder =new AlertDialog.Builder(LineTask.this);
         builder.setTitle("New Line Task");
-
+        builder.setCancelable(false);
         builder.setView(linearLayout);
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
@@ -203,7 +211,7 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
 
             }
         });
-        builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -221,6 +229,7 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
                 counter=0;
                 WronInput(MEASURE);
                 WronInput(TASKNAME);
+
                 if(counter==0){
                     da=new DataBaseHandler(LineTask.this);
                     if(isExist(Config.Date(),TASKNAME.getText().toString())){
@@ -366,37 +375,57 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
         }
 
     }
-    private  void LoadList(){
+    private  void LoadList() {
         projectList.setAdapter(null);
         final String _measure[];
         final String _date[];
         final String _taskname[];
         final String _id[];
-        da=new DataBaseHandler(LineTask.this);
-        Cursor cursor=da.getLIST("select * from line_task where project_id="+_ProjectID+" order 784598/ by start_date desc");
-        _measure=new String[cursor.getCount()];
-        _date=new String[cursor.getCount()];
-        _taskname=new String[cursor.getCount()];
-        _id=new String[cursor.getCount()];
-        int i=0;
+        da = new DataBaseHandler(LineTask.this);
+        Cursor cursor = da.getLIST("select * from line_task where project_id=" + _ProjectID + " order  by start_date desc");
+        _measure = new String[cursor.getCount()];
+        _date = new String[cursor.getCount()];
+        _taskname = new String[cursor.getCount()];
+        _id = new String[cursor.getCount()];
+        int i = 0;
         if (cursor.moveToFirst()) {
             do {
-
-                _measure[i]=  cursor.getString(cursor.getColumnIndex("measure"))+" m.";
-                _date[i]=  cursor.getString(cursor.getColumnIndex("start_date"));
-                _taskname[i]=  cursor.getString(cursor.getColumnIndex("task_name"));
-                _id[i]=cursor.getString(cursor.getColumnIndex("_id"));
+                _measure[i] = cursor.getString(cursor.getColumnIndex("measure")) + " m.";
+                _date[i] = cursor.getString(cursor.getColumnIndex("start_date"));
+                _taskname[i] = cursor.getString(cursor.getColumnIndex("task_name"));
+                _id[i] = cursor.getString(cursor.getColumnIndex("_id"));
                 i = cursor.getPosition() + 1;
             } while (cursor.moveToNext());
         }
 
-        LineTaskAdapter adapter=new LineTaskAdapter(LineTask.this,_taskname,_date,_measure);
+        LineTaskAdapter adapter = new LineTaskAdapter(LineTask.this, _taskname, _date, _measure);
         projectList.setAdapter(adapter);
         projectList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                EntryEntry(_id[position] ,_taskname[position],_date[position],_measure[position]);
+                EntryEntry(_id[position], _taskname[position], _date[position], _measure[position].replace("m.", ""));
                 return false;
+            }
+        });
+        projectList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+
+                    fab.hide();
+                    fab1.hide();
+                    fab2.hide();
+
+                } else {
+                    //isFabOpen=true;
+                    fab.show();
+                    // animateFAB();
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
             }
         });
     }
@@ -439,7 +468,7 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
             case R.id.fab_exel:
                 ToExcel();
                 animateFAB();
-
+                ToExcel();
                 break;
             case R.id.fab_create:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
