@@ -13,6 +13,7 @@ import pupthesis.chronos.Activity.Gantt;
 import pupthesis.chronos.Activity.Line;
 import pupthesis.chronos.R;
 import pupthesis.chronos.Animation.SlideAnimationUtil;
+import pupthesis.chronos.Util.Config;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,7 +31,7 @@ public class Create extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =inflater.inflate(R.layout.fragment_create, container, false);
-
+        Config.islastpage=true;
         SlideAnimationUtil.slideInFromRight(getContext(),view);
         btn_gantt=(FButton)view.findViewById(R.id.btn_gantt);
         btn_gantt.setOnClickListener(new View.OnClickListener() {
@@ -54,5 +55,9 @@ public class Create extends Fragment {
     }
 
 
-
+    @Override
+    public void onResume() {
+        Config.islastpage=true;
+        super.onResume();
+    }
 }

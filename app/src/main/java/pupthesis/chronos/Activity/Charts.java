@@ -44,6 +44,7 @@ public class Charts extends AppCompatActivity implements  View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_charts);
+        Config.islastpage=false;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -156,12 +157,18 @@ public class Charts extends AppCompatActivity implements  View.OnClickListener{
         String sql="select * from gant_task where project_id="+ _ProjectID+" order by _id desc";
         Cursor cursor= da.getLIST(sql);
         final String taskname[];
+        final String dependencies[];
+        final String days[];
+        final String precedence[];
         final String task_id[];
         final String endtime[];
         final String starttime[];
         final String _percentcompelete[];
         final String _id[];
         endtime=new String[cursor.getCount()];
+        dependencies=new String[cursor.getCount()];
+        days=new String[cursor.getCount()];
+        precedence=new String[cursor.getCount()];
         task_id=new String[cursor.getCount()];
         starttime=new String[cursor.getCount()];
         _percentcompelete=new String[cursor.getCount()];
@@ -171,26 +178,30 @@ public class Charts extends AppCompatActivity implements  View.OnClickListener{
         if(cursor!=null){
             cursor.moveToFirst();
             try{
-                endtime[0]=cursor.getString(4);
-                task_id[0]=cursor.getString(1);
-                taskname[0]=cursor.getString(2);
-                starttime[0]=cursor.getString(5);
-                _percentcompelete[0]=cursor.getString(3);
-                _id[0]=cursor.getString(0);}catch (Exception xx){}
+                dependencies[0]=cursor.getString(cursor.getColumnIndex("dependencies"));
+                days[0]=cursor.getString(cursor.getColumnIndex("days"));
+                precedence[0]=cursor.getString(cursor.getColumnIndex("precedence"));
+                endtime[0]=cursor.getString(cursor.getColumnIndex("end_date"));
+                task_id[0]=cursor.getString(cursor.getColumnIndex("task_id"));
+                taskname[0]=cursor.getString(cursor.getColumnIndex("task_name"));
+                starttime[0]=cursor.getString(cursor.getColumnIndex("start_date"));
+                _percentcompelete[0]=cursor.getString(cursor.getColumnIndex("percent_complete"));
+                _id[0]=cursor.getString(cursor.getColumnIndex("_id"));}catch (Exception xx){}
             while (cursor.moveToNext()){
-                endtime[i]=cursor.getString(4);
-                taskname[i]=cursor.getString(2);
-                starttime[i]=cursor.getString(5);
-                task_id[i]=cursor.getString(1);
-                _percentcompelete[i]=cursor.getString(3);
-
+                dependencies[i]=cursor.getString(cursor.getColumnIndex("dependencies"));
+                days[i]=cursor.getString(cursor.getColumnIndex("days"));
+                precedence[i]=cursor.getString(cursor.getColumnIndex("precedence"));
+                endtime[i]=cursor.getString(cursor.getColumnIndex("end_date"));
+                task_id[i]=cursor.getString(cursor.getColumnIndex("task_id"));
+                taskname[i]=cursor.getString(cursor.getColumnIndex("task_name"));
+                starttime[i]=cursor.getString(cursor.getColumnIndex("start_date"));
+                _percentcompelete[i]=cursor.getString(cursor.getColumnIndex("percent_complete"));
+                _id[i]=cursor.getString(cursor.getColumnIndex("_id"));
                 i++;
             }
             for(int c=0;c<cursor.getCount();c++){
-
-                String Data="['"+task_id[c]+"','"+taskname[c]+"',new Date("+starttime[c]+") "+",new Date("+ endtime[c]+"),null, "+_percentcompelete[c]+",null]";
+                String Data="['"+task_id[c]+"','"+taskname[c]+"',new Date("+starttime[c]+") "+",new Date("+ endtime[c]+"),daysToMilliseconds("+days[c]+"), "+_percentcompelete[c]+",'"+dependencies[c]+"']";
                 list.add(Data);
-
             }
         }
         return TextUtils.join(",\n",list);

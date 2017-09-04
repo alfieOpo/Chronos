@@ -13,6 +13,7 @@ import info.hoang8f.widget.FButton;
 import pupthesis.chronos.Activity.About;
 import pupthesis.chronos.R;
 import pupthesis.chronos.Animation.SlideAnimationUtil;
+import pupthesis.chronos.Util.Config;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,7 +36,7 @@ public class MainMenu extends Fragment  {
         btn_create=(FButton)view.findViewById(R.id.btn_create);
         btn_refrence=(FButton)view.findViewById(R.id.btn_reference);
         btn_about=(FButton)view.findViewById(R.id.btn_about);
-
+        Config.islastpage=false;
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

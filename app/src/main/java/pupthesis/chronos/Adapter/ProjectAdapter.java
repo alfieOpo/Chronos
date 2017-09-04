@@ -43,7 +43,7 @@ public class ProjectAdapter extends ArrayAdapter<String> {
 
         DataBaseHandler da=new DataBaseHandler(context);
 
-        String item="Item";
+        String item=" Item";
 
         if(gantt){
             int count=Integer.parseInt(da.getCountTaskforProject(ProjectID[position]));

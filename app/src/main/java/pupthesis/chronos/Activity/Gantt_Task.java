@@ -2,28 +2,28 @@ package pupthesis.chronos.Activity;
 
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Build;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.InputFilter;
 import android.text.InputType;
-import android.text.TextWatcher;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -37,12 +37,12 @@ import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
 import jxl.Workbook;
 import jxl.WorkbookSettings;
-
 import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
@@ -50,9 +50,8 @@ import jxl.write.WriteException;
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.Adapter.GantTaskAdapter;
 import pupthesis.chronos.Animation.BaseActivity;
-import pupthesis.chronos.Util.Config;
 import pupthesis.chronos.R;
-import pupthesis.chronos.Util.InputFilterMinMax;
+import pupthesis.chronos.Util.Config;
 
 public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
     GantTaskAdapter adapter;
@@ -70,12 +69,12 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
     private FloatingActionButton fab,fab1,fab2,fab_charts;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
     int counter=0;
-
+    String dependencies="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gantt__task);
-
+        Config.islastpage=false;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -153,7 +152,7 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
         TextView starttime=new TextView(Gantt_Task.this);
         starttime.setText("START :");
         final EditText START=new EditText(Gantt_Task.this);
-START.setFocusable(false);
+        START.setFocusable(false);
         START.setFocusableInTouchMode(false);
 
 
@@ -230,13 +229,70 @@ START.setFocusable(false);
         chkboxholder.addView(endtime);
         chkboxholder.addView(END);
 
+        TextView precedence =new TextView(Gantt_Task.this);
+        final EditText Precedence=new EditText(Gantt_Task.this);
+        Precedence.setFocusable(false);
+        Precedence.setFocusableInTouchMode(false);
+        Precedence.setText("None");
+        Precedence.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder listofProject = new AlertDialog.Builder(Gantt_Task.this);
+                da=new DataBaseHandler(Gantt_Task.this);
+                Cursor tasklist=da.getLIST("select _id,task_id,task_name from gant_task where project_id="+_ProjectID);
+                 final  LinearLayout listLayout=new LinearLayout(Gantt_Task.this);
+                listLayout.setOrientation(LinearLayout.VERTICAL);
+                int i=0;
+                if(tasklist.moveToFirst()){
 
+                    do{
+                        da.ExecuteSql("update gant_task set alphid='"+Config.Letters[i]+"' where _id="+tasklist.getString(tasklist.getColumnIndex("_id")));
+                        CheckBox chk=new CheckBox(Gantt_Task.this);
+                        chk.setText(Config.Letters[i]+" - "+tasklist.getString(tasklist.getColumnIndex("task_name")));
+                        chk.setTag(tasklist.getString(+tasklist.getColumnIndex("task_id")));
+                        if(tasklist.getString(+tasklist.getColumnIndex("task_name")).toLowerCase().equals(PROJECTNAME.getText().toString().toLowerCase())){
+                                chk.setEnabled(false);
+                        }
+                        listLayout.addView(chk);
+                        i++;
+                    }
+                    while (tasklist.moveToNext());
+                }
+                listofProject.setView(listLayout);
+                listofProject.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ArrayList<String> names=new ArrayList<String>();
+                        ArrayList<String> dep=new ArrayList<String>();
+                        for (int i = 0; i < listLayout.getChildCount(); i++) {
+                            CheckBox chk =(CheckBox)listLayout.getChildAt(i);
+                            if(chk.isChecked()){
+                                String split[]=chk.getText().toString().toString().split("-");
+                                names.add(split[0].replace(" ",""));
+                                dep.add(chk.getTag().toString().replace(","," "));
+                            }
+                        }
+                        Precedence.setText(TextUtils.join(",",names));
+                        dependencies=TextUtils.join(",",dep);
+                    }
+                });
+                listofProject.setNegativeButton("None", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Precedence.setText("None");
+                        dependencies="";
+                    }
+                });
+                final  AlertDialog dialog = listofProject.create();
+                dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
+                dialog.show();
+            }
+        });
+
+        chkboxholder.addView(precedence);
+        chkboxholder.addView(Precedence);
         TextView percent=new TextView(Gantt_Task.this);
-
         percent.setText("PERCENT COMPLETE :");
-
-
-
         final   EditText  PERCENTCOMPLETE=new EditText(Gantt_Task.this);
         PERCENTCOMPLETE.setInputType(InputType.TYPE_CLASS_NUMBER);
         PERCENTCOMPLETE.setText("0");
@@ -246,10 +302,9 @@ START.setFocusable(false);
 
         final LinearLayout layout2 = chkboxholder;
         layout.addView(chkboxholder);
+
         alert.setView(layout);
         alert.setCancelable(false);
-
-
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -312,9 +367,12 @@ START.setFocusable(false);
                    da=new DataBaseHandler(Gantt_Task.this);
                    ContentValues cv=new ContentValues();
                    cv.put("task_name",PROJECTNAME.getText().toString());
-                   cv.put("task_id",PROJECTNAME.getText().toString()+da.gantttaskcount());
+                   cv.put("task_id",PROJECTNAME.getText().toString().replace(" ","_").replace(","," ")+da.gantttaskcount(_ProjectID));
                    cv.put("start_date",startformatdate);
                    cv.put("end_date",endformatdate);
+                   cv.put("precedence",Precedence.getText().toString());
+                    cv.put("dependencies",dependencies);
+                    cv.put("days",Config.days(startformatdate,endformatdate));
                    cv.put("percent_complete",PERCENTCOMPLETE.getText().toString());
                    cv.put("project_id", _ProjectID);
                     if(startformatdate.replace(",","/").equals(Config.Date())){
@@ -356,6 +414,7 @@ counter++;
         ganttlist.setAdapter(null);
 
         final String taskname[];
+        final String _precedence[];
         final String endtime[];
         final String starttime[];
         final String _percentcompelete[];
@@ -366,6 +425,7 @@ counter++;
                      " select * from gant_task where project_id="+_ProjectID+" and start_date <> '"+Config.Date().replace("/",",")+"'  )x   ";
 
         Cursor cursor= da.getLIST(sql);
+        _precedence=new String[cursor.getCount()];
         endtime=new String[cursor.getCount()];
         starttime=new String[cursor.getCount()];
         _percentcompelete=new String[cursor.getCount()];
@@ -376,17 +436,19 @@ counter++;
         if(cursor!=null){
             cursor.moveToFirst();
             try{
-                endtime[0]=cursor.getString(4);
-                taskname[0]=cursor.getString(2);
-                starttime[0]=cursor.getString(5);
-                _percentcompelete[0]=cursor.getString(3);
-                _id[0]=cursor.getString(0);}catch (Exception xx){}
+                _precedence[0]=cursor.getString(cursor.getColumnIndex("precedence"));
+                endtime[0]=cursor.getString(cursor.getColumnIndex("end_date"));
+                taskname[0]=cursor.getString(cursor.getColumnIndex("task_name"));
+                starttime[0]=cursor.getString(cursor.getColumnIndex("start_date"));
+                _percentcompelete[0]=cursor.getString(cursor.getColumnIndex("percent_complete"));
+                _id[0]=cursor.getString(cursor.getColumnIndex("_id"));}catch (Exception xx){}
             while (cursor.moveToNext()){
-                _id[i]=cursor.getString(0);
-                endtime[i]=cursor.getString(4);
-                taskname[i]=cursor.getString(2);
-                starttime[i]=cursor.getString(5);
-                _percentcompelete[i]=cursor.getString(3);
+                _precedence[i]=cursor.getString(cursor.getColumnIndex("precedence"));
+                _id[i]=cursor.getString(cursor.getColumnIndex("_id"));
+                endtime[i]=cursor.getString(cursor.getColumnIndex("end_date"));
+                taskname[i]=cursor.getString(cursor.getColumnIndex("task_name"));
+                starttime[i]=cursor.getString(cursor.getColumnIndex("start_date"));
+                _percentcompelete[i]=cursor.getString(cursor.getColumnIndex("percent_complete"));
                 i++;
             }
 
@@ -397,8 +459,7 @@ counter++;
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 isLongPress=true;
-
-                showAlert(_id[position],taskname[position],starttime[position].replace(",","/"),endtime[position].replace(",","/"),_percentcompelete[position]);
+                showAlert(_id[position],taskname[position],starttime[position].replace(",","/"),endtime[position].replace(",","/"),_percentcompelete[position],_precedence[position]);
                 return isLongPress;
             }
         });
@@ -428,9 +489,10 @@ counter++;
         }
     }
     private  void ToExcel(){
-        da=new DataBaseHandler(Gantt_Task.this);
 
-        final Cursor cursor = da.getLIST("select task_name,percent_complete,end_date,start_date,project_id from gant_task where project_id="+_ProjectID);
+        da=new DataBaseHandler(Gantt_Task.this);
+        da.UpdateAlphid(_ProjectID);
+        final Cursor cursor = da.getLIST("select * from gant_task where project_id="+_ProjectID);
         File filepath = Environment.getExternalStorageDirectory();
         File sd = new File(filepath.getAbsolutePath()
                 + "/CHRONOS/");
@@ -452,22 +514,31 @@ counter++;
             //Excel sheet name. 0 represents first sheet
             WritableSheet sheet = workbook.createSheet(_ProjectNAME, 0);
             // column and row
-            sheet.addCell(new Label(0, 0, "Task Name"));
+            sheet.addCell(new Label(0, 0, "Activity Name"));
             sheet.addCell(new Label(1, 0, "Percent Complete"));
             sheet.addCell(new Label(2, 0, "End Date"));
             sheet.addCell(new Label(3, 0, "Start Date"));
+            sheet.addCell(new Label(4, 0, "Duration"));
+            sheet.addCell(new Label(5, 0, "Precedence"));
+            sheet.addCell(new Label(6, 0, "ID"));
             int i=0;
             if (cursor.moveToFirst()) {
                 do {
+                    String alphid = cursor.getString(cursor.getColumnIndex("alphid"));
                     String task_name = cursor.getString(cursor.getColumnIndex("task_name"));
                     String percent_complete = cursor.getString(cursor.getColumnIndex("percent_complete"));
                     String end_date = cursor.getString(cursor.getColumnIndex("end_date"));
                     String start_date = cursor.getString(cursor.getColumnIndex("start_date"));
+                    String Duration = cursor.getString(cursor.getColumnIndex("days"));
+                    String Precedence = cursor.getString(cursor.getColumnIndex("precedence"));
                     i = cursor.getPosition() + 1;
                     sheet.addCell(new Label(0, i, task_name));
                     sheet.addCell(new Label(1, i, percent_complete));
                     sheet.addCell(new Label(2, i, end_date.replace(",","/")));
                     sheet.addCell(new Label(3, i, start_date.replace(",","/")));
+                    sheet.addCell(new Label(4, i, Duration));
+                    sheet.addCell(new Label(5, i, Precedence));
+                    sheet.addCell(new Label(6, i, alphid));
                 } while (cursor.moveToNext());
             }
             //closing cursor
@@ -482,7 +553,7 @@ counter++;
         }
     }
 
-    private void showAlert(final String id,String task_name,String start_date,String end_date,String percent_complete) {
+    private void showAlert(final String id,String task_name,String start_date,String end_date,String percent_complete,String _Precedence) {
         final   AlertDialog.Builder alert = new AlertDialog.Builder(Gantt_Task.this);
         LinearLayout layout = new LinearLayout(Gantt_Task.this);
         LinearLayout chkboxholder = new LinearLayout(Gantt_Task.this);
@@ -514,7 +585,6 @@ counter++;
             spinnerArrayAdapter = new ArrayAdapter<String>(Gantt_Task.this, R.layout.dropdownadapter, ProjectName); //selected item will look like a spinner set from XML
             spinnerArrayAdapter.setDropDownViewResource(R.layout.dropdownadapter);
         }catch (Exception xx){
-
             TastyToast.makeText(Gantt_Task.this, "No Task Found.", Toast.LENGTH_SHORT,TastyToast.WARNING);
             return;
         }
@@ -605,6 +675,76 @@ counter++;
         chkboxholder.addView(END);
 
         END.setText(end_date);
+
+
+
+        TextView precedence =new TextView(Gantt_Task.this);
+        final EditText Precedence=new EditText(Gantt_Task.this);
+        Precedence.setFocusable(false);
+        Precedence.setFocusableInTouchMode(false);
+        Precedence.setText("None");
+        Precedence.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder listofProject = new AlertDialog.Builder(Gantt_Task.this);
+                da=new DataBaseHandler(Gantt_Task.this);
+                Cursor tasklist=da.getLIST("select task_id,task_name from gant_task where project_id="+_ProjectID+"");
+                final  LinearLayout listLayout=new LinearLayout(Gantt_Task.this);
+                listLayout.setOrientation(LinearLayout.VERTICAL);
+                int i=0;
+                if(tasklist.moveToFirst()){
+
+                    do{
+                        CheckBox chk=new CheckBox(Gantt_Task.this);
+                        chk.setText(Config.Letters[i]+" - "+tasklist.getString(+tasklist.getColumnIndex("task_name")));
+                        chk.setTag(tasklist.getString(+tasklist.getColumnIndex("task_id")));
+                        if(tasklist.getString(+tasklist.getColumnIndex("task_name")).toLowerCase().equals(PROJECTNAME.getText().toString().toLowerCase()))
+                        {
+                            chk.setEnabled(false);
+                        }
+                        listLayout.addView(chk);
+                        i++;
+                    }
+                    while (tasklist.moveToNext());
+                }
+
+                listofProject.setView(listLayout);
+                listofProject.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ArrayList<String> names=new ArrayList<String>();
+                        ArrayList<String> dep=new ArrayList<String>();
+                        for (int i = 0; i < listLayout.getChildCount(); i++) {
+                            CheckBox chk =(CheckBox)listLayout.getChildAt(i);
+                            if(chk.isChecked()){
+                                String split[]=chk.getText().toString().toString().split("-");
+                                names.add(split[0].replace(" ",""));
+                                dep.add(chk.getTag().toString().replace(","," "));
+                            }
+                        }
+                        Precedence.setText(TextUtils.join(",",names));
+                        dependencies=TextUtils.join(",",dep);
+                    }
+                });
+                listofProject.setNegativeButton("None", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Precedence.setText("None");
+                        dependencies="";
+                    }
+                });
+                final  AlertDialog dialog = listofProject.create();
+                dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
+                dialog.show();
+            }
+        });
+
+        chkboxholder.addView(precedence);
+        chkboxholder.addView(Precedence);
+Precedence.setText(_Precedence);
+
+
+
         final TextView percent=new TextView(Gantt_Task.this);
 
         percent.setText("PERCENT COMPLETE :");
@@ -616,7 +756,7 @@ counter++;
 
 
         PERCENTCOMPLETE.setInputType(InputType.TYPE_CLASS_NUMBER);
-         PERCENTCOMPLETE.setFilters(new InputFilter[]{new InputFilterMinMax("1", "12")});
+
         PERCENTCOMPLETE.setText(percent_complete);
 
 
@@ -702,9 +842,13 @@ counter++;
             }
                 if(counter==0){
                     da=new DataBaseHandler(Gantt_Task.this);
+
                     da.ExecuteSql("update gant_task set task_name ='"+PROJECTNAME.getText().toString()+
-                            "',task_id='"+PROJECTNAME.getText().toString()+da.gantttaskcount()+
+                            "',task_id='"+PROJECTNAME.getText().toString().replace(" ","_").replace(","," ")+da.gantttaskcount(_ProjectID)+
                             "',start_date='"+START.getText().toString().replace("/",",")+
+                            "',precedence='"+Precedence.getText().toString()+
+                            "',dependencies='"+dependencies+
+                            "',days='"+Config.days(START.getText().toString().replace("/",","),END.getText().toString().replace("/",","))+
                             "',end_date='"+END.getText().toString().replace("/",",")+
                             "',percent_complete='"+PERCENTCOMPLETE.getText().toString()+"' where _id ="+id);
                     Loadlist();
@@ -755,21 +899,33 @@ counter++;
 
                 break;
             case R.id.fab_create:
+
                 showAlert();
+
                 animateFAB();
                 break;
             case R.id.fab_charts:
+                if(isNetworkAvailable()){
                 Intent startmainactivity = new Intent(getApplicationContext(), Charts.class);
                 startmainactivity.putExtra("project_id", _ProjectID);
                 startmainactivity.putExtra("project_name", _ProjectNAME);
                 startmainactivity.putExtra("ref_project_id", _RefProjectID);
                 startActivity(startmainactivity);
 
+                }
+                else{
+                    TastyToast.makeText(Gantt_Task.this,"No internet connection found",TastyToast.LENGTH_SHORT,TastyToast.ERROR);
+                }
                 animateFAB();
                 break;
         }
     }
-
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
     @Override
     public void onBackPressed() {
         super.onBackPressed();

@@ -1,12 +1,45 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="pupthesis.chronos.Fragment.Files">
+
+ <RadioGroup
+     android:gravity="right"
+     android:paddingRight="10dp"
+     android:orientation="horizontal"
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content">
+
+  <RadioButton
+      android:id="@+id/all"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginRight="5dp"
+      android:text="All" />
+  <RadioButton
+      android:id="@+id/excel"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginRight="5dp"
+      android:text="Excel" />
+  <RadioButton
+      android:id="@+id/image"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginRight="5dp"
+      android:text="Image" />
+ </RadioGroup>
+
+
+
  <ListView android:layout_width="match_parent"
      android:id="@+id/listoffilees"
      android:divider="@null"
      android:dividerHeight="10.0sp"
-     android:layout_height="match_parent"/>
+     android:layout_height="match_parent">
 
-</FrameLayout>
+ </ListView>
+
+</LinearLayout>

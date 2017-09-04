@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -25,12 +24,11 @@ import android.widget.Toast;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
-import jxl.write.Label;
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.Adapter.GantAdapter;
 import pupthesis.chronos.Animation.BaseActivity;
-import pupthesis.chronos.Util.Config;
 import pupthesis.chronos.R;
+import pupthesis.chronos.Util.Config;
 
 public class Gantt extends BaseActivity {
     boolean isLongPress=false;
@@ -180,7 +178,7 @@ public class Gantt extends BaseActivity {
     }
     private  void Loadlist(){
 
-
+        Config.islastpage=false;
         da=new DataBaseHandler(getApplicationContext());
         if(da.getCountProjects().equals("0")){
             AlertDialog.Builder createproject=new AlertDialog.Builder(Gantt.this);
@@ -302,7 +300,7 @@ public class Gantt extends BaseActivity {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                     isLongPress=true;
-                    String idid =_id[position];
+
                     showAlert(taskname[position],description[position],status[position],_id[position]);
 
                     return isLongPress;
@@ -483,9 +481,10 @@ public class Gantt extends BaseActivity {
                     da.updateGANTT(DESCRIPTION.getText().toString(),PROJECTNAME.getText().toString(),STATUSNAME.getText().toString(),ID);
                     Loadlist();
 
-                    isLongPress=false;
                     dialog.dismiss();
                 }
+
+                isLongPress=false;
                 counter=0;
             }
         });

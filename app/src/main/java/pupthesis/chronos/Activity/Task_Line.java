@@ -20,6 +20,7 @@ import com.sdsmdg.tastytoast.TastyToast;
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.Animation.BaseActivity;
 import pupthesis.chronos.R;
+import pupthesis.chronos.Util.Config;
 
 public class Task_Line extends BaseActivity {
 
@@ -48,6 +49,7 @@ public class Task_Line extends BaseActivity {
                 PopupEntry();
             }
         });
+        Config.islastpage=false;
         LoadList();
     }
 

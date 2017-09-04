@@ -23,6 +23,7 @@ import pupthesis.chronos.Fragment.MainMenu;
 import pupthesis.chronos.Fragment.ReferenceMenu;
 import pupthesis.chronos.R;
 import pupthesis.chronos.Service.NotificationEventReceiver;
+import pupthesis.chronos.Util.Config;
 
 public class NavigationActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,7 +35,7 @@ public class NavigationActivity extends BaseActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        Config.islastpage=false;
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +118,12 @@ public class NavigationActivity extends BaseActivity
     @Override
     public void onBackPressed() {
 
+if( Config.islastpage){
 
+    FragmentManager fragmentManager =  getSupportFragmentManager();
+    fragmentManager.beginTransaction().replace(R.id.frame, new MainMenu()).commit();
+    return;
+}
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);

@@ -21,6 +21,7 @@ import com.sdsmdg.tastytoast.TastyToast;
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.Animation.BaseActivity;
 import pupthesis.chronos.R;
+import pupthesis.chronos.Util.Config;
 
 public class Task extends BaseActivity {
     Button btn_project;
@@ -35,7 +36,7 @@ public class Task extends BaseActivity {
         setContentView(R.layout.activity_task);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        Config.islastpage=false;
         ProjectID = getIntent().getStringExtra("project_id");
         ProjectNAME=getIntent().getStringExtra("project_name");
         TextView project_nameTV=(TextView)findViewById(R.id.project_nameTV);
@@ -68,7 +69,7 @@ public class Task extends BaseActivity {
         linearLayout.addView(label);
         linearLayout.addView(txt_project);
         alert.setView(linearLayout);
-        alert.setTitle("NEW TASK");
+        alert.setTitle("NEW ACTIVITY");
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

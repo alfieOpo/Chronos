@@ -61,6 +61,7 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_line_task);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Config.islastpage=false;
         setSupportActionBar(toolbar);
         _ProjectID = getIntent().getStringExtra("project_id");
         _ProjectNAME=getIntent().getStringExtra("project_name");
@@ -120,7 +121,7 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
             WritableSheet sheet = workbook.createSheet(_ProjectNAME, 0);
             // column and row
 
-            sheet.addCell(new Label(0, 0, "Task Name"));
+            sheet.addCell(new Label(0, 0, "Item Name"));
             sheet.addCell(new Label(1, 0, "Measure"));
             sheet.addCell(new Label(2, 0, "Date Added"));
 
@@ -232,18 +233,12 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
 
                 if(counter==0){
                     da=new DataBaseHandler(LineTask.this);
-                    if(isExist(Config.Date(),TASKNAME.getText().toString())){
-                        da.ExecuteSql("update line_task set measure=measure+"+MEASURE.getText().toString()+" where start_date='"+Config.Date()+"' and task_name='"+TASKNAME.getText().toString()+"' and project_id="+_ProjectID);
-                        TastyToast.makeText(LineTask.this,"Successfully Saved",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
-                        LoadList();
-                        dialog.cancel();
-                    }
-                    else {
-                        da.ExecuteSql("update line_task set measure=measure+"+MEASURE.getText().toString()+" where start_date='"+date+"' and task_name='"+TASKNAME.getText().toString()+"' and project_id="+_ProjectID);
+
+                        da.ExecuteSql("update line_task set measure="+MEASURE.getText().toString()+" where start_date='"+date+"' and task_name='"+TASKNAME.getText().toString()+"' and project_id="+_ProjectID);
                         TastyToast.makeText(LineTask.this,"Successfully Saved",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
                         LoadList();
                         dialog.cancel();}
-                }
+
             }
         });
     }
@@ -382,7 +377,7 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
         final String _taskname[];
         final String _id[];
         da = new DataBaseHandler(LineTask.this);
-        Cursor cursor = da.getLIST("select * from line_task where project_id=" + _ProjectID + " order  by start_date desc");
+        Cursor cursor = da.getLIST("select * from line_task where project_id=" + _ProjectID + " and measure > 0 order  by start_date,task_name desc");
         _measure = new String[cursor.getCount()];
         _date = new String[cursor.getCount()];
         _taskname = new String[cursor.getCount()];

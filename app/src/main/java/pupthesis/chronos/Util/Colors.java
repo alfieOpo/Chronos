@@ -23,9 +23,13 @@ public class Colors {
         return colors;
     }
     public static final int[] MATERIAL_COLORS = {
-            rgb("#2ecc71"), rgb("#f1c40f"), rgb("#e74c3c"), rgb("#3498db")
-            , rgb("#16a085"), rgb("#FF4081"), rgb("#f1c40f"), rgb("#f39c12")
-            , rgb("#4a5151"), rgb("#388E3C")
+            rgb("#f44336"), rgb("#E91E63"), rgb("#9C27B0"), rgb("#673AB7")
+            , rgb("#3F51B5"), rgb("#00BCD4"), rgb("#2196F3"), rgb("#009688")
+            , rgb("#4a5151"), rgb("#660066"), rgb("#990099"), rgb("#996600")
+            , rgb("#333300"), rgb("#ffff00"), rgb("#ff00cc"), rgb("#990033")
+            , rgb("#607D8B"), rgb("#666600"), rgb("#669966"), rgb("#ffcc00")
+            , rgb("#9E9E9E"), rgb("#FF5722"), rgb("#795548"), rgb("#FF9800")
+            , rgb("#FFC107"), rgb("#CDDC39"), rgb("#8BC34A"), rgb("#4CAF50")
     };
     public static int rgb(String hex) {
         int color = (int) Long.parseLong(hex.replace("#", ""), 16);

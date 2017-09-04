@@ -13,7 +13,7 @@ import pupthesis.chronos.Util.Config;
  */
 
 public class DataBaseHandler extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "chronos";
     private static final String TABLE_GANTT= "gantt";
     private static final String TABLE_PROJECT= "projects";
@@ -88,6 +88,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 "end_date TEXT," +
                 "start_date TEXT," +
                 "project_id TEXT," +
+                "precedence TEXT," +
+                "dependencies TEXT," +
+                "alphid TEXT," +
+                "days TEXT," +
                 "isseen INTEGER  DEFAULT 0)";
         return CREATE_CHRONOS_TABLE;
     }
@@ -286,6 +290,12 @@ String xa=xx.getMessage();
         db.close();
     }
 
+    public int gantttaskcount(String projectid) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from "+TABLE_GANT_TASK+" where project_id="+projectid, null);
+        return cursor.getCount();
+
+    }
     public int gantttaskcount() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("select * from "+TABLE_GANT_TASK, null);
@@ -447,5 +457,19 @@ String val=cursor.getString(0);
 
         }
         return Config.Date();
+    }
+    public  void UpdateAlphid(String _ProjectID){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor=db.rawQuery("select _id from gant_task where project_id="+_ProjectID,null);
+        int i=0;
+        if(cursor.moveToFirst()){
+
+            do{
+                 ExecuteSql("update gant_task set alphid='"+Config.Letters[i]+"' where _id="+cursor.getString(cursor.getColumnIndex("_id")));
+
+                i++;
+            }
+            while (cursor.moveToNext());
+        }
     }
 }

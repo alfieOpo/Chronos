@@ -69,6 +69,7 @@ public class Line extends BaseActivity {
         final String start_date[]=new String[cursor.getCount()];
         final String end_date[]=new String[cursor.getCount()];
         final String ID[]=new String[cursor.getCount()];
+        Config.islastpage=false;
         final String ref_project_id[]=new String[cursor.getCount()];
         int i=0;
         if (cursor.moveToFirst()) {
@@ -102,6 +103,7 @@ public class Line extends BaseActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 islongpress=true;
                 showAlert(start_date[position],end_date[position],LineName[position], Status[position], ID[position]);
+
                 return islongpress;
             }
         });

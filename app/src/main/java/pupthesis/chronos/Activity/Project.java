@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -19,11 +18,11 @@ import android.widget.TextView;
 
 import com.sdsmdg.tastytoast.TastyToast;
 
-import jxl.write.Label;
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.Adapter.ProjectAdapter;
 import pupthesis.chronos.Animation.BaseActivity;
 import pupthesis.chronos.R;
+import pupthesis.chronos.Util.Config;
 
 public class Project extends BaseActivity {
     ListView projectList;
@@ -36,7 +35,7 @@ public class Project extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         projectList=(ListView)findViewById(R.id.projectList);
-
+        Config.islastpage=false;
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

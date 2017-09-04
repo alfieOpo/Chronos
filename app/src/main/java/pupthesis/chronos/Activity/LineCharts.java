@@ -38,6 +38,7 @@ import java.util.List;
 import pupthesis.chronos.Access.DataBaseHandler;
 import pupthesis.chronos.R;
 import pupthesis.chronos.Util.Colors;
+import pupthesis.chronos.Util.Config;
 import pupthesis.chronos.Util.MyAxisValueFormatter;
 import pupthesis.chronos.Util.MyValueFormatter;
 
@@ -64,6 +65,7 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_line_charts);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Config.islastpage=false;
         setSupportActionBar(toolbar);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         _ProjectID = getIntent().getStringExtra("project_id");
@@ -162,27 +164,6 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
     }
 
 
- /*
-        da=new DataBaseHandler(LineCharts.this);
-        String sql="select "+getSqlSelect()+" from line_task where project_id=" + _ProjectID+" group by start_date";
-        String []Dates=getDate("select "+getSqlSelect()+",start_date from line_task where project_id=" + _ProjectID+" group by start_date");
-        Cursor cursor=da.getLIST(sql);
-        data =new Float[cursor.getCount()][cursor.getColumnCount()];
-        int i=0;
-        if(cursor.moveToFirst()){
-            do {
-                float val[]=new float[cursor.getColumnCount()];
-                for(int j =0; j<cursor.getColumnCount(); j++){
-                    data[i][j]=Float.valueOf(cursor.getString(j));
-                    val[j]=Float.valueOf(cursor.getString(j));
-                }
-
-                yVals1.add(new BarEntry(i, val,items.get(i)));
-                i++;
-            }while (cursor.moveToNext());
-        }
-*/
-
 
         BarDataSet set1;
 
@@ -202,18 +183,19 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
 
              }
             set1.setStackLabels(n);
-
             ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
             dataSets.add(set1);
 
             BarData data = new BarData(dataSets);
+
             data.setValueFormatter(new MyValueFormatter());
             data.setValueTextColor(Color.WHITE);
 
             mChart.setData(data);
+
         }
 
-        //mChart.setExtraBottomOffset(5f);
+        mChart.setExtraBottomOffset(5f);
         mChart.setExtraOffsets(10, 10, 10, 10);
         mChart.setFitBars(true);
         mChart.setDragEnabled(true);
@@ -241,7 +223,7 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         NamesList = new ArrayList<String>();
 
         da = new DataBaseHandler(LineCharts.this);
-        Cursor cursor = da.getLIST("select distinct task_name from line_task where project_id=" + _ProjectID+" ");
+        Cursor cursor = da.getLIST("select distinct task_name from line_task where project_id=" + _ProjectID+" order by task_name");
         if (cursor.moveToFirst()) {
             do {
                 NamesList.add(cursor.getString(cursor.getColumnIndex("task_name")));

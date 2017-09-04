@@ -11,9 +11,9 @@ import android.view.ViewGroup;
 import info.hoang8f.widget.FButton;
 import pupthesis.chronos.Activity.Project;
 import pupthesis.chronos.Activity.Project_Line;
-import pupthesis.chronos.R;
 import pupthesis.chronos.Animation.SlideAnimationUtil;
-import pupthesis.chronos.Activity.Task;
+import pupthesis.chronos.R;
+import pupthesis.chronos.Util.Config;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +30,7 @@ public class ReferenceMenu extends Fragment {
         View view=inflater.inflate(R.layout.fragment_reference_menu, container, false);
         SlideAnimationUtil.slideInFromRight(getContext(),view);
         btn_project=(FButton)view.findViewById(R.id.btn_project);
+        Config.islastpage=true;
         btn_project.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,5 +49,9 @@ public class ReferenceMenu extends Fragment {
 
         return view;
     }
-
+    @Override
+    public void onResume() {
+        Config.islastpage=true;
+        super.onResume();
+    }
 }
