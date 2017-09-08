@@ -65,6 +65,9 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
     String _ProjectID="0";
     String _RefProjectID="0";
     String _ProjectNAME="N/A";
+    String _Status="N/A";
+    String _Description="N/A";
+
     private Boolean isFabOpen = false;
     private FloatingActionButton fab,fab1,fab2,fab_charts;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
@@ -81,6 +84,8 @@ public class Gantt_Task extends BaseActivity implements  View.OnClickListener {
         _ProjectID = getIntent().getStringExtra("project_id");
         _ProjectNAME=getIntent().getStringExtra("project_name");
         _RefProjectID=getIntent().getStringExtra("ref_project_id");
+        _Status=getIntent().getStringExtra("status");
+        _Description=getIntent().getStringExtra("description");
          da=new DataBaseHandler(getApplicationContext());
          da.ExecuteSql("update gant_task set isseen =1 where project_id="+_ProjectID);
 
@@ -514,13 +519,14 @@ counter++;
             //Excel sheet name. 0 represents first sheet
             WritableSheet sheet = workbook.createSheet(_ProjectNAME, 0);
             // column and row
-            sheet.addCell(new Label(0, 0, "Activity Name"));
-            sheet.addCell(new Label(1, 0, "Percent Complete"));
-            sheet.addCell(new Label(2, 0, "End Date"));
-            sheet.addCell(new Label(3, 0, "Start Date"));
-            sheet.addCell(new Label(4, 0, "Duration"));
-            sheet.addCell(new Label(5, 0, "Precedence"));
-            sheet.addCell(new Label(6, 0, "ID"));
+            sheet.addCell(new Label(0, 0, "ID"));
+            sheet.addCell(new Label(1, 0, "Activity Name"));
+            sheet.addCell(new Label(2, 0, "Percent Complete"));
+            sheet.addCell(new Label(3, 0, "End Date"));
+            sheet.addCell(new Label(4, 0, "Start Date"));
+            sheet.addCell(new Label(5, 0, "Duration"));
+            sheet.addCell(new Label(6, 0, "Precedence"));
+
             int i=0;
             if (cursor.moveToFirst()) {
                 do {
@@ -532,15 +538,28 @@ counter++;
                     String Duration = cursor.getString(cursor.getColumnIndex("days"));
                     String Precedence = cursor.getString(cursor.getColumnIndex("precedence"));
                     i = cursor.getPosition() + 1;
-                    sheet.addCell(new Label(0, i, task_name));
-                    sheet.addCell(new Label(1, i, percent_complete));
-                    sheet.addCell(new Label(2, i, end_date.replace(",","/")));
-                    sheet.addCell(new Label(3, i, start_date.replace(",","/")));
-                    sheet.addCell(new Label(4, i, Duration));
-                    sheet.addCell(new Label(5, i, Precedence));
-                    sheet.addCell(new Label(6, i, alphid));
+                    sheet.addCell(new Label(0, i, alphid));
+                    sheet.addCell(new Label(1, i, task_name));
+                    sheet.addCell(new Label(2, i, percent_complete));
+                    sheet.addCell(new Label(3, i, end_date.replace(",","/")));
+                    sheet.addCell(new Label(4, i, start_date.replace(",","/")));
+                    int days=Integer.parseInt(Duration);
+                    String Days=days+" day";
+                    if(days>1){
+                        Days=days+" days";
+                    }
+                    sheet.addCell(new Label(5, i,Days));
+                    sheet.addCell(new Label(6, i, Precedence));
+
                 } while (cursor.moveToNext());
             }
+            sheet.addCell(new Label(0, i+2, "Project Name"));
+            sheet.addCell(new Label(1, i+2, "Status"));
+            sheet.addCell(new Label(2, i+2, "Description"));
+
+            sheet.addCell(new Label(0, i+3, _ProjectNAME));
+            sheet.addCell(new Label(1, i+3, _Status));
+            sheet.addCell(new Label(2, i+3, _Description));
             //closing cursor
             cursor.close();
             workbook.write();

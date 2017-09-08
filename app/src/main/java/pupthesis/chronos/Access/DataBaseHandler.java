@@ -392,29 +392,31 @@ String xa=xx.getMessage();
             String sql =" select count(_id) from line_task where project_id = "+_ProjectID+" and start_date='"+Config.Date()+"'";
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor cursor = db.rawQuery(sql, null);
+
             if(cursor.moveToFirst()){
-String val=cursor.getString(0);
-                    if(val.equals("0")){
-                        String sql2 =" select project_id,task_name from tasksline where project_id = "+refproject_id+"";
+
+                    if(cursor.getString(0).equals("0")) {
+                        String sql2 = " select project_id,task_name from tasksline where project_id = " + refproject_id + "";
 
                         Cursor cursor1 = db.rawQuery(sql2, null);
-                        if(cursor1.moveToFirst()){
-                            do{
-                                ContentValues cv=new ContentValues();
-                                cv.put("task_id",_ProjectNAME+_ProjectID);
-                                cv.put("task_name",cursor1.getString(1));
-                                cv.put("measure",0);
-                                cv.put("start_date", Config.Date());
-                                cv.put("project_id",_ProjectID);
+                        if (cursor1.moveToFirst()) {
+                            do {
 
-                                if(createNewLINETASK(cv)){
+                                ContentValues cv = new ContentValues();
+                                cv.put("task_id", _ProjectNAME + _ProjectID);
+                                cv.put("task_name", cursor1.getString(1));
+                                cv.put("measure", 0);
+                                cv.put("start_date", Config.Date());
+                                cv.put("project_id", _ProjectID);
+
+                                if (createNewLINETASK(cv)) {
 
                                 }
 
-                            }while (cursor1.moveToNext());
+                            } while (cursor1.moveToNext());
                         }
-
                     }
+
                 }
 
 
@@ -471,5 +473,17 @@ String val=cursor.getString(0);
             }
             while (cursor.moveToNext());
         }
+    }
+    public  boolean Existing(String date,String Project_id){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor=db.rawQuery("select _id from line_task where project_id="+Project_id+"  and start_date='"+date+"'",null);
+
+        if(cursor.moveToFirst()){
+            return true;
+
+        }
+        return  false;
+
     }
 }

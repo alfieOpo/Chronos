@@ -287,6 +287,8 @@ public class Gantt extends BaseActivity {
                         startmainactivity.putExtra("project_id", _id[position]);
                         startmainactivity.putExtra("project_name", taskname[position].toUpperCase());
                         startmainactivity.putExtra("ref_project_id", ref_project_id[position]);
+                        startmainactivity.putExtra("status", status[position]);
+                        startmainactivity.putExtra("description", description[position]);
                         startActivity(startmainactivity);
 
 

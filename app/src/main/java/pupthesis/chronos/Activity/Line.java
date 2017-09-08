@@ -94,6 +94,9 @@ public class Line extends BaseActivity {
                     startmainactivity.putExtra("project_id", ID[position]);
                     startmainactivity.putExtra("project_name", LineName[position].toUpperCase());
                     startmainactivity.putExtra("ref_project_id", ref_project_id[position]);
+                    startmainactivity.putExtra("date_start", start_date[position]);
+                    startmainactivity.putExtra("date_end", end_date[position]);
+                    startmainactivity.putExtra("status", Status[position]);
                     startActivity(startmainactivity);
                 }
             }

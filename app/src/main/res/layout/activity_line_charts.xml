@@ -9,31 +9,9 @@
 
     <include layout="@layout/content_line_charts" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="130dp"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:src="@android:drawable/ic_menu_rotate"
-        android:visibility="invisible"
-        app:backgroundTint="@color/colorPrimaryDark"
-        app:elevation="6dp"
-        app:pressedTranslationZ="12dp" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_toimage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="80dp"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:src="@android:drawable/ic_menu_gallery"
-        android:visibility="invisible"
-        app:backgroundTint="@color/wet_asphalt"
-        app:elevation="6dp"
-        app:pressedTranslationZ="12dp" />
+
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -41,6 +19,6 @@
         android:layout_gravity="bottom|end"
         android:background="@color/AppbarColor"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/add" />
+        app:srcCompat="@android:drawable/ic_menu_camera" />
 
 </android.support.design.widget.CoordinatorLayout>

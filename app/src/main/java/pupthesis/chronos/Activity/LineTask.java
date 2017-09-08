@@ -1,5 +1,6 @@
 package pupthesis.chronos.Activity;
 
+import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -31,6 +33,7 @@ import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Locale;
 
 import jxl.Workbook;
@@ -49,6 +52,9 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
     String _ProjectID="0";
     String _RefProjectID="0";
     String _ProjectNAME="N/A";
+    String _DateStart="N/A";
+    String _DateEnd="N/A";
+    String _Status="N/A";
     int counter=0;
 
     DataBaseHandler da;
@@ -56,6 +62,8 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
     private Boolean isFabOpen = false;
     private FloatingActionButton fab,fab1,fab2,fab_charts;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
+    private String[] Names;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +74,9 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
         _ProjectID = getIntent().getStringExtra("project_id");
         _ProjectNAME=getIntent().getStringExtra("project_name");
         _RefProjectID=getIntent().getStringExtra("ref_project_id");
+        _DateStart=getIntent().getStringExtra("date_start");
+        _DateEnd=getIntent().getStringExtra("date_end");
+        _Status=getIntent().getStringExtra("status");
         projectList=(ListView)findViewById(R.id.projectList);
         da=new DataBaseHandler(LineTask.this);
         try {
@@ -121,8 +132,8 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
             WritableSheet sheet = workbook.createSheet(_ProjectNAME, 0);
             // column and row
 
-            sheet.addCell(new Label(0, 0, "Item Name"));
-            sheet.addCell(new Label(1, 0, "Measure"));
+            sheet.addCell(new Label(0, 0, "Item's Name"));
+            sheet.addCell(new Label(1, 0, "Measure's"));
             sheet.addCell(new Label(2, 0, "Date Added"));
 
             int i=0;
@@ -139,6 +150,15 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
 
                 } while (cursor.moveToNext());
             }
+            sheet.addCell(new Label(0, i+2, "Project Name"));
+            sheet.addCell(new Label(1, i+2, "Status"));
+            sheet.addCell(new Label(2, i+2, "Date Start"));
+            sheet.addCell(new Label(3, i+2, "Date End"));
+
+            sheet.addCell(new Label(0, i+3, _ProjectNAME));
+            sheet.addCell(new Label(1, i+3, _Status));
+            sheet.addCell(new Label(2, i+3, _DateStart));
+            sheet.addCell(new Label(3, i+3, _DateEnd));
             //closing cursor
             cursor.close();
             workbook.write();
@@ -160,42 +180,62 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
         TextView taskname=new TextView(LineTask.this);
         taskname.setText("Task Name");
 
-        String ProjectName[];
-        da=new DataBaseHandler(LineTask.this);
 
-        final Cursor cursor =da.getLIST("select * from tasksline where project_id="+_RefProjectID);
-        ProjectName=new String[cursor.getCount()];
-        ArrayAdapter<String> spinnerArrayAdapter;
-        try {
-            int i = 1;
-            if (cursor != null) {
-                cursor.moveToFirst();
-                ProjectName[0] = cursor.getString(1);
-                while (cursor.moveToNext()) {
-                    ProjectName[i] = cursor.getString(1);
-                    i++;
-                }
-            }
-            spinnerArrayAdapter = new ArrayAdapter<String>(LineTask.this, R.layout.dropdownadapter, ProjectName); //selected item will look like a spinner set from XML
-            spinnerArrayAdapter.setDropDownViewResource(R.layout.dropdownadapter);
-        }catch (Exception xx){
+        final EditText TASKNAME=new EditText(LineTask.this);
 
-            TastyToast.makeText(LineTask.this, "No Task Found.", Toast.LENGTH_SHORT,TastyToast.WARNING);
-
-            return;
-        }
-        final MaterialBetterSpinner TASKNAME=new MaterialBetterSpinner(LineTask.this);
-        TASKNAME.setAdapter(spinnerArrayAdapter);
         TextView measure=new TextView(LineTask.this);
         TASKNAME.setEnabled(false);
         TASKNAME.setText(task_name);
+
         measure.setText("Measure");
+
+
+        TextView starttime=new TextView(LineTask.this);
+        starttime.setText("Date");
+        final EditText START=new EditText(LineTask.this);
+
+        START.setFocusable(false);
+        START.setFocusableInTouchMode(false);
+        START.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // calender class's instance and get current date , month and year from calender
+                final Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR); // current year
+                int mMonth = c.get(Calendar.MONTH); // current month
+                int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                // date picker dialog
+                DatePickerDialog datePickerDialog = new DatePickerDialog(LineTask.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // set day of month , month and year value in the edit text
+
+                                int _year=year;
+                                int _month=(monthOfYear + 1);
+                                int _day=dayOfMonth;
+
+                                START.setText(_year+"/"+_month+"/"+_day);
+
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
+        START.setText(date);
+
+
+
         final EditText MEASURE=new EditText(LineTask.this);
         MEASURE.setInputType(InputType.TYPE_CLASS_NUMBER);
         MEASURE.setText(Measure);
         linearLayout.addView(taskname);
         linearLayout.addView(TASKNAME);
-
+        TASKNAME.setClickable(false);
+        linearLayout.addView(starttime);
+        linearLayout.addView(START);
         linearLayout.addView(measure);
         linearLayout.addView(MEASURE);
 
@@ -234,9 +274,10 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
                 if(counter==0){
                     da=new DataBaseHandler(LineTask.this);
 
-                        da.ExecuteSql("update line_task set measure="+MEASURE.getText().toString()+" where start_date='"+date+"' and task_name='"+TASKNAME.getText().toString()+"' and project_id="+_ProjectID);
-                        TastyToast.makeText(LineTask.this,"Successfully Saved",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
-                        LoadList();
+    da.ExecuteSql("update line_task set measure="+MEASURE.getText().toString()+" where start_date='"+START.getText().toString()+"' and task_name='"+TASKNAME.getText().toString()+"' and project_id="+_ProjectID);
+    TastyToast.makeText(LineTask.this,"Successfully Saved",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
+    LoadList();
+
                         dialog.cancel();}
 
             }
@@ -278,6 +319,46 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
         TASKNAME.setAdapter(spinnerArrayAdapter);
         TextView measure=new TextView(LineTask.this);
         measure.setText("Measure");
+
+        TextView starttime=new TextView(LineTask.this);
+        starttime.setText("Date");
+        final EditText START=new EditText(LineTask.this);
+
+        START.setFocusable(false);
+        START.setFocusableInTouchMode(false);
+        START.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // calender class's instance and get current date , month and year from calender
+                final Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR); // current year
+                int mMonth = c.get(Calendar.MONTH); // current month
+                int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                // date picker dialog
+                DatePickerDialog datePickerDialog = new DatePickerDialog(LineTask.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // set day of month , month and year value in the edit text
+
+                                int _year=year;
+                                int _month=(monthOfYear + 1);
+                                int _day=dayOfMonth;
+
+                                START.setText(_year+"/"+_month+"/"+_day);
+
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
+
+
+        linearLayout.addView(starttime);
+        linearLayout.addView(START);
+
         final EditText MEASURE=new EditText(LineTask.this);
         MEASURE.setInputType(InputType.TYPE_CLASS_NUMBER);
 
@@ -312,8 +393,8 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
                 WronInput(TASKNAME);
                 if(counter==0){
                     da=new DataBaseHandler(LineTask.this);
-                    if(isExist(Config.Date(),TASKNAME.getText().toString())){
-                        da.ExecuteSql("update line_task set measure=measure+"+MEASURE.getText().toString()+" where start_date='"+Config.Date()+"' and task_name='"+TASKNAME.getText().toString()+"' and project_id="+_ProjectID);
+                    if(isExist(START.getText().toString(),TASKNAME.getText().toString())){
+                        da.ExecuteSql("update line_task set measure=measure+"+MEASURE.getText().toString()+" where start_date='"+START.getText().toString()+"' and task_name='"+TASKNAME.getText().toString()+"' and project_id="+_ProjectID);
                         TastyToast.makeText(LineTask.this,"Successfully Saved",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
                         LoadList();
                         dialog.cancel();
@@ -323,7 +404,7 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
                         cv.put("task_id",_ProjectNAME+_ProjectID);
                         cv.put("task_name",TASKNAME.getText().toString());
                         cv.put("measure",MEASURE.getText().toString());
-                        cv.put("start_date", Config.Date());
+                        cv.put("start_date",START.getText().toString());
                         cv.put("project_id",_ProjectID);
 
                         if(da.createNewLINETASK(cv)){
@@ -377,7 +458,8 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
         final String _taskname[];
         final String _id[];
         da = new DataBaseHandler(LineTask.this);
-        Cursor cursor = da.getLIST("select * from line_task where project_id=" + _ProjectID + " and measure > 0 order  by start_date,task_name desc");
+        LoadData();
+        Cursor cursor = da.getLIST("select * from line_task where project_id=" + _ProjectID + " and measure > 0 order  by  task_name ");
         _measure = new String[cursor.getCount()];
         _date = new String[cursor.getCount()];
         _taskname = new String[cursor.getCount()];
@@ -393,7 +475,7 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
             } while (cursor.moveToNext());
         }
 
-        LineTaskAdapter adapter = new LineTaskAdapter(LineTask.this, _taskname, _date, _measure);
+        LineTaskAdapter adapter = new LineTaskAdapter(LineTask.this, _taskname, _date, _measure,Names);
         projectList.setAdapter(adapter);
         projectList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -481,5 +563,20 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
                 animateFAB();
                 break;
         }
+    }
+    private void LoadData() {
+        da = new DataBaseHandler(LineTask.this);
+        Cursor cursor = da.getLIST("select distinct task_name from line_task where project_id=" + _ProjectID+" order by task_name");
+        String n[]=new String[cursor.getCount()];
+        int i=0;
+        if (cursor.moveToFirst()) {
+            do {
+                n[i]=cursor.getString(cursor.getColumnIndex("task_name"));
+                i++;
+            }
+            while (cursor.moveToNext());
+        }
+        Names=n;
+       
     }
 }

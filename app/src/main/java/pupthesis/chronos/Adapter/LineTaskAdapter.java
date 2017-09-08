@@ -1,7 +1,6 @@
 package pupthesis.chronos.Adapter;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import pupthesis.chronos.R;
+import pupthesis.chronos.Util.Colors;
 
 public class LineTaskAdapter extends ArrayAdapter<String> {
     TextView measureTV,projectnameTV,dateTV;
@@ -21,12 +21,14 @@ public class LineTaskAdapter extends ArrayAdapter<String> {
     int maxposition=0;
     Activity context;
     String[] taskname;String[] date; String[] measure;
-    public LineTaskAdapter(Activity context, String[] taskname, String[] date, String[] measure) {
+    String []_Names;
+    public LineTaskAdapter(Activity context, String[] taskname, String[] date, String[] measure,String []Names) {
         super(context, R.layout.activity_line_task_adapter, taskname);
         this.context = context;
         this.taskname=taskname;
         this.date=date;
         this.measure=measure;
+        this._Names=Names;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -43,6 +45,15 @@ public class LineTaskAdapter extends ArrayAdapter<String> {
         cardComplete=(CardView)listViewItem.findViewById(R.id.cardmeasure);
         carddate=(CardView)listViewItem.findViewById(R.id. carddate);
         int complete=Integer.parseInt(measure[position].replace("m.","").replace(" ",""));
+
+        for(int i=0;i<_Names.length;i++){
+
+            if(taskname[position].equals(_Names[i])){
+                cardComplete.setCardBackgroundColor(Colors.MaterialUIColors(i));
+                carddate.setCardBackgroundColor(Colors.MaterialUIColors(i));
+            }
+        }
+        /*
         if(complete<=10){
             cardComplete.setCardBackgroundColor(Color.rgb(116, 98, 156));
             carddate.setCardBackgroundColor(Color.rgb(116, 98, 156));
@@ -85,7 +96,7 @@ public class LineTaskAdapter extends ArrayAdapter<String> {
             cardComplete.setCardBackgroundColor(Color.rgb(26, 188, 156));
             carddate.setCardBackgroundColor(Color.rgb(26, 188, 156));
         }
-
+*/
         if (position != maxposition) {
             AnimationSet set = new AnimationSet(true);
 

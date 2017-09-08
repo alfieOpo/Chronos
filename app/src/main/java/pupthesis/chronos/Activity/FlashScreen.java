@@ -18,11 +18,11 @@ public class FlashScreen extends BaseActivity {
         TastyToast.makeText(getApplicationContext(), "Welcome to CHRONOS", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
         mLoadingView = (LoadingView) findViewById(R.id.loading_view);
 
-        mLoadingView.addAnimation(R.color.White,R.drawable.labor_man,LoadingView.FROM_LEFT);
-        mLoadingView.addAnimation(R.color.White,R.drawable.building,LoadingView.FROM_RIGHT);
-        mLoadingView.addAnimation(R.color.White,R.drawable.road,LoadingView.FROM_BOTTOM);
-        mLoadingView.addAnimation(R.color.White,R.drawable.graphmo,LoadingView.FROM_LEFT);
-        mLoadingView.addAnimation(R.color.White,R.drawable.circlelogo,LoadingView.FROM_BOTTOM);
+        mLoadingView.addAnimation(R.color.red,R.drawable.labor_man,LoadingView.FROM_LEFT);
+        mLoadingView.addAnimation(R.color.fbutton_color_midnight_blue,R.drawable.building,LoadingView.FROM_RIGHT);
+        mLoadingView.addAnimation(R.color.fbutton_color_concrete,R.drawable.road,LoadingView.FROM_BOTTOM);
+        mLoadingView.addAnimation(R.color.green_sea,R.drawable.graphmo,LoadingView.FROM_LEFT);
+        mLoadingView.addAnimation(R.color.AppbarColor,R.drawable.circlelogo,LoadingView.FROM_BOTTOM);
 
         mLoadingView.startAnimation();
         Thread thread = new Thread() {

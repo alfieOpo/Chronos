@@ -9,24 +9,14 @@ import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.webkit.WebView;
-import android.widget.Toast;
+import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.github.mikephil.charting.charts.HorizontalBarChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.sdsmdg.tastytoast.TastyToast;
 
 import java.io.File;
@@ -36,28 +26,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pupthesis.chronos.Access.DataBaseHandler;
+import pupthesis.chronos.Animation.SlideAnimationUtil;
 import pupthesis.chronos.R;
 import pupthesis.chronos.Util.Colors;
 import pupthesis.chronos.Util.Config;
-import pupthesis.chronos.Util.MyAxisValueFormatter;
-import pupthesis.chronos.Util.MyValueFormatter;
 
 
-public class LineCharts extends AppCompatActivity implements  View.OnClickListener, OnChartValueSelectedListener {
-    private FloatingActionButton fab,fab_toimage,fab_refresh;
-    private Animation fab_open,fab_close,rotate_forward,rotate_backward;
-    private WebView webView;
+public class LineCharts extends AppCompatActivity implements  View.OnClickListener {
+    private FloatingActionButton fab ;
+
+    TextView txt_title,description;
+    LinearLayout mainlayout;
+    LinearLayout legendlayout,lineardays;
+    RelativeLayout main;
     private Boolean isFabOpen = false;
     private String _ProjectID = "0";
     private String _RefProjectID = "0";
     private String _ProjectNAME = "N/A";
     List<String> items;
-    String MASTERDATA="";
+    String [] Names;
+    String [][] Values;
+    String [][] Dates;
     DataBaseHandler da;
 
-    Float data[][];
-    private HorizontalBarChart   mChart;
+
+
     private ArrayList<String> NamesList;
+    private boolean singlerowinitialize=false;
 
 
     @Override
@@ -72,168 +67,316 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         _ProjectNAME = getIntent().getStringExtra("project_name");
         _RefProjectID = getIntent().getStringExtra("ref_project_id");
 
-         LoadItem();//load all the names
-        LoadName();
         fab = (FloatingActionButton)findViewById(R.id.fab);
-        fab_refresh = (FloatingActionButton)findViewById(R.id.fab_refresh);
-        fab_toimage = (FloatingActionButton)findViewById(R.id.fab_toimage);
 
-        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
 
-        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward);
-        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward);
+
         fab.setOnClickListener(this);
-        fab_refresh.setOnClickListener(this);
-        fab_toimage.setOnClickListener(this);
 
 
 
-        mChart = (HorizontalBarChart) findViewById(R.id.mChart);
-        mChart.setOnChartValueSelectedListener(this);
-
-        mChart.getDescription().setEnabled(false);
-
-        // if more than 60 entries are displayed in the chart, no values will be
-        // drawn
-        mChart.setMaxVisibleValueCount(40);
-
-        // scaling can now only be done on x- and y-axis separately
-        mChart.setPinchZoom(false);
-
-        mChart.setDrawGridBackground(false);
-        mChart.setDrawBarShadow(false);
-
-        mChart.setDrawValueAboveBar(false);
-        mChart.setHighlightFullBarEnabled(false);
-
-        // change the position of the y-labels
-        YAxis leftAxis = mChart.getAxisLeft();
-        leftAxis.setValueFormatter(new MyAxisValueFormatter());
-        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
-        mChart.getAxisRight().setEnabled(false);
-
-        XAxis xLabels = mChart.getXAxis();
-
-        xLabels.setPosition(XAxis.XAxisPosition.TOP);
-        // mChart.setDrawXLabels(false);
-        // mChart.setDrawYLabels(false);
-
-        // setting data
-
-
-        Legend l = mChart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        l.setDrawInside(false);
-        l.setFormSize(8f);
-        l.setFormToTextSpace(0f);
-        l.setXEntrySpace(6f);
-
+        txt_title=(TextView)findViewById(R.id.txt_title);
+        description=(TextView)findViewById(R.id.description);
+        mainlayout=(LinearLayout)findViewById(R.id.mainlayout);
+        lineardays=(LinearLayout)findViewById(R.id.lineardays);
+        legendlayout=(LinearLayout)findViewById(R.id.legendlayout);
+        main=(RelativeLayout)findViewById(R.id.main);
         LoadList();
+
     }
+
     private void LoadList() {
-        String NAMES[]=null;
-        ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
-        for(int i=0;i<items.size();i++){
 
-            String sql="select measure,task_name from line_task where project_id="+_ProjectID+" and start_date='"+items.get(i)+"' order by task_name";
-            da=new DataBaseHandler(LineCharts.this);
-            Cursor cursor=da.getLIST(sql);
-            float val[]=new float[cursor.getCount()];
-              NAMES=new String[cursor.getCount()];
-            int a=0;
-            if(cursor.moveToFirst()){
+        LoadData();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = (displayMetrics.heightPixels-150)/Names.length;
+        int width = displayMetrics.widthPixels;
 
-                do {
-                if(NAMES.length!=cursor.getCount()){
-                        NAMES[a]=cursor.getString(cursor.getColumnIndex("task_name"));
+
+        for(int i=0;i<Names.length;i++){
+            LinearLayout  Rows=new LinearLayout(LineCharts.this);
+            Rows.setLayoutParams(new LinearLayout.LayoutParams(width,height));
+            Rows.setOrientation(LinearLayout.HORIZONTAL);
+            Rows.setBackgroundColor(Colors.MaterialUIColors(i));
+
+            Rows.setGravity(Gravity.CENTER);
+
+            SlideAnimationUtil.slideInFromLeft(LineCharts.this,Rows);//animation kuno
+            SlideAnimationUtil.slideInFromRight(LineCharts.this,legendlayout);//animation kuno
+            TextView Divider=new TextView(LineCharts.this);
+            Divider.setHeight(2);
+            Divider.setBackgroundColor(Color.TRANSPARENT);
+            int txtw=width/Values[i].length;
+            mainlayout.addView(Rows);
+            mainlayout.addView(Divider);
+            for(int j=0;j<Values[i].length;j++){//columns
+
+                ///Meter
+                final TextView Text=new TextView(LineCharts.this);
+
+                Text.setText(Values[i][j]);
+                Text.setTextColor(Color.WHITE);
+
+                ViewTreeObserver vto1 = Text.getViewTreeObserver();
+                Text.setGravity(Gravity.CENTER|Gravity.TOP);
+                vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+
+                        int size=(Text.getWidth()+Text.getHeight())/24;
+                        if(size>16){
+                            size=16;
+                        }
+                        if(size<10){
+                            size=10;
+                        }
+                        Text.setTextSize(size);
+
+                        if(Text.getText().toString().equals("m.")){
+                            Text.setText("N/A");
+
+                            Text.setTextSize(12);
+                        }
+
                     }
+                });
 
-                    val[a]=Float.valueOf(cursor.getString(cursor.getColumnIndex("measure")));
-                    a++;
+                ///Days
+                final TextView txtday=new TextView(LineCharts.this);
+                txtday.setText(Dates[i][j]);
+                txtday.setGravity(Gravity.CENTER);
+                txtday.setTextColor(Color.WHITE);
+                txtday.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                ViewTreeObserver vto = txtday.getViewTreeObserver();
+                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+
+                        int size=(txtday.getWidth()+txtday.getHeight())/28;
+                        if(size>14){
+                            size=14;
+                        }
+                        if(size<10){
+                            size=10;
+                        }
+                        txtday.setTextSize(size);
+
+                    }
+                });
+
+
+                ///DIVIDER
+                TextView div=new TextView(LineCharts.this);
+                div.setWidth(1);
+                div.setHeight(height);
+                div.setBackgroundColor(Color.WHITE);
+///Dataholder
+                LinearLayout data=new LinearLayout(LineCharts.this);
+                data.setOrientation(LinearLayout.VERTICAL);
+                data.setLayoutParams(new LinearLayout.LayoutParams(txtw,height));
+                data.setBackgroundColor(Colors.MaterialUIColors(i));
+
+                if(Text.getText().toString().equals("0") )
+                {div.setWidth(1);
+                    div.setBackgroundColor(Colors.MaterialUIColors(i));
+                    data.setBackgroundColor(this.getResources().getColor(R.color.concrete));
+                    Text.setTextColor(Color.LTGRAY);
+                    txtday.setTextColor(Color.LTGRAY);
+
+
                 }
-                while (cursor.moveToNext());
+                Text.setText(Text.getText().toString()+"m.");
+                if(Text.getText().toString().equals("m.")){
+                    div.setWidth(1);
+                    div.setBackgroundColor(Colors.MaterialUIColors(i));
+                    data.setBackgroundColor(this.getResources().getColor(R.color.fbutton_color_clouds));
+                    Text.setTextColor(Color.LTGRAY);
+                    txtday.setTextColor(Color.LTGRAY);
+                    Text.setText("N/A");
+                    txtday.setText("Unknown date.");
+                }
+
+                data.addView(txtday);
+                data.addView(Text);
+
+                Rows.addView(data);
+                Rows.addView(div);
 
 
 
-
-        }
-            yVals1.add(new BarEntry(i, val,items.get(i)));
-    }
-
-
-
-        BarDataSet set1;
-
-        if (mChart.getData() != null &&
-                mChart.getData().getDataSetCount() > 0) {
-            set1 = (BarDataSet) mChart.getData().getDataSetByIndex(0);
-            set1.setValues(yVals1);
-            mChart.getData().notifyDataChanged();
-            mChart.notifyDataSetChanged();
-        } else {
-            set1 = new BarDataSet(yVals1, _ProjectNAME);
-            set1.setDrawIcons(false);
-            set1.setColors(Colors.getColors(da.countoftask(_RefProjectID)));
-                String n[]=new String[NamesList.size()];
-             for(int i=0;i<NamesList.size();i++){
-                 n[i]=NamesList.get(i);
-
-             }
-            set1.setStackLabels(n);
-            ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
-            dataSets.add(set1);
-
-            BarData data = new BarData(dataSets);
-
-            data.setValueFormatter(new MyValueFormatter());
-            data.setValueTextColor(Color.WHITE);
-
-            mChart.setData(data);
-
-        }
-
-        mChart.setExtraBottomOffset(5f);
-        mChart.setExtraOffsets(10, 10, 10, 10);
-        mChart.setFitBars(true);
-        mChart.setDragEnabled(true);
-        mChart.getLegend().setWordWrapEnabled(true);
-        mChart.invalidate();
-    }
-
-
-    private void LoadItem() {
-
-        items = new ArrayList<String>();
-
-        da = new DataBaseHandler(LineCharts.this);
-        Cursor cursor = da.getLIST("select distinct start_date from line_task where project_id=" + _ProjectID+" order  by _id desc");
-        if (cursor.moveToFirst()) {
-            do {
-                items.add(cursor.getString(cursor.getColumnIndex("start_date")));
 
             }
-            while (cursor.moveToNext());
         }
-        //getSqlSelect();
-    } private void LoadName() {
 
-        NamesList = new ArrayList<String>();
+        ///setting the day label
+        for(int d=0;d<Values[0].length;d++){
+            TextView day=new TextView(LineCharts.this);
+            day.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT,1f));
 
+            day.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            day.setTextColor(Color.BLACK);
+            day.setText("Day "+(d+1));
+            lineardays.addView(day);
+
+        }
+
+
+        //setting the legends of the blue sea tadaH!!!: funny no!
+        txt_title.setText(_ProjectNAME);
+        description.setText("description baby dapat mahaba");
+        int counte=0;
+        int realcounter=-1;
+        int rows=Names.length/4;
+        if((rows*4)-Names.length==0){
+            rows=Names.length/4;
+        }
+       else if(Names.length<5)
+        {
+            rows=1;
+        }
+         else
+             {
+                int leftnumber=Names.length-counte;
+                if(leftnumber!=0)
+                {
+                    rows=rows+1;
+                }
+             }
+        LinearLayout []linearLayouts=new LinearLayout[rows];
+        for(int c=0;c<Names.length;c++){
+            TextView txt=new TextView(LineCharts.this);
+            txt.setBackgroundColor(Colors.MaterialUIColors(c));
+            txt.setText(Names[c]);
+            txt.setTextSize(10);
+            txt.setPadding(3,3,3,3);
+            txt.setTextColor(Color.WHITE);
+            TextView Divider=new TextView(LineCharts.this);
+            Divider.setWidth(1);
+            Divider.setBackgroundColor(Color.TRANSPARENT);
+
+            if(!singlerowinitialize) {
+                if(Names.length<5){
+
+                        if (realcounter == -1) {
+                            singlerowinitialize = true;
+                            realcounter++;
+                        }
+
+
+                    linearLayouts[realcounter]=new LinearLayout(LineCharts.this);
+                    linearLayouts[realcounter].setOrientation(LinearLayout.HORIZONTAL);
+                    linearLayouts[realcounter].setGravity(Gravity.CENTER);
+                }
+
+                else if(counte==c){
+                    counte=counte+4;
+
+                    realcounter++;
+
+
+                    try{
+                        linearLayouts[realcounter]=new LinearLayout(LineCharts.this);
+                        linearLayouts[realcounter].setOrientation(LinearLayout.HORIZONTAL);
+                        linearLayouts[realcounter].setGravity(Gravity.CENTER);
+                    }catch (Exception xx)
+                    {
+
+                        break;
+                    }
+                }
+            }
+
+
+            linearLayouts[realcounter].addView(txt);
+            linearLayouts[realcounter].addView(Divider);
+        }
+        for(int i=0;i<linearLayouts.length;i++){
+            legendlayout.addView(linearLayouts[i]);
+        }
+        singlerowinitialize=false;
+    }
+
+
+    private void LoadData() {
         da = new DataBaseHandler(LineCharts.this);
         Cursor cursor = da.getLIST("select distinct task_name from line_task where project_id=" + _ProjectID+" order by task_name");
+        String n[]=new String[cursor.getCount()];
+        int i=0;
         if (cursor.moveToFirst()) {
             do {
-                NamesList.add(cursor.getString(cursor.getColumnIndex("task_name")));
-
+                n[i]=cursor.getString(cursor.getColumnIndex("task_name"));
+                i++;
             }
             while (cursor.moveToNext());
         }
-        //getSqlSelect();
+        Names=n;
+        LoadValues(Names);
+        LoadDays(Names);
     }
+    private void  LoadValues(String [] names){
+        int col=0;
+        String val[][]=null;
+        for(int rowindex=0;rowindex<names.length;rowindex++){
+            da = new DataBaseHandler(LineCharts.this);
+            Cursor cursor = da.getLIST("select  measure from line_task where project_id=" + _ProjectID+" and task_name='"+names[rowindex]+"'");
+            int columnindex=cursor.getColumnCount();
+            try{int w=val[rowindex].length;}
+            catch (Exception xx)
+            {
+                val=new String[names.length][50];
+            }
 
+            int i=0;
+            if (cursor.moveToFirst()) {
+                do {
+                    val[rowindex][i]=cursor.getString(cursor.getColumnIndex("measure"));
+                    i++;
+                }
+                while (cursor.moveToNext());
+            }
+            if(i>col){col=i;}
+        }
+        Values=new String[Names.length][col];
+        for(int i=0;i<Names.length;i++){
+            for(int j=0;j<col;j++){
+                Values[i][j]=val[i][j];
+            }
+        }
+    }
+    private void  LoadDays(String [] names){
+        int col=0;
+        String val[][]=null;
+        for(int rowindex=0;rowindex<names.length;rowindex++){
+            da = new DataBaseHandler(LineCharts.this);
+            Cursor cursor = da.getLIST("select  start_date from line_task where project_id=" + _ProjectID+" and     task_name='"+names[rowindex]+"'");
+            int columnindex=cursor.getColumnCount();
+            try{int w=val[rowindex].length;}
+            catch (Exception xx)
+            {
+                val=new String[names.length][50];
+            }
+
+
+            int i=0;
+            if (cursor.moveToFirst()) {
+                do {
+                    val[rowindex][i]=cursor.getString(cursor.getColumnIndex("start_date"));
+                    i++;
+                }
+                while (cursor.moveToNext());
+            }
+            if(i>col){col=i;}
+
+
+        }
+        Dates=new String[Names.length][col];
+        for(int i=0;i<Names.length;i++){
+            for(int j=0;j<col;j++){
+                Dates[i][j]=val[i][j];
+            }
+        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -241,46 +384,15 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         switch (id){
             case R.id.fab:
 
-                animateFAB();
-                break;
-            case R.id.fab_refresh:
-                LoadList();
-                animateFAB();
-
-                break;
-            case R.id.fab_toimage:
                 SaveImage();
-                animateFAB();
                 break;
 
+
+
         }
     }
 
 
-
-    public void animateFAB(){
-
-        if(isFabOpen){
-
-            fab.startAnimation(rotate_backward);
-            fab_refresh.startAnimation(fab_close);
-            fab_toimage.startAnimation(fab_close);
-            fab_refresh.setClickable(false);
-            fab_toimage.setClickable(false);
-            isFabOpen = false;
-            Log.d("Alfie", "close");
-
-        } else {
-
-            fab.startAnimation(rotate_forward);
-            fab_refresh.startAnimation(fab_open);
-            fab_toimage.startAnimation(fab_open);
-            fab_refresh.setClickable(true);
-            fab_toimage.setClickable(true);
-            isFabOpen = true;
-            Log.d("Alfie","open");
-        }
-    }
 
     private  void SaveImage(){
 
@@ -288,8 +400,8 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         OutputStream output;
 
         // Retrieve the image from the res folder
-        mChart.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(mChart.getDrawingCache());
+        main.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(main.getDrawingCache());
         // Find the SD Card path
         File filepath = Environment.getExternalStorageDirectory();
 
@@ -300,7 +412,7 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         File file = new File(dir, _ProjectNAME+"-"+("0000" + _ProjectID).substring( _ProjectID.length())+".png");
 
         // Show a toast message on successful save
-        TastyToast.makeText(getApplicationContext(), "Image Saved", Toast.LENGTH_SHORT,TastyToast.SUCCESS) ;
+        TastyToast.makeText(getApplicationContext(), "Image Saved", TastyToast.LENGTH_SHORT,TastyToast.SUCCESS) ;
         try {
 
             output = new FileOutputStream(file);
@@ -317,16 +429,6 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         }
     }
 
-    @Override
-    protected void onStop() {
-
-        try{
-            webView.stopLoading();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        super.onStop();
-    }
 
     @Override
     public void onBackPressed() {
@@ -339,13 +441,5 @@ public class LineCharts extends AppCompatActivity implements  View.OnClickListen
         super.onBackPressed();
     }
 
-    @Override
-    public void onValueSelected(Entry e, Highlight h) {
 
-    }
-
-    @Override
-    public void onNothingSelected() {
-
-    }
 }
