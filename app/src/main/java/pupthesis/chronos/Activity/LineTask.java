@@ -369,9 +369,11 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
         linearLayout.addView(MEASURE);
 
 /////////............................................
+
+
         final AlertDialog.Builder builder =new AlertDialog.Builder(LineTask.this);
         builder.setTitle("New Line Task");
-
+        builder.setCancelable(false);
         builder.setView(linearLayout);
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
@@ -381,7 +383,14 @@ public class LineTask extends BaseActivity implements  View.OnClickListener {
 
             }
         });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
+                dialog.cancel();
+
+            }
+        });
         final  AlertDialog dialog = builder.create();
         dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
         dialog.show();

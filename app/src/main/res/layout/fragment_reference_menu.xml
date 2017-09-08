@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:id="@+id/refe_frag"
     tools:context=".Fragment.ReferenceMenu">
 
     <!-- TODO: Update blank fragment layout -->
@@ -15,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:layout_marginBottom="10dp"
-        android:text="Create Project"
+        android:text="Create Gantt"
         android:textAlignment="center"
         android:textColor="@color/White"
         fbutton:buttonColor="@color/sun_flower"

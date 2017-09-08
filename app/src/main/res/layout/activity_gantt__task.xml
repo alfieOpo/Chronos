@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="pupthesis.chronos.Activity.Gantt_Task">
-    <include layout="@layout/content_gantt__task" android:id="@+id/include3" />
+    <include layout="@layout/content_gantt__task" />
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_charts"
         android:layout_width="wrap_content"

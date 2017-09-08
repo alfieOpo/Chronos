@@ -241,20 +241,37 @@ layout.addView(lbl_end_date);
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        final    AlertDialog dialog = builder.create();
+        dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 try {
                     if(!Config.ValidDate(txt_start.getText().toString(),txt_end.getText().toString())){
 
                         AlertWronInput(txt_end);
-
+                        return;
                     }
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
                 if(STATUS.getText().toString().equals("")){
                     AlertWronInput(STATUS);
+                    return;
                 }
                 if(LINEPROJECT.getText().toString().equals("")){
                     AlertWronInput(LINEPROJECT);
+                    return;
                 }
                 ContentValues cv=new ContentValues();
 
@@ -263,23 +280,27 @@ layout.addView(lbl_end_date);
                 cv.put("line_name",LINEPROJECT.getText().toString());
                 cv.put("status",STATUS.getText().toString());
                 int position=spinnerArrayAdapter.getPosition(LINEPROJECT.getText().toString());
-                cv.put("ref_project_id",ref_ProjectID[position]);
+                try{
+                    cv.put("ref_project_id",ref_ProjectID[position]);
+                }
+                catch (Exception  xx){
+                    AlertWronInput(LINEPROJECT);
+                    return;
+                }
                 da=new DataBaseHandler(Line.this);
                 if(da.createNewLINE(cv)){
                     TastyToast.makeText(Line.this,"Successfully Saved",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
                     LoadList();
                 }
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
-        final    AlertDialog dialog = builder.create();
-        dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
-        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
     }
 
     private  void showAlert(String _start_date, String _end_date, String _name, String _status, final String _id){
@@ -384,16 +405,37 @@ layout.addView(lbl_end_date);
 
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+
+            }
+        });
+        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
             }
         });
         final    AlertDialog dialog = builder.create();
         dialog.getWindow().getAttributes().windowAnimations = R.style.UpDown;
         dialog.show();
-  dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                da.ExecuteSql("delete from line where _id="+_id);
+                LoadList();
+                TastyToast.makeText(Line.this,"Successfully Deleted",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
+                dialog.cancel();;
+            }
+        });
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();;
+            }
+        });
+       dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
           try {
